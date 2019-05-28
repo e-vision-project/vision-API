@@ -1,0 +1,265 @@
+﻿namespace FrostweepGames.Plugins.GoogleCloud.NaturalLanguage
+{
+    public class Enumerators
+    {
+        public enum DocumentType
+        {
+            TYPE_UNSPECIFIED,
+            PLAIN_TEXT,
+            HTML
+        }
+        public enum EncodingType
+        {
+            NONE,
+            UTF8,
+            UTF16,
+            UTF32
+        }
+        public enum EntityType
+        {
+            UNKNOWN,
+            PERSON,
+            LOCATION,
+            ORGANIZATION,
+            EVENT,
+            WORK_OF_ART,
+            CONSUMER_GOOD,
+            OTHER
+        }
+        public enum EntityMentionType
+        {
+            TYPE_UNKNOWN,
+            PROPER,
+            COMMON
+        }
+
+        public enum Tag
+        {
+            UNKNOWN,
+            ADJ,
+            ADP,
+            ADV,
+            CONJ,
+            DET,
+            NOUN,
+            NUM,
+            PRON,
+            PRT,
+            PUNCT,
+            VERB,
+            X,
+            AFFIX
+        }
+        public enum Aspect
+        {
+            ASPECT_UNKNOWN,
+            PERFECTIVE,
+            IMPERFECTIVE,
+            PROGRESSIVE,
+        }
+        public enum Case
+        {
+            CASE_UNKNOWN,
+            ACCUSATIVE,
+            ADVERBIAL,
+            COMPLEMENTIVE,
+            DATIVE,
+            GENITIVE,
+            INSTRUMENTAL,
+            LOCATIVE,
+            NOMINATIVE,
+            OBLIQUE,
+            PARTITIVE,
+            PREPOSITIONAL,
+            REFLEXIVE_CASE,
+            RELATIVE_CASE,
+            VOCATIVE,
+        }
+        public enum Form
+        {
+            FORM_UNKNOWN,
+            ADNOMIAL,
+            AUXILIARY,
+            COMPLEMENTIZER,
+            FINAL_ENDING,
+            GERUND,
+            REALIS,
+            IRREALIS,
+            SHORT,
+            LONG,
+            ORDER,
+            SPECIFIC,
+        }
+        public enum Gender
+        {
+            GENDER_UNKNOWN,
+            FEMININE,
+            MASCULINE,
+            NEUTER,
+        }
+        public enum Mood
+        {
+            MOOD_UNKNOWN,
+            CONDITIONAL_MOOD,
+            IMPERATIVE,
+            INDICATIVE,
+            INTERROGATIVE,
+            JUSSIVE,
+            SUBJUNCTIVE,
+        }
+        public enum Number
+        {
+            NUMBER_UNKNOWN,
+            SINGULAR,
+            PLURAL,
+            DUAL,
+        }
+        public enum Person
+        {
+            PERSON_UNKNOWN,
+            FIRST,
+            SECOND,
+            THIRD,
+            REFLEXIVE_PERSON,
+        }
+        public enum Proper
+        {
+            PROPER_UNKNOWN,
+            PROPER,
+            NOT_PROPER,
+        }
+        public enum Reciprocity
+        {
+            RECIPROCITY_UNKNOWN,
+            RECIPROCAL,
+            NON_RECIPROCAL,
+        }
+        public enum Tense
+        {
+            TENSE_UNKNOWN,
+            CONDITIONAL_TENSE,
+            FUTURE,
+            PAST,
+            PRESENT,
+            IMPERFECT,
+            PLUPERFECT,
+        }
+        public enum Voice
+        {
+            VOICE_UNKNOWN,
+            ACTIVE,
+            CAUSATIVE,
+            PASSIVE,
+        }
+        public enum Label
+        {
+            UNKNOWN,
+            ABBREV,
+            ACOMP,
+            ADVCL,
+            ADVMOD,
+            AMOD,
+            APPOS,
+            ATTR,
+            AUX,
+            AUXPASS,
+            CC,
+            CCOMP,
+            CONJ,
+            CSUBJ,
+            CSUBJPASS,
+            DEP,
+            DET,
+            DISCOURSE,
+            DOBJ,
+            EXPL,
+            GOESWITH,
+            IOBJ,
+            MARK,
+            MWE,
+            MWV,
+            NEG,
+            NN,
+            NPADVMOD,
+            NSUBJ,
+            NSUBJPASS,
+            NUM,
+            NUMBER,
+            P,
+            PARATAXIS,
+            PARTMOD,
+            PCOMP,
+            POBJ,
+            POSS,
+            POSTNEG,
+            PRECOMP,
+            PRECONJ,
+            PREDET,
+            PREF,
+            PREP,
+            PRONL,
+            PRT,
+            PS,
+            QUANTMOD,
+            RCMOD,
+            RCMODREL,
+            RDROP,
+            REF,
+            REMNANT,
+            REPARANDUM,
+            ROOT,
+            SNUM,
+            SUFF,
+            TMOD,
+            TOPIC,
+            VMOD,
+            VOCATIVE,
+            XCOMP,
+            SUFFIX,
+            TITLE,
+            ADVPHMOD,
+            AUXCAUS,
+            AUXVV,
+            DTMOD,
+            FOREIGN,
+            KW,
+            LIST,
+            NOMC,
+            NOMCSUBJ,
+            NOMCSUBJPASS,
+            NUMC,
+            COP,
+            DISLOCATED,
+            ASP,
+            GMOD,
+            GOBJ,
+            INFMOD,
+            MES,
+            NCOMP,
+        }
+
+        public enum GoogleCloudRequestType
+        {
+            ANALYZE_ENTITIES_REQUEST,
+            ANALYZE_ENTITY_SENTIMENT_REQUEST,
+            ANALYZE_SENTIMENT_REQUEST,
+            ANALYZE_SYNTAX_REQUEST,
+            ANNOTATE_TEXT_REQUEST,
+            CLASSIFY_TEXT_REQUEST,
+        }
+
+        public enum Language
+        {
+            zh,
+            zh_Hant,
+            en,
+            fr,
+            de,
+            it,
+            ja,
+            ko,
+            pt,
+            es,
+        }
+    }
+}
