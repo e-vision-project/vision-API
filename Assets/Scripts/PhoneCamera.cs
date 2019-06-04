@@ -24,23 +24,35 @@ public class PhoneCamera : MonoBehaviour
 
     private void Update()
     {
-        
+
+    }
+
+    public void SwapCamera()
+    {
+        if(devices.Length > 0)
+        {
+            camIndex += 1;
+            camIndex %= devices.Length;
+        }
     }
 
     public void StartCamera()
     {
         if (devices.Length == 0) return;
 
-        WebCamTexture camTex = new WebCamTexture(devices[camIndex].name);
+        WebCamTexture camTex = new WebCamTexture(devices[camIndex].name,1280,720,30);
         display.texture = camTex;
 
-        camNumber.text = camTex.videoRotationAngle.ToString();
         float antiRotate = -(360 - camTex.videoRotationAngle);
         Quaternion quatRot = new Quaternion();
-        quatRot.eulerAngles = new Vector3(0, 0, antiRotate);
+        quatRot.eulerAngles = new Vector3(0, 0, -90);
         display.transform.rotation = quatRot;
-        
+
+        camTex.filterMode = FilterMode.Trilinear;
+
         camTex.Play();
+
+        camNumber.text = camTex.width.ToString() +"_"+camTex.height.ToString();
     }
 
     public void StopCamera()

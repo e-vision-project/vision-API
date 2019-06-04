@@ -88,7 +88,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
 
             FillHeaders();
 
-            Debug.Log(obj.responses[0].fullTextAnnotation.ToString());
+            //Debug.Log(obj.responses[0].fullTextAnnotation.ToString());
         }
 
         private void AnnotateButtonOnClickHandler()
@@ -188,6 +188,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             {
                 _selectedImageText.text = item.name;
                _selectedImageData = ImageConvert.Convert(ImageConvert.GetTextureFromPath(item.path));
+                Debug.Log(_selectedImageData);
             }
             else
             {
