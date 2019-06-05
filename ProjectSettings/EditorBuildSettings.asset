@@ -5,10 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Mobile camera.unity
     guid: 6be7f5701296936498e910e1b6186d6b
   - enabled: 0
     path: Assets/FrostweepGames/GCVision/Examples/OCRExample/GC_Vision_OCRExample.unity
     guid: 3aa979d3ba1fd5f4a8d267fc7f25aeb0
+  - enabled: 1
+    path: Assets/Scenes/Mobile camera Refurbished.unity
+    guid: 6ed476c6e5bd7804faf2ddd1870fc9e2
   m_configObjects: {}
