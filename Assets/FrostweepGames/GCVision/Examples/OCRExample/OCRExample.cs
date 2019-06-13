@@ -104,7 +104,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         private void _gcVision_AnnotateSuccessEvent(VisionResponse arg1, long arg2)
         {
             statusImage.color = UnityEngine.Color.green;
-            print(arg1.responses[0].textAnnotations);
+            print(arg1.responses[0].fullTextAnnotation.text);
 
             foreach (var response in arg1.responses)
                 foreach (var entity in response.textAnnotations)

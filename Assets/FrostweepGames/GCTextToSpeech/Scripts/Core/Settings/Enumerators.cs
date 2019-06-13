@@ -26,6 +26,7 @@
 
         public enum LanguageCode
         {
+            el_GR,
             en_AU,
             nl_NL,
             en_GB,

@@ -23,8 +23,8 @@ public class OCRController : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E)) {
-            string _selectedImageData = ImageConvert.Convert(ImageConvert.GetTextureFromPath("C:\\Users\\migkotzidis\\Desktop\\61993457_872351859766818_1949266492063219712_n.png"));
-            AnnotateImage(_selectedImageData);
+            string _selectedImageData = ImageConvert.Convert(ImageConvert.GetTextureFromPath("https://ageliesergasias.gr/wp-content/uploads/2016/05/masoutis-thessnews-kouponi.jpg"));
+            AnnotateImageFromURL(_selectedImageData);
         }
     }
 
