@@ -12,14 +12,18 @@ namespace EVISION.Camera.plugin
         private GCTextToSpeech _gcTextToSpeech;
 
         private Voice[] _voices;
+        private List<string> voices = new List<string>();
         private Voice _currentVoice;
 
-        public string text;
-
-        public void PerformSpeechFromText()
+        public void PerformSpeechFromText(string voiceOverText)
         {
-            GetVoicesHandler(Enumerators.LanguageCode.el_GR);
-            SynthesizeHandler(text);
+            //GetVoicesHandler();
+            SynthesizeHandler(voiceOverText);
+        }
+
+        public void StopSpeech()
+        {
+            audioSource.Stop();
         }
 
         #region MonoBehaviour callbacks
@@ -33,6 +37,7 @@ namespace EVISION.Camera.plugin
 
             _gcTextToSpeech.GetVoicesFailedEvent += _gcTextToSpeech_GetVoicesFailedEvent;
             _gcTextToSpeech.SynthesizeFailedEvent += _gcTextToSpeech_SynthesizeFailedEvent;
+            GetVoicesHandler();
 
         }
 
@@ -43,33 +48,30 @@ namespace EVISION.Camera.plugin
         }
         #endregion
 
-        private void GetVoicesHandler(Enumerators.LanguageCode lang)
+        private void GetVoicesHandler()
         {
-            Debug.Log("asdasd");
+            Debug.Log("Get voices");
             _gcTextToSpeech.GetVoices(new GetVoicesRequest()
             {
                 languageCode = _gcTextToSpeech.PrepareLanguage(Enumerators.LanguageCode.el_GR)
-                Debug.Log(languageCode);
             });
         }
 
-        private void SynthesizeHandler(string textContent)
+        private void SynthesizeHandler(string contentText)
         {
-            Debug.Log("1");
-            string content = textContent;
-            if (string.IsNullOrEmpty(content))
+            string content = contentText;
+            var voice = _voices.ToList().Find(item => item.name.Contains(voices[0]));
+            _currentVoice = voice;
+            if (string.IsNullOrEmpty(content) || _currentVoice == null)
                 return;
-            Debug.Log("2");
+
             _gcTextToSpeech.Synthesize(content, new VoiceConfig()
             {
-                gender = Enumerators.SsmlVoiceGender.MALE,
+                gender = _currentVoice.ssmlGender,
                 languageCode = _currentVoice.languageCodes[0],
                 name = _currentVoice.name
-            },
-            false,
-            1,
-            1,
-            16000);
+            }
+            );
         }
 
         private void FillVoicesList()
@@ -84,6 +86,7 @@ namespace EVISION.Camera.plugin
                 if (_voices[i].name.ToLower().Contains(((Enumerators.VoiceType.WAVENET)).ToString().ToLower()))
                     elements.Add(_voices[i].name);
             }
+            voices.AddRange(elements);
         }
 
         #region failed handlers
@@ -104,7 +107,6 @@ namespace EVISION.Camera.plugin
 
         private void _gcTextToSpeech_SynthesizeSuccessEvent(PostSynthesizeResponse response)
         {
-            Debug.Log("success 2");
             audioSource.clip = _gcTextToSpeech.GetAudioClipFromBase64(response.audioContent, Constants.DEFAULT_AUDIO_ENCODING);
             audioSource.Play();
         }
@@ -114,7 +116,6 @@ namespace EVISION.Camera.plugin
             _voices = response.voices;
             FillVoicesList();
         }
-
 
         #endregion sucess handlers
     }

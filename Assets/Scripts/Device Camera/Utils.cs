@@ -6,7 +6,7 @@ public static class Utils
 {
     public static void PerformMajorityVoting()
     {
-
+        
     }
 
     public static Texture2D RotateTexture(Texture2D originalTexture, bool clockwise)

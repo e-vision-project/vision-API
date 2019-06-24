@@ -16,7 +16,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             _gcVision.AnnotateSuccessEvent += _gcVision_AnnotateSuccessEvent;
             _gcVision.AnnotateFailedEvent += _gcVision_AnnotateFailedEvent;
 
-            AnnotateImage("https://www.google.com/search?q=parrot+images&rlz=1C1GCEU_enGR822GR822&source=lnms&tbm=isch&sa=X&ved=0ahUKEwj7pZTTpIniAhVGUxoKHQy_AQ0Q_AUIDigB&biw=1920&bih=937#imgrc=DdYqMkOVt1DSIM:");
+            AnnotateImage("https://images.unsplash.com/photo-1534567059665-cbcfe2e73b91?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");
         }
 
         public void AnnotateImage(string url)

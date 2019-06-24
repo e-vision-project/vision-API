@@ -30,7 +30,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
 
             annotateButton.onClick.AddListener(AnnotateButtonOnClickHandler);
 
-            urlInputField.text = "https://www.masoutis.gr/images/kitchenAidForSlider.jpg"; // dafault value     
+            urlInputField.text = "https://lh6.googleusercontent.com/-O_bev-SPc-4/UIwUjpqzngI/AAAAAAAAI0M/7eEr_wSfaZs/s912/DSC_6316.JPG"; // dafault value     
         }
 
         private void AnnotateButtonOnClickHandler()
@@ -42,7 +42,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         public void AnnotateImage(string url)
         {
             var features = new List<Feature>();
-            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION });
+            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.LANDMARK_DETECTION });
 
             _gcVision.Annotate(new List<AnnotateRequest>()
             {
@@ -104,11 +104,11 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         private void _gcVision_AnnotateSuccessEvent(VisionResponse arg1, long arg2)
         {
             statusImage.color = UnityEngine.Color.green;
-            print(arg1.responses[0].fullTextAnnotation.text);
+            print(arg1.responses[0].landmarkAnnotations[0].description);
 
-            foreach (var response in arg1.responses)
-                foreach (var entity in response.textAnnotations)
-                    InternalTools.ProcessImage(entity.boundingPoly.vertices, ref _loadedTexture, color);            
+            //foreach (var response in arg1.responses)
+            //    foreach (var entity in response.textAnnotations)
+            //        InternalTools.ProcessImage(entity.boundingPoly.vertices, ref _loadedTexture, color);            
         }
     }
 }

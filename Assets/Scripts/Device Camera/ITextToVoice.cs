@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface ITextToVoice
 {
-    void PerformSpeechFromText(); 
+    void PerformSpeechFromText(string text);
+    void StopSpeech();
 }

@@ -5,28 +5,30 @@ using System.Linq;
 
 public class ClientApplication : MonoBehaviour
 {
+    #region properties
+
     private IDeviceCamera cam;
     private IAnnotate annotator;
-    private ITextToVoice voiceSync;
+    private ITextToVoice voiceSynthesizer;
     private Texture2D camTexture;
-    private string annotationText { get; set; }
-    private bool annotationProccessBusy = false;
+    private string annotationText { get; set;}
+    public bool annotationProccessBusy { get; set;}
 
-    public delegate void OnAnnotationCompleted();
-    public static OnAnnotationCompleted onAnnotationCompleted;
+    #endregion
+
 
     private void Awake()
     {
         cam = GetComponent<IDeviceCamera>();
         annotator = GetComponent<IAnnotate>();
-        voiceSync = GetComponent<ITextToVoice>();
+        voiceSynthesizer = GetComponent<ITextToVoice>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
         annotationProccessBusy = false;
-        //cam.SetCamera(DeviceCamera.Cameras.Back);
+        cam.SetCamera(DeviceCamera.Cameras.Back);
     }
 
     // Update is called once per frame
@@ -58,14 +60,13 @@ public class ClientApplication : MonoBehaviour
         {
             Debug.LogError("annotationText in ClientApplication dropped an exception error");
         }
-        Debug.Log("Annotation from Client : " + annotationText[0]);
+        voiceSynthesizer.PerformSpeechFromText(annotationText);
         //unlock process
         annotationProccessBusy = false;
     }
 
     public void SaveScreenShot()
     {
-        //cam.SaveScreenShot(camTexture);
-        voiceSync.PerformSpeechFromText();
+        cam.SaveScreenShot(camTexture);
     }
 }
