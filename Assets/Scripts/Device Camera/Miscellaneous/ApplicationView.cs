@@ -8,6 +8,7 @@ public class ApplicationView : MonoBehaviour
     public GameObject image;
     public Text text;
     public ClientApplication clientApp;
+    public Text deviceNumberText;
 
     // Start is called before the first frame update
     void Start()
@@ -21,11 +22,13 @@ public class ApplicationView : MonoBehaviour
         if(clientApp.annotationProccessBusy)
         {
             image.SetActive(true);
-            Debug.Log("Annotating");
+            //Debug.Log("Annotating");
         }
         else if (!clientApp.annotationProccessBusy)
         {
             image.SetActive(false);
         }
+
+        deviceNumberText.text = WebCamTexture.devices.Length.ToString();
     }
 }

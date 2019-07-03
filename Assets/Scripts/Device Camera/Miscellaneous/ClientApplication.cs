@@ -7,7 +7,7 @@ public class ClientApplication : MonoBehaviour
 {
     #region properties
 
-    private IDeviceCamera cam;
+    public IDeviceCamera cam;
     private IAnnotate annotator;
     private ITextToVoice voiceSynthesizer;
     private Texture2D camTexture;
@@ -60,7 +60,11 @@ public class ClientApplication : MonoBehaviour
         {
             Debug.LogError("annotationText in ClientApplication dropped an exception error");
         }
-        voiceSynthesizer.PerformSpeechFromText(annotationText);
+        // Perform majority voting
+        List<string> OCR_List = Utils.SplitStringToList(annotationText);
+        string product = Utils.PerformMajorityVoting(OCR_List);
+        // Text to speech
+        voiceSynthesizer.PerformSpeechFromText(product);
         //unlock process
         annotationProccessBusy = false;
     }

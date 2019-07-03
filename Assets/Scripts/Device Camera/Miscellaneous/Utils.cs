@@ -1,12 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
+using System.Linq;
 
 public static class Utils
 {
-    public static void PerformMajorityVoting()
+    public static string PerformMajorityVoting(List<string> OCR_List)
     {
-        
+        MajorityVoting maj = new MajorityVoting();
+        string product = maj.PerformMajorityVoting(OCR_List);
+        return product;
+    }
+
+    public static List<string> SplitStringToList(string text)
+    {
+        List<string> l = text.Split(new Char[] { ' ', '\n' }).ToList();
+        return l;
     }
 
     public static Texture2D RotateTexture(Texture2D originalTexture, bool clockwise)
@@ -32,12 +42,5 @@ public static class Utils
         rotatedTexture.SetPixels32(rotated);
         rotatedTexture.Apply();
         return rotatedTexture;
-    }
-
-    public static List<string> DoMajorityVoting(string annotationText)
-    {
-        List<string> productList = new List<string>();
-
-        return productList;
     }
 }

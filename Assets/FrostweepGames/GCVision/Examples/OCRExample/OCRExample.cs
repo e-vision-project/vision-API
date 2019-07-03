@@ -42,7 +42,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         public void AnnotateImage(string url)
         {
             var features = new List<Feature>();
-            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.LANDMARK_DETECTION });
+            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION });
 
             _gcVision.Annotate(new List<AnnotateRequest>()
             {
@@ -104,8 +104,11 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         private void _gcVision_AnnotateSuccessEvent(VisionResponse arg1, long arg2)
         {
             statusImage.color = UnityEngine.Color.green;
-            print(arg1.responses[0].landmarkAnnotations[0].description);
-
+            print(arg1.responses[0].textAnnotations[0].description);
+            print("==============================");
+            print(arg1.responses[0].fullTextAnnotation.text);
+            var list = Utils.SplitStringToList(arg1.responses[0].textAnnotations[0].description);
+            list.ForEach(Debug.Log);
             //foreach (var response in arg1.responses)
             //    foreach (var entity in response.textAnnotations)
             //        InternalTools.ProcessImage(entity.boundingPoly.vertices, ref _loadedTexture, color);            

@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MajorityVoting.unity
     guid: 798aad215921cc941856cab2ca7860e0
+  - enabled: 0
+    path: Assets/libuvc_android_unity-master/uvc_camera_unity/Assets/Main.unity
+    guid: 009abcde4eec35a42a1c34c5e1248d27
   m_configObjects: {}
