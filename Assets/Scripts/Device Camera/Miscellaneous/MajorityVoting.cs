@@ -20,17 +20,16 @@ public class MasoutisDataBase
 
 public class MajorityVoting
 {
-    static List<string> desc = new List<string>();
-    static List<string> cat1 = new List<string>();
-    static List<string> cat2 = new List<string>();
-    static List<string> cat3 = new List<string>();
-    static List<string> cat4 = new List<string>();
-    static List<string> brand = new List<string>();
+    static List<string> desc = new List<string>(115180);
+    static List<string> cat1 = new List<string>(115180);
+    static List<string> cat2 = new List<string>(115180);
+    static List<string> cat3 = new List<string>(115180);
+    static List<string> cat4 = new List<string>(115180);
+    static List<string> brand = new List<string>(115180);
 
     List<string> wordsOCR = new List<string>();
     List<int> sel_k = new List<int>();
     List<int> cnt_found = new List<int>();
-
 
     // empty constructor
     public MajorityVoting()
@@ -40,21 +39,24 @@ public class MajorityVoting
 
     public string PerformMajorityVoting(List<string> wordsOCR)
     {
-
+   
         // read database to class properties
         ReadDatabaseFile("masoutis_db");
-        Debug.Log("read database: "+ Time.realtimeSinceStartup);
+        Debug.Log("read database: " + Time.realtimeSinceStartup);
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
-        Debug.Log("len three: " + Time.realtimeSinceStartup);
         // remove greek accent and make all uppercase
         wordsOCR = RemoveGreekAccentParallel(wordsOCR);
-        Debug.Log("remove accent: " + Time.realtimeSinceStartup);
-        // Get valid words from db
-        wordsOCR = GetValidWordsFromDbParallel(wordsOCR, desc);
-        Debug.Log("get valid words: " + Time.realtimeSinceStartup);
-        wordsOCR.ForEach(Debug.Log);
+        desc.Sort();
+        Debug.Log("sort: " + Time.realtimeSinceStartup);
+        //desc.ForEach(Debug.Log);
 
+        // Get valid words from db
+        //wordsOCR = GetValidWordsFromDbParallel(wordsOCR, desc);
+        //Debug.Log("get valid words: " + Time.realtimeSinceStartup);
+        //wordsOCR.ForEach(Debug.Log);
+
+        return null;
         //Get all products from the db that contain the valid words.
         List<string> cropped_cat2 = new List<string>(), cropped_cat3 = new List<string>();
         List<string> cropped_cat4 = new List<string>(), cropped_desc = new List<string>();
@@ -177,33 +179,15 @@ public class MajorityVoting
         return validWords.Distinct().ToList();
     }
 
-    private List<string> GetValidWordsFromDbParallel (List<string> words, List<string> masoutisDesc)
+    private List<string> GetValidWordsFromDbParallel (List<string> words, HashSet<string> masoutisDesc)
     {
         List<string> validWords = new List<string>();
-        int cnt = 0;
 
-        // use multi core for loop.
-        Parallel.For(0, words.Count, i => {
-            for (int k = 0; k < masoutisDesc.Count; k++)
-            {
-                List<string> new_data = new List<string>();
-                string[] splitted = masoutisDesc[k].Split(' ');
-                for (int j = 0; j < splitted.Length; j++)
-                {
-                    new_data.Add(masoutisDesc[k].Split(' ')[j]);
-                }
-                if (new_data.Contains(words[i]))
-                {
-                    cnt += 1;
-                    sel_k.Add(k);
-                    validWords.Add(words[i]);
-                }
-            }
-            if (cnt != 0)
-            {
-                cnt_found.Add(cnt);
-            }
-        });
+        foreach (var word in words)
+        {
+            
+        }
+       
 
         //keep only distinct elements from the database.
         return validWords.Distinct().ToList();
