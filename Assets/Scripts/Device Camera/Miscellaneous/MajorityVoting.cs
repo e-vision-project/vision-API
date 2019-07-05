@@ -58,6 +58,7 @@ public class MajorityVoting
 
         //Get valid words from db
         wordsOCR = GetValidWordsFromDbParallel(wordsOCR, descSplitted);
+        //wordsOCR = GetValidWordsFromDbSequential(wordsOCR, desc);
         Debug.Log("get valid words: " + Time.realtimeSinceStartup);
         wordsOCR.ForEach(Debug.Log);
 
@@ -189,7 +190,7 @@ public class MajorityVoting
         List<string> validWords = new List<string>();
         int cnt = 0;
 
-        foreach (var word in words)
+        Parallel.ForEach(words, word =>
         {
             for (int i = 0; i < masoutisDesc.Count; i++)
             {
@@ -204,8 +205,7 @@ public class MajorityVoting
             {
                 cnt_found.Add(cnt);
             }
-        }
-       
+        });
 
         //keep only distinct elements from the database.
         return validWords.Distinct().ToList();
