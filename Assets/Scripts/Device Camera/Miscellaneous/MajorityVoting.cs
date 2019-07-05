@@ -47,14 +47,19 @@ public class MajorityVoting
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
         // remove greek accent and make all uppercase
         wordsOCR = RemoveGreekAccentParallel(wordsOCR);
-        desc.Sort();
-        Debug.Log("sort: " + Time.realtimeSinceStartup);
-        //desc.ForEach(Debug.Log);
 
-        // Get valid words from db
-        //wordsOCR = GetValidWordsFromDbParallel(wordsOCR, desc);
-        //Debug.Log("get valid words: " + Time.realtimeSinceStartup);
-        //wordsOCR.ForEach(Debug.Log);
+        List<HashSet<string>> descSplitted = new List<HashSet<string>>();
+        for (int i = 0; i < desc.Count; i++)
+        {
+            string[] splitted = desc[i].Split(' ');
+            HashSet<string> temp_hash = new HashSet<string>(splitted);
+            descSplitted.Add(temp_hash);
+        }
+
+        //Get valid words from db
+        wordsOCR = GetValidWordsFromDbParallel(wordsOCR, descSplitted);
+        Debug.Log("get valid words: " + Time.realtimeSinceStartup);
+        wordsOCR.ForEach(Debug.Log);
 
         return null;
         //Get all products from the db that contain the valid words.
@@ -179,13 +184,26 @@ public class MajorityVoting
         return validWords.Distinct().ToList();
     }
 
-    private List<string> GetValidWordsFromDbParallel (List<string> words, HashSet<string> masoutisDesc)
+    private List<string> GetValidWordsFromDbParallel (List<string> words, List<HashSet<string>> masoutisDesc)
     {
         List<string> validWords = new List<string>();
+        int cnt = 0;
 
         foreach (var word in words)
         {
-            
+            for (int i = 0; i < masoutisDesc.Count; i++)
+            {
+                if (masoutisDesc[i].Contains(word))
+                {
+                    cnt += 1;
+                    sel_k.Add(i);
+                    validWords.Add(word);
+                } 
+            }
+            if (cnt != 0)
+            {
+                cnt_found.Add(cnt);
+            }
         }
        
 

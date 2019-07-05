@@ -13,11 +13,11 @@ public class TestMajority : MonoBehaviour
         List<string> wordsOCR = new List<string>();
         wordsOCR.Add("MOZZARELLA");
         wordsOCR.Add("ΔώΔΩΝΗ");
-        wordsOCR.Add("Ψητό");
+        wordsOCR.Add("Ψιτό");
         wordsOCR.Add("Nά");
-        wordsOCR.Add("Σοκολάτα");
-        wordsOCR.Add("Κοτόπουλο");
-        wordsOCR.Add("ΦήΛΕΤΟ");
+        //wordsOCR.Add("Σοκολάτα");
+        //wordsOCR.Add("Κοτόπουλο");
+        //wordsOCR.Add("ΦήΛΕΤΟ");
         string str = maj.PerformMajorityVoting(wordsOCR);
         Debug.Log(Time.realtimeSinceStartup);
     }
