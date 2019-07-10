@@ -6,11 +6,11 @@ using System.Linq;
 
 public static class Utils
 {
-    public static string PerformMajorityVoting(List<string> OCR_List)
+    public static IEnumerator PerformMajorityVoting(List<string> OCR_List)
     {
         MajorityVoting maj = new MajorityVoting();
         string product = maj.PerformMajorityVoting(OCR_List);
-        return product;
+        yield return null;
     }
 
     public static List<string> SplitStringToList(string text)

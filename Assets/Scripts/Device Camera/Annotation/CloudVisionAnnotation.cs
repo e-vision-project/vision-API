@@ -28,6 +28,10 @@ namespace EVISION.Camera.plugin
 
         public string GetAnnotationText()
         {
+            if (textAnnotation == null)
+            {
+                textAnnotation = "Δεν βρέθηκε αναγραφώμενο κείμενο";
+            }
             return textAnnotation;
         }
 

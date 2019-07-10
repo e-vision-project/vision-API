@@ -14,6 +14,9 @@ public class ClientApplication : MonoBehaviour
     private string annotationText { get; set;}
     public bool annotationProccessBusy { get; set;}
 
+    // FOR test only remember to remove
+    public TestTensorflow tensorflow;
+
     #endregion
 
 
@@ -39,7 +42,11 @@ public class ClientApplication : MonoBehaviour
 
     public void TakeScreenShot()
     {
-        if (annotationProccessBusy) { Debug.Log("Process busy"); return; }
+        if (annotationProccessBusy)
+        {
+            Debug.Log("Process busy");
+            return;
+        }
         StartCoroutine(TakeScreenshotSingleThreaded());
     }
 
@@ -50,6 +57,7 @@ public class ClientApplication : MonoBehaviour
         // Get and rotate camera texture
         camTexture = cam.TakeScreenShot();
         camTexture = Utils.RotateTexture(camTexture, true);
+
         // wait until the annotation process returns
         yield return StartCoroutine(annotator.PerformAnnotation(camTexture));
         try
@@ -62,9 +70,9 @@ public class ClientApplication : MonoBehaviour
         }
         // Perform majority voting
         List<string> OCR_List = Utils.SplitStringToList(annotationText);
-        string product = Utils.PerformMajorityVoting(OCR_List);
+        yield return StartCoroutine(Utils.PerformMajorityVoting(OCR_List));
         // Text to speech
-        voiceSynthesizer.PerformSpeechFromText(product);
+        //voiceSynthesizer.PerformSpeechFromText(product);
         //unlock process
         annotationProccessBusy = false;
     }

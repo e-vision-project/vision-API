@@ -11,12 +11,15 @@ public class TestMajority : MonoBehaviour
         MajorityVoting maj = new MajorityVoting();
 
         List<string> wordsOCR = new List<string>();
-        wordsOCR.Add("MOZZARELLA");
-        wordsOCR.Add("ΔώΔΩΝΗ");
-        wordsOCR.Add("Ψιτό");
-        wordsOCR.Add("Nά");
-        //wordsOCR.Add("Σοκολάτα");
+        //wordsOCR.Add("MOZZARELLA");
+        //wordsOCR.Add("ΔώΔΩΝΗ");
+        //wordsOCR.Add("Ψιτό");
+        //wordsOCR.Add("Nά");
+        wordsOCR.Add("Σοκολάτα");
+        wordsOCR.Add("LACTA");
         //wordsOCR.Add("Κοτόπουλο");
+        //wordsOCR.Add("Χοιρινό");
+        //wordsOCR.Add("DUREX");
         //wordsOCR.Add("ΦήΛΕΤΟ");
         string str = maj.PerformMajorityVoting(wordsOCR);
         Debug.Log(Time.realtimeSinceStartup);

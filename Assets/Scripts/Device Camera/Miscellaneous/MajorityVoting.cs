@@ -26,6 +26,8 @@ public class MajorityVoting
     static List<string> cat3 = new List<string>(115180);
     static List<string> cat4 = new List<string>(115180);
     static List<string> brand = new List<string>(115180);
+    static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
+
 
     List<string> wordsOCR = new List<string>();
     List<int> sel_k = new List<int>();
@@ -47,22 +49,12 @@ public class MajorityVoting
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
         // remove greek accent and make all uppercase
         wordsOCR = RemoveGreekAccentParallel(wordsOCR);
-
-        List<HashSet<string>> descSplitted = new List<HashSet<string>>();
-        for (int i = 0; i < desc.Count; i++)
-        {
-            string[] splitted = desc[i].Split(' ');
-            HashSet<string> temp_hash = new HashSet<string>(splitted);
-            descSplitted.Add(temp_hash);
-        }
-
         //Get valid words from db
         wordsOCR = GetValidWordsFromDbParallel(wordsOCR, descSplitted);
         //wordsOCR = GetValidWordsFromDbSequential(wordsOCR, desc);
         Debug.Log("get valid words: " + Time.realtimeSinceStartup);
         wordsOCR.ForEach(Debug.Log);
 
-        return null;
         //Get all products from the db that contain the valid words.
         List<string> cropped_cat2 = new List<string>(), cropped_cat3 = new List<string>();
         List<string> cropped_cat4 = new List<string>(), cropped_desc = new List<string>();
@@ -82,16 +74,20 @@ public class MajorityVoting
         List<string> cropped_cat3_unq = cropped_cat3.Distinct().ToList();
         List<string> cropped_cat4_unq = cropped_cat4.Distinct().ToList();
         List<string> cropped_desc_unq = cropped_desc.Distinct().ToList();
-        Debug.Log(Time.realtimeSinceStartup);
+
         // get number of occurancies of each element in every category
         List<int> count_cat2 = GetCategoryCount(cropped_cat2, cropped_cat2_unq);
         List<int> count_cat3 = GetCategoryCount(cropped_cat3, cropped_cat3_unq);
         List<int> count_cat4 = GetCategoryCount(cropped_cat4, cropped_cat4_unq);
         List<int> count_desc = GetCategoryCount(cropped_desc, cropped_desc_unq);
         Debug.Log("End: " + Time.realtimeSinceStartup);
+
         try
         {
             string category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
+            string category_3 = cropped_cat3_unq [count_cat3.IndexOf(count_cat3.Max())];
+            Debug.Log(category_2);
+            Debug.Log(category_3);
             return category_2;
         }
         catch (System.Exception)
@@ -100,7 +96,6 @@ public class MajorityVoting
             return "προϊόν μη αναγνωρίσιμο";
         }
 
-        //string category_3 = cropped_cat3_unq [count_cat3.IndexOf(count_cat3.Max())];
         //string category_4 = cropped_cat4_unq [count_cat3.IndexOf(count_cat4.Max())];
         //string product = cropped_desc_unq [count_desc.IndexOf(count_desc.Max())];
 
@@ -135,12 +130,36 @@ public class MajorityVoting
                     }
                 }
             }
+            for (int i = 0; i < desc.Count; i++)
+            {
+                string[] splitted = desc[i].Split(' ');
+                HashSet<string> temp_hash = new HashSet<string>(splitted);
+                descSplitted.Add(temp_hash);
+            }
         }
         else
         {
             Debug.Log("DB already loaded");
         }
     } 
+
+    private void LoadDataToDict(List<string> desc)
+    {
+        //add every splitted element to list
+        List<string> descSplitted = new List<string>();
+        for (int i = 0; i < desc.Count; i++)
+        {
+            string[] splitted = desc[i].Split(' ');
+            desc.AddRange(splitted);
+        }
+
+        Dictionary<string, int[]> dict = new Dictionary<string, int[]>();
+        for (int i = 0; i < descSplitted.Count; i++)
+        {
+            // get all indexes of the element (desc[i])
+        }
+
+    }
 
     private List<int> GetCategoryCount(List<string> cat, List<string> cat_unq)
     {
@@ -190,7 +209,7 @@ public class MajorityVoting
         List<string> validWords = new List<string>();
         int cnt = 0;
 
-        Parallel.ForEach(words, word =>
+        foreach(var word in words)
         {
             for (int i = 0; i < masoutisDesc.Count; i++)
             {
@@ -205,7 +224,7 @@ public class MajorityVoting
             {
                 cnt_found.Add(cnt);
             }
-        });
+        }
 
         //keep only distinct elements from the database.
         return validWords.Distinct().ToList();
