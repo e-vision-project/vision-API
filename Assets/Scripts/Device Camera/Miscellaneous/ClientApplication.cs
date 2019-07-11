@@ -57,23 +57,24 @@ public class ClientApplication : MonoBehaviour
         // Get and rotate camera texture
         camTexture = cam.TakeScreenShot();
         camTexture = Utils.RotateTexture(camTexture, true);
-
+        tensorflow.ProcessImage(camTexture);
+        yield return null; 
         // wait until the annotation process returns
-        yield return StartCoroutine(annotator.PerformAnnotation(camTexture));
-        try
-        {
-            annotationText = annotator.GetAnnotationText();
-        }
-        catch (System.Exception)
-        {
-            Debug.LogError("annotationText in ClientApplication dropped an exception error");
-        }
-        // Perform majority voting
-        List<string> OCR_List = Utils.SplitStringToList(annotationText);
-        yield return StartCoroutine(Utils.PerformMajorityVoting(OCR_List));
-        // Text to speech
-        //voiceSynthesizer.PerformSpeechFromText(product);
-        //unlock process
+        //yield return StartCoroutine(annotator.PerformAnnotation(camTexture));
+        //try
+        //{
+        //    annotationText = annotator.GetAnnotationText();
+        //}
+        //catch (System.Exception)
+        //{
+        //    Debug.LogError("annotationText in ClientApplication dropped an exception error");
+        //}
+        //// Perform majority voting
+        //List<string> OCR_List = Utils.SplitStringToList(annotationText);
+        //yield return StartCoroutine(Utils.PerformMajorityVoting(OCR_List));
+        //// Text to speech
+        ////voiceSynthesizer.PerformSpeechFromText(product);
+        ////unlock process
         annotationProccessBusy = false;
     }
 

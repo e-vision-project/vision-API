@@ -34,8 +34,6 @@ public class TestTensorflow : MonoBehaviour
     private TFGraph graph;
     private TFSession session;
     private string[] labels;
-
-    public RawImage img;
     //#if UNITY_ANDROID
     //    TensorFlowSharp.Android.NativeBinding.Init();
     //#endif
@@ -53,8 +51,8 @@ public class TestTensorflow : MonoBehaviour
 
         Texture2D tex = new Texture2D(224, 224);
         StartCoroutine(setImage("https://cdn.pixabay.com/photo/2018/05/28/22/11/message-in-a-bottle-3437294__340.jpg", tex));
-        img.texture = tex;
-        ProcessImage(tex);
+        //img.texture = tex;
+        //ProcessImage(tex);
 
 
     }
@@ -74,9 +72,14 @@ public class TestTensorflow : MonoBehaviour
 
     public void ProcessImage(Texture2D tex)
     {
-      
-        Debug.Log("Image to Pixels32 ok");
-        var tensor = TransformInput(tex.GetPixels32(), INPUT_SIZE, INPUT_SIZE);
+        //var cropped = TextureTools.CropTexture(tex);
+        Debug.Log("cropped");
+        var scaled = TextureTools.scaled(tex, 224, 224, FilterMode.Bilinear);
+        Debug.Log("scaled");
+        var img = scaled.GetPixels32();
+        Debug.Log("Pixels 32");
+        var tensor = TransformInput(img, INPUT_SIZE, INPUT_SIZE);
+        Debug.Log("Transform input");
         var runner = session.GetRunner();
         runner.AddInput(graph[INPUT_TENSOR][0], tensor).Fetch(graph[OUTPUT_TENSOR][0]);
         var output = runner.Run();
