@@ -14,11 +14,12 @@ namespace EVISION.Camera.plugin
         private Voice[] _voices;
         private List<string> voices = new List<string>();
         private Voice _currentVoice;
+        [SerializeField] private Enumerators.LanguageCode currentLanguage;
 
         public void PerformSpeechFromText(string voiceOverText)
         {
-            //GetVoicesHandler();
             SynthesizeHandler(voiceOverText);
+            
         }
 
         public void StopSpeech()
@@ -53,7 +54,7 @@ namespace EVISION.Camera.plugin
             Debug.Log("Get voices");
             _gcTextToSpeech.GetVoices(new GetVoicesRequest()
             {
-                languageCode = _gcTextToSpeech.PrepareLanguage(Enumerators.LanguageCode.el_GR)
+                languageCode = _gcTextToSpeech.PrepareLanguage(currentLanguage)
             });
         }
 

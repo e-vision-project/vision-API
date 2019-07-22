@@ -11,7 +11,10 @@ namespace EVISION.Camera.plugin
         public GameObject image;
         public Text text;
         public ClientApplication clientApp;
+        public DeviceCamera cam;
         public Text deviceNumberText;
+        public Text resolutionText;
+        
 
         // Start is called before the first frame update
         void Start()
@@ -22,6 +25,7 @@ namespace EVISION.Camera.plugin
         // Update is called once per frame
         void Update()
         {
+
             if (clientApp.annotationProccessBusy)
             {
                 image.SetActive(true);
@@ -33,6 +37,8 @@ namespace EVISION.Camera.plugin
             }
 
             deviceNumberText.text = WebCamTexture.devices.Length.ToString();
+            resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() +" " 
+                + cam.GetCamTextureWidthHeight().y.ToString();
         }
     }
 }

@@ -16,24 +16,30 @@ using UnityEngine.UI;
 using System.Threading;
 
 
-
 public class TestTensorflow : MonoBehaviour
 {
 
     private const int INPUT_SIZE = 224;
-    private const int IMAGE_MEAN = 224;
-    private const float IMAGE_STD = 1;
+    private const int IMAGE_MEAN = 127;
+    private const float IMAGE_STD = 127;
     private const string INPUT_TENSOR = "input";
     private const string OUTPUT_TENSOR = "output";
 
-
-
     public TextAsset model;
-    public TextAsset labelMap;
+    public TextAsset labelsFile;
 
     private TFGraph graph;
     private TFSession session;
     private string[] labels;
+
+    private string inputName = "input_1";
+    //private string outputName = "fc1000/Softmax";
+    private string outputName = "Logits/Softmax";
+    private int inputHeight= 224;
+    private int inputWidth = 224;
+    private float inputMean = 127.5f;
+    private float inputStd = 127.5f;
+
     //#if UNITY_ANDROID
     //    TensorFlowSharp.Android.NativeBinding.Init();
     //#endif
@@ -41,55 +47,91 @@ public class TestTensorflow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        RawImage img = GameObject.Find("img").GetComponent<RawImage>();
+        Texture2D tex = new Texture2D(img.texture.width, img.texture.height);
+        tex = img.texture as Texture2D;
 
-        //load labels into string array
-        labels = labelMap.ToString().Split('\n');
+
         //load graph
         graph = new TFGraph();
         graph.Import(model.bytes);
         session = new TFSession(graph);
+        labels = labelsFile.text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-        Texture2D tex = new Texture2D(224, 224);
-        StartCoroutine(setImage("https://cdn.pixabay.com/photo/2018/05/28/22/11/message-in-a-bottle-3437294__340.jpg", tex));
-        //img.texture = tex;
-        //ProcessImage(tex);
-
-
+        LoadTFModel(tex);
     }
 
-    IEnumerator setImage(string url,Texture2D tex)
+    public void LoadTFModel(Texture2D tex)
     {
+        var shape = new TFShape(1, inputWidth, inputHeight, 3);
+        var input = graph[inputName][0];
+        TFTensor inputTensor = null;
 
-        WWW www = new WWW(url);
-        yield return www;
+        int angle = 90;
+        Flip flip = Flip.NONE; 
 
-        // calling this function with StartCoroutine solves the problem
+        if (input.OutputType == TFDataType.Float)
+        {
+            float[] imgData = Utils.DecodeTexture(tex, inputWidth, inputHeight,
+                                                  inputMean, inputStd, angle, flip);
+            inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
+        }
+        else if (input.OutputType == TFDataType.UInt8)
+        {
+            byte[] imgData = Utils.DecodeTexture(tex, inputWidth, inputHeight, angle, flip);
+            inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
+        }
+        else
+        {
+            throw new Exception($"Input date type {input.OutputType} is not supported.");
+        }
 
-        www.LoadImageIntoTexture(tex);
-        www.Dispose();
-        www = null;
+        var runner = session.GetRunner();
+        runner.AddInput(input, inputTensor).Fetch(graph[outputName][0]);
+
+        var output = runner.Run()[0];
+        var outputs = output.GetValue() as float[,];
+
+        inputTensor.Dispose();
+        output.Dispose();
+
+        var list = new List<KeyValuePair<string, float>>();
+
+        for (int i = 0; i < labels.Length; i++)
+        {
+            var confidence = outputs[0, i];
+            if (confidence < 0.05f) continue;
+
+            list.Add(new KeyValuePair<string, float>(labels[i], confidence));
+        }
+
+        var results = list.OrderByDescending(i => i.Value).Take(3).ToList();
+        foreach (KeyValuePair<string, float> value in results)
+        {
+            Debug.Log("my model: " + value.Key);
+        }
     }
 
     public void ProcessImage(Texture2D tex)
     {
-        //var cropped = TextureTools.CropTexture(tex);
-        Debug.Log("cropped");
+
+        graph = new TFGraph();
+        graph.Import(model.bytes);
+        session = new TFSession(graph);
+        Debug.Log("Model loaded");
+
         var scaled = TextureTools.scaled(tex, 224, 224, FilterMode.Bilinear);
-        Debug.Log("scaled");
         var img = scaled.GetPixels32();
-        Debug.Log("Pixels 32");
         var tensor = TransformInput(img, INPUT_SIZE, INPUT_SIZE);
-        Debug.Log("Transform input");
         var runner = session.GetRunner();
-        runner.AddInput(graph[INPUT_TENSOR][0], tensor).Fetch(graph[OUTPUT_TENSOR][0]);
+        runner.AddInput(graph[inputName][0], tensor).Fetch(graph[outputName][0]);
         var output = runner.Run();
-        Debug.Log("output Ok");
         //put results into one dimensional array
         float[] probs = ((float[][])output[0].GetValue(jagged: true))[0];
-        Debug.Log("Probs ok");
         //get max value of probabilities and find its associated label index
         float maxValue = probs.Max();
         int maxIndex = probs.ToList().IndexOf(maxValue);
+        print(maxIndex);
         //print label with highest probability
         string label = labels[maxIndex];
         Debug.Log(label);
@@ -131,4 +173,18 @@ public class TestTensorflow : MonoBehaviour
 //foreach (var item in probs)
 //{
 //    print(Mathf.Round(item));
+//}
+
+
+
+//TFTensor input = new float[,] { { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
+//var runner = session.GetRunner();
+////runner.AddInput(graph["panos_in_input"][0],input).Fetch(graph["panos_out/Sigmoid"][0]);
+//runner.AddInput(graph["panos_in_input"][0],input).Fetch(graph["panos_out/Sigmoid"][0]);
+//var output = runner.Run();
+
+//float[] probs = ((float[][])output[0].GetValue(jagged: true))[1];
+//foreach (var item in probs)
+//{
+//    print(item);
 //}

@@ -58,4 +58,10 @@ public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
     public abstract void Tick();
     public abstract void SwitchCamera();
     public abstract Texture2D TakeScreenShot();
+
+    public virtual Vector2 GetCamTextureWidthHeight()
+    {
+        Vector2 resolution = new Vector2(activeCameraTexture.width, activeCameraTexture.height);
+        return resolution;
+    }
 }

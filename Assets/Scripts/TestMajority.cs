@@ -21,7 +21,7 @@ public class TestMajority : MonoBehaviour
         //wordsOCR.Add("Χοιρινό");
         //wordsOCR.Add("DUREX");
         //wordsOCR.Add("ΦήΛΕΤΟ");
-        string str = maj.PerformMajorityVoting(wordsOCR);
+        MasoutisItem str = maj.PerformMajorityVoting(wordsOCR);
         Debug.Log(Time.realtimeSinceStartup);
     }
 

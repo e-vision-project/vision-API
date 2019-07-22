@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using EVISION.Camera.plugin;
 
 namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
 {
@@ -107,7 +108,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             print(arg1.responses[0].textAnnotations[0].description);
             print("==============================");
             print(arg1.responses[0].fullTextAnnotation.text);
-            var list = Utils.SplitStringToList(arg1.responses[0].textAnnotations[0].description);
+            var list = GenericUtils.SplitStringToList(arg1.responses[0].textAnnotations[0].description);
             list.ForEach(Debug.Log);
             //foreach (var response in arg1.responses)
             //    foreach (var entity in response.textAnnotations)

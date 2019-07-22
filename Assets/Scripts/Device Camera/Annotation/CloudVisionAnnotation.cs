@@ -1,16 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using FrostweepGames.Plugins.GoogleCloud.Vision;
 
 namespace EVISION.Camera.plugin
 {
-
     public class CloudVisionAnnotation : MonoBehaviour, IAnnotate
     {
         private GCVision _gcVision;
-        private string textAnnotation;
+        private string textAnnotation = null;
         private bool annotationCompleted = false;
 
         #region IAnnotate callbacks
@@ -19,19 +17,14 @@ namespace EVISION.Camera.plugin
         {
             string _selectedImageData = ImageConvert.Convert(snap);
             AnnotateImage(_selectedImageData);
-            while(annotationCompleted != true)
+            while (annotationCompleted != true)
             {
                 yield return null;
             }
-            Debug.Log("Annotation Completed from Cloud Vision");
         }
 
         public string GetAnnotationText()
         {
-            if (textAnnotation == null)
-            {
-                textAnnotation = "Δεν βρέθηκε αναγραφώμενο κείμενο";
-            }
             return textAnnotation;
         }
 
@@ -113,16 +106,25 @@ namespace EVISION.Camera.plugin
         private void _gcVision_AnnotateFailedEvent(string arg1, long arg2)
         {
             Debug.Log("Error: " + arg1 + " - " + arg2);
-            Debug.Log("e-vision platform logs:" + "Annotation failed");
+            Debug.Log("e-vision platform logs: " + "Annotation failed. Check internet connection");
             annotationCompleted = true;
         }
 
         private void _gcVision_AnnotateSuccessEvent(VisionResponse arg1, long arg2)
         {
-            Debug.Log("e-vision platform logs 1: " + "Annotation successfull");
-            //Debug.Log("e-vision platform logs 2: " + arg1.responses[0].fullTextAnnotation.text);
-            textAnnotation = arg1.responses[0].fullTextAnnotation.text;
-            annotationCompleted = true;
+            Debug.Log("e-vision platform logs: " + "Annotation successfull");
+
+            // ADD TRY CATCH HANDLING
+            try
+            {
+                textAnnotation = arg1.responses[0].fullTextAnnotation.text;
+                annotationCompleted = true;
+            }
+            catch (System.Exception)
+            {
+                Debug.LogError("Annotation was successfull but no responses were found");
+                annotationCompleted = true;
+            }
         }
     }
 }

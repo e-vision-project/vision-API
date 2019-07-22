@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 using CsvHelper;
 using System.Text;
 
-//"Assets/masoutis_dataset_cleaned.csv"
-// Assets/test.csv
-
-public class MasoutisDataBase
+public struct MasoutisItem
 {
-    public string desc;
-    public string cat1;
-    public string cat2;
+    public string category_2;
+    public string category_3;
+    public string category_4;
+    public string product_description;
 }
 
 public class MajorityVoting
@@ -25,7 +23,7 @@ public class MajorityVoting
     static List<string> cat2 = new List<string>(115180);
     static List<string> cat3 = new List<string>(115180);
     static List<string> cat4 = new List<string>(115180);
-    static List<string> brand = new List<string>(115180);
+    //static List<string> brand = new List<string>(115180);
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
 
 
@@ -39,7 +37,7 @@ public class MajorityVoting
 
     }
 
-    public string PerformMajorityVoting(List<string> wordsOCR)
+    public MasoutisItem PerformMajorityVoting(List<string> wordsOCR)
     {
    
         // read database to class properties
@@ -50,8 +48,7 @@ public class MajorityVoting
         // remove greek accent and make all uppercase
         wordsOCR = RemoveGreekAccentParallel(wordsOCR);
         //Get valid words from db
-        wordsOCR = GetValidWordsFromDbParallel(wordsOCR, descSplitted);
-        //wordsOCR = GetValidWordsFromDbSequential(wordsOCR, desc);
+        wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
         Debug.Log("get valid words: " + Time.realtimeSinceStartup);
         wordsOCR.ForEach(Debug.Log);
 
@@ -82,18 +79,25 @@ public class MajorityVoting
         List<int> count_desc = GetCategoryCount(cropped_desc, cropped_desc_unq);
         Debug.Log("End: " + Time.realtimeSinceStartup);
 
+        MasoutisItem item = new MasoutisItem(); 
+
         try
         {
-            string category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
-            string category_3 = cropped_cat3_unq [count_cat3.IndexOf(count_cat3.Max())];
-            Debug.Log(category_2);
-            Debug.Log(category_3);
-            return category_2;
+            item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
+            item.category_3 = cropped_cat3_unq [count_cat3.IndexOf(count_cat3.Max())];
+            item.category_4 = cropped_cat4_unq [count_cat4.IndexOf(count_cat4.Max())];
+            Debug.Log(item.category_2);
+            Debug.Log(item.category_3);
+            Debug.Log(item.category_4);
+            return item;
         }
         catch (System.Exception)
         {
             Debug.LogError("Problem in category 2 index");
-            return "προϊόν μη αναγνωρίσιμο";
+            item.category_2 = "μη αναγνωρίσιμο";
+            item.category_3 = "μη αναγνωρίσιμο";
+            item.category_4 = "μη αναγνωρίσιμο"; 
+            return item;
         }
 
         //string category_4 = cropped_cat4_unq [count_cat3.IndexOf(count_cat4.Max())];
@@ -120,13 +124,13 @@ public class MajorityVoting
                         string cat2Field = csv.GetField<string>("Unnamed: 3");
                         string cat3Field = csv.GetField<string>("Unnamed: 5");
                         string cat4Field = csv.GetField<string>("Unnamed: 7");
-                        string brandField = csv.GetField<string>("Brand Name");
+                        //string brandField = csv.GetField<string>("Brand Name");
                         desc.Add(descField);
                         cat1.Add(cat1Field);
                         cat2.Add(cat2Field);
                         cat3.Add(cat3Field);
                         cat4.Add(cat4Field);
-                        brand.Add(brandField);
+                        //brand.Add(brandField);
                     }
                 }
             }
@@ -139,7 +143,7 @@ public class MajorityVoting
         }
         else
         {
-            Debug.Log("DB already loaded");
+            return;
         }
     } 
 
@@ -204,7 +208,7 @@ public class MajorityVoting
         return validWords.Distinct().ToList();
     }
 
-    private List<string> GetValidWordsFromDbParallel (List<string> words, List<HashSet<string>> masoutisDesc)
+    private List<string> GetValidWordsFromDb (List<string> words, List<HashSet<string>> masoutisDesc)
     {
         List<string> validWords = new List<string>();
         int cnt = 0;
