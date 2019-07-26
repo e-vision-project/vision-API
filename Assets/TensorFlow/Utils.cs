@@ -86,7 +86,7 @@ public static class Utils
                 break;
         }
 
-        GL.Clear(true, true, new Color(0, 0, 0, 0));
+        //GL.Clear(true, true, new Color(0, 0, 0, 0));
         Graphics.DrawTexture(new Rect(0, 0, 1, 1), tex);
 
         tex.Resize(width, height);
@@ -95,9 +95,9 @@ public static class Utils
 
         var pixels = RotateImage(tex, angle);
 
-        UnityEngine.Object.Destroy(tex);
+        //UnityEngine.Object.Destroy(tex);
         tex = null;
-        UnityEngine.Object.Destroy(rtt);
+        //UnityEngine.Object.Destroy(rtt);
         rtt = null;
 
         return pixels;

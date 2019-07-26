@@ -15,8 +15,8 @@ public class PerfomClassification : MonoBehaviour
     void Start()
     {
         RawImage img = GameObject.Find("img").GetComponent<RawImage>();
-        //classifier = new Classifier(model, labels, output: "MobilenetV1/Predictions/Reshape_1");
-        classifier = new Classifier(model, labels, input: "input_1", output: "Logits/Softmax");
+        classifier = new Classifier(model, labels, output: "MobilenetV1/Predictions/Reshape_1");
+        //classifier = new Classifier(model, labels, input: "input_1", output: "Logits/Softmax");
         Texture2D tex = new Texture2D(img.texture.width, img.texture.height);
         tex = img.texture as Texture2D;
         ProcessImage(tex);

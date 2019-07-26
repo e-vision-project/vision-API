@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using FrostweepGames.Plugins.GoogleCloud.TextToSpeech;
 
 namespace EVISION.Camera.plugin
 {
@@ -14,8 +13,9 @@ namespace EVISION.Camera.plugin
         public IDeviceCamera cam;
         private IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
-        private Texture2D camTexture;
-        public Texture2D CamTexture { get; }
+        [SerializeField] private DeviceCamera.Cameras cameraDevice;
+        public Texture2D camTexture;
+        //public Texture2D CamTexture { get { return camTexture;} }
         private string annotationText { get; set; }
         public bool annotationProccessBusy { get; set; }
 
@@ -31,14 +31,14 @@ namespace EVISION.Camera.plugin
             cam = GetComponent<IDeviceCamera>();
             OCRAnnotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
-            classifier = new TFSharpClassification("input_1", "Logits/Softmax", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 90, 0.05f);
+            classifier = new TFSharpClassification("input_1", "Logits/Softmax", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.05f);
         }
 
         // Start is called before the first frame update
         void Start()
         {
             annotationProccessBusy = false;
-            cam.SetCamera(DeviceCamera.Cameras.Back);
+            cam.SetCamera(cameraDevice);
         }
 
         // Update is called once per frame
@@ -60,9 +60,10 @@ namespace EVISION.Camera.plugin
         {
             // lock the process so the user cannot access it.
             annotationProccessBusy = true;
-            
+
             // Get and rotate camera texture
-            CaptureAndRotateScreen();
+            camTexture = cam.TakeScreenShot();
+            camTexture = GenericUtils.RotateTexture(camTexture, true);
 
             //wait until the annotation process returns
             yield return StartCoroutine(OCRAnnotator.PerformAnnotation(camTexture));
@@ -74,7 +75,7 @@ namespace EVISION.Camera.plugin
                 List<string> OCR_List = GenericUtils.SplitStringToList(annotationText);
                 MasoutisItem product = GenericUtils.PerformMajorityVoting(OCR_List);
                 // Text to speech
-                voiceSynthesizer.PerformSpeechFromText(product.category_3);
+                voiceSynthesizer.PerformSpeechFromText(product.category_4);
             }
             else
             {
@@ -92,19 +93,12 @@ namespace EVISION.Camera.plugin
 
         public void CLassify()
         {
-            CaptureAndRotateScreen();
+            camTexture = cam.TakeScreenShot();
             var output = classifier.FetchOutput(camTexture);
             foreach (KeyValuePair<string, float> value in output)
             {
                 Debug.Log("class :" + value.Key);
-                voiceSynthesizer.PerformSpeechFromText(value.Key);
             }
-        }
-
-        private void CaptureAndRotateScreen()
-        {
-            camTexture = cam.TakeScreenShot();
-            camTexture = GenericUtils.RotateTexture(camTexture, true);
         }
     }
 }

@@ -7,9 +7,10 @@ using TensorFlow;
 
 public class TFSharpClassification : TFSharpModel
 {
-    private int angle = 90;
+    private int angle;
     private float thresshold = 0.05f;
     private string[] labels;
+    private int numOfResults = 5;
 
 
     public TFSharpClassification(string inputName, string outputName, int inputHeight, int inputWidth, float inputMean,
@@ -25,6 +26,8 @@ public class TFSharpClassification : TFSharpModel
         base.modelFile = modelFile;
         base.labelFile = labelFile;
 
+        this.angle = angle;
+        this.thresshold = thresshold;
         graph = new TFGraph();
         graph.Import(modelFile.bytes);
         session = new TFSession(graph);
@@ -38,7 +41,6 @@ public class TFSharpClassification : TFSharpModel
         var input = graph[inputName][0];
         TFTensor inputTensor = null;
 
-        angle = 90;
         Flip flip = Flip.NONE;
 
         if (input.OutputType == TFDataType.Float)
@@ -76,7 +78,7 @@ public class TFSharpClassification : TFSharpModel
             list.Add(new KeyValuePair<string, float>(labels[i], confidence));
         }
 
-        var results = list.OrderByDescending(i => i.Value).Take(1).ToList();
+        var results = list.OrderByDescending(i => i.Value).Take(numOfResults).ToList();
         return results;
     }
 

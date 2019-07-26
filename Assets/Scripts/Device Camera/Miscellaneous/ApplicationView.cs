@@ -11,9 +11,11 @@ namespace EVISION.Camera.plugin
         public GameObject image;
         public Text text;
         public ClientApplication clientApp;
+        public AndroidCamera android;
         public DeviceCamera cam;
         public Text deviceNumberText;
         public Text resolutionText;
+        public RawImage helperImage;
         
 
         // Start is called before the first frame update
@@ -22,10 +24,14 @@ namespace EVISION.Camera.plugin
             image.SetActive(false);
         }
 
+        public void OnButtonPressed()
+        {
+            helperImage.texture = android.TakeScreenShot();
+        }
+
         // Update is called once per frame
         void Update()
         {
-
             if (clientApp.annotationProccessBusy)
             {
                 image.SetActive(true);
