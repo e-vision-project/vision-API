@@ -6,6 +6,8 @@ using System.Linq;
 
 namespace EVISION.Camera.plugin
 {
+    public enum CameraType { Webcam, arCam }
+
     public static class GenericUtils
     {
         public static MasoutisItem PerformMajorityVoting(List<string> OCR_List)

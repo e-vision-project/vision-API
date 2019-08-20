@@ -11,12 +11,13 @@ namespace EVISION.Camera.plugin
         public GameObject image;
         public Text text;
         public ClientApplication clientApp;
-        public AndroidCamera android;
+        public ARCameraController ARCamera;
         public DeviceCamera cam;
         public Text deviceNumberText;
         public Text resolutionText;
         public RawImage helperImage;
-        
+        [SerializeField] private CameraType cameraType;
+
 
         // Start is called before the first frame update
         void Start()
@@ -26,7 +27,9 @@ namespace EVISION.Camera.plugin
 
         public void OnButtonPressed()
         {
-            helperImage.texture = android.TakeScreenShot();
+            Texture2D tex = ARCamera.TakeScreenShot();
+            tex = GenericUtils.RotateTexture(tex, true);
+            helperImage.texture = tex;
         }
 
         // Update is called once per frame
@@ -41,10 +44,12 @@ namespace EVISION.Camera.plugin
             {
                 image.SetActive(false);
             }
-
-            deviceNumberText.text = WebCamTexture.devices.Length.ToString();
-            resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() +" " 
-                + cam.GetCamTextureWidthHeight().y.ToString();
+            if (cameraType == CameraType.Webcam)
+            {
+                deviceNumberText.text = WebCamTexture.devices.Length.ToString();
+                resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
+                    + cam.GetCamTextureWidthHeight().y.ToString();
+            }
         }
     }
 }

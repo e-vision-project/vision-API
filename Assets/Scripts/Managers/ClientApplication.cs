@@ -61,7 +61,7 @@ namespace EVISION.Camera.plugin
             // lock the process so the user cannot access it.
             annotationProccessBusy = true;
 
-            // Get and rotate camera texture
+            // Get and rotate camera texture.
             camTexture = cam.TakeScreenShot();
             camTexture = GenericUtils.RotateTexture(camTexture, true);
 
@@ -94,10 +94,11 @@ namespace EVISION.Camera.plugin
         public void CLassify()
         {
             camTexture = cam.TakeScreenShot();
+            camTexture = GenericUtils.RotateTexture(camTexture, true);
             var output = classifier.FetchOutput(camTexture);
             foreach (KeyValuePair<string, float> value in output)
             {
-                Debug.Log("class :" + value.Key);
+                Debug.Log("class :" + value.Key + "_" + value.Value);
             }
         }
     }
