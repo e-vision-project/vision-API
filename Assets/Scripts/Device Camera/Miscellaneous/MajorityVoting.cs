@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -7,7 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using System.Text;
+using UnityAsync;
+using System.Threading.Tasks;
 
+[Serializable]
 public struct MasoutisItem
 {
     public string category_2;
@@ -16,32 +20,39 @@ public struct MasoutisItem
     public string product_description;
 }
 
-public class MajorityVoting
+[Serializable]
+public class MajorityVoting : AsyncBehaviour
 {
-    static List<string> desc = new List<string>(115180);
-    static List<string> cat1 = new List<string>(115180);
-    static List<string> cat2 = new List<string>(115180);
-    static List<string> cat3 = new List<string>(115180);
-    static List<string> cat4 = new List<string>(115180);
-    //static List<string> brand = new List<string>(115180);
+    public static List<string> desc = new List<string>(115180);
+    public static List<string> cat1 = new List<string>(115180);
+    public static List<string> cat2 = new List<string>(115180);
+    public static List<string> cat3 = new List<string>(115180);
+    public static List<string> cat4 = new List<string>(115180);
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
+    public MasoutisItem masoutis_item { get; set; }
 
 
     List<string> wordsOCR = new List<string>();
     List<int> sel_k = new List<int>();
     List<int> cnt_found = new List<int>();
+    public static bool database_ready = false;
 
     // empty constructor
     public MajorityVoting()
     {
+        masoutis_item = new MasoutisItem();
+    } 
 
-    }
-
-    public MasoutisItem PerformMajorityVoting(List<string> wordsOCR)
+    public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
-   
         // read database to class properties
         ReadDatabaseFile("masoutis_db");
+
+        while (!database_ready)
+        {
+            yield return null;
+        }
+
         Debug.Log("read database: " + Time.realtimeSinceStartup);
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
@@ -79,33 +90,31 @@ public class MajorityVoting
         List<int> count_desc = GetCategoryCount(cropped_desc, cropped_desc_unq);
         Debug.Log("End: " + Time.realtimeSinceStartup);
 
-        MasoutisItem item = new MasoutisItem(); 
+        MasoutisItem item = new MasoutisItem();
 
         try
         {
+            //Debug.Log("Set Item");
             item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
-            item.category_3 = cropped_cat3_unq [count_cat3.IndexOf(count_cat3.Max())];
-            item.category_4 = cropped_cat4_unq [count_cat4.IndexOf(count_cat4.Max())];
-            Debug.Log(item.category_2);
+            item.category_3 = cropped_cat3_unq[count_cat3.IndexOf(count_cat3.Max())];
+            item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
+            Debug.Log("why" + item.category_2);
             Debug.Log(item.category_3);
             Debug.Log(item.category_4);
-            return item;
+            masoutis_item = item;
         }
         catch (System.Exception)
         {
-            Debug.LogError("Problem in category 2 index");
+            Debug.LogError("Problem in category index");
             item.category_2 = "μη αναγνωρίσιμο";
             item.category_3 = "μη αναγνωρίσιμο";
-            item.category_4 = "μη αναγνωρίσιμο"; 
-            return item;
+            item.category_4 = "μη αναγνωρίσιμο";   
         }
-
-        //string category_4 = cropped_cat4_unq [count_cat3.IndexOf(count_cat4.Max())];
-        //string product = cropped_desc_unq [count_desc.IndexOf(count_desc.Max())];
 
     }
 
-    private void ReadDatabaseFile (string name)
+    
+    public async void ReadDatabaseFile (string name)
     {
         if(desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
             && cat4.Count == 0 && cat1.Count == 0)
@@ -115,6 +124,8 @@ public class MajorityVoting
             {
                 using (var csv = new CsvReader(streamReader))
                 {
+                    await new WaitForBackgroundThread();
+                    // ENTER THE NEW THREAD
                     csv.Read();
                     csv.ReadHeader();
                     while (csv.Read())
@@ -124,14 +135,15 @@ public class MajorityVoting
                         string cat2Field = csv.GetField<string>("Unnamed: 3");
                         string cat3Field = csv.GetField<string>("Unnamed: 5");
                         string cat4Field = csv.GetField<string>("Unnamed: 7");
-                        //string brandField = csv.GetField<string>("Brand Name");
                         desc.Add(descField);
                         cat1.Add(cat1Field);
                         cat2.Add(cat2Field);
                         cat3.Add(cat3Field);
                         cat4.Add(cat4Field);
-                        //brand.Add(brandField);
                     }
+
+                    await new WaitForUpdate();
+                    // RETURN TO MAIN UNITY THREAD
                 }
             }
             for (int i = 0; i < desc.Count; i++)
@@ -140,9 +152,11 @@ public class MajorityVoting
                 HashSet<string> temp_hash = new HashSet<string>(splitted);
                 descSplitted.Add(temp_hash);
             }
+            database_ready = true;
         }
         else
         {
+            database_ready = true;
             return;
         }
     } 

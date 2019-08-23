@@ -10,12 +10,6 @@ namespace EVISION.Camera.plugin
 
     public static class GenericUtils
     {
-        public static MasoutisItem PerformMajorityVoting(List<string> OCR_List)
-        {
-            MajorityVoting maj = new MajorityVoting();
-            MasoutisItem product = maj.PerformMajorityVoting(OCR_List);
-            return product;
-        }
 
         public static List<string> SplitStringToList(string text)
         {

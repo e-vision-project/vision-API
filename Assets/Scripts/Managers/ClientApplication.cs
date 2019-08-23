@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 namespace EVISION.Camera.plugin
 {
@@ -9,20 +8,21 @@ namespace EVISION.Camera.plugin
     public class ClientApplication : MonoBehaviour
     {
         #region properties
-
+ 
         public IDeviceCamera cam;
         private IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
+        private IModelPrediction _model;
         [SerializeField] private DeviceCamera.Cameras cameraDevice;
-        public Texture2D camTexture;
-        //public Texture2D CamTexture { get { return camTexture;} }
+
+        [SerializeField] private TextAsset DLModel;
+        [SerializeField] private TextAsset LabelsFile;
+        private TFSharpClassification classifier;
+
+        private Texture2D camTexture;
+        private MasoutisItem product;
         private string annotationText { get; set; }
         public bool annotationProccessBusy { get; set; }
-
-        public TextAsset DLModel;
-        public TextAsset LabelsFile;
-        TFSharpClassification classifier;
-
         #endregion
 
 
@@ -61,9 +61,8 @@ namespace EVISION.Camera.plugin
             // lock the process so the user cannot access it.
             annotationProccessBusy = true;
 
-            // Get and rotate camera texture.
+            // Get camera texture.
             camTexture = cam.TakeScreenShot();
-            camTexture = GenericUtils.RotateTexture(camTexture, true);
 
             //wait until the annotation process returns
             yield return StartCoroutine(OCRAnnotator.PerformAnnotation(camTexture));
@@ -73,7 +72,9 @@ namespace EVISION.Camera.plugin
             if (annotationText != null)
             {
                 List<string> OCR_List = GenericUtils.SplitStringToList(annotationText);
-                MasoutisItem product = GenericUtils.PerformMajorityVoting(OCR_List);
+                MajorityVoting majVoting = new MajorityVoting();
+                yield return majVoting.PerformMajorityVoting(OCR_List);
+                product = majVoting.masoutis_item;
                 // Text to speech
                 voiceSynthesizer.PerformSpeechFromText(product.category_4);
             }
@@ -94,7 +95,6 @@ namespace EVISION.Camera.plugin
         public void CLassify()
         {
             camTexture = cam.TakeScreenShot();
-            camTexture = GenericUtils.RotateTexture(camTexture, true);
             var output = classifier.FetchOutput(camTexture);
             foreach (KeyValuePair<string, float> value in output)
             {

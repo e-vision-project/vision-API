@@ -9,6 +9,7 @@ namespace EVISION.Camera.plugin
     public class ApplicationView : MonoBehaviour
     {
         public GameObject image;
+        public GameObject imageDd;
         public Text text;
         public ClientApplication clientApp;
         public ARCameraController ARCamera;
@@ -28,7 +29,6 @@ namespace EVISION.Camera.plugin
         public void OnButtonPressed()
         {
             Texture2D tex = ARCamera.TakeScreenShot();
-            tex = GenericUtils.RotateTexture(tex, true);
             helperImage.texture = tex;
         }
 

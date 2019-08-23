@@ -28,176 +28,164 @@ using UnityEngine.XR.ARSubsystems;
 /// This is done as an example; do not use this technique simply
 /// to render the camera image on screen.
 /// </summary>
-public class ARCameraController : MonoBehaviour, IDeviceCamera
+
+namespace EVISION.Camera.plugin
 {
-    [SerializeField]
-    [Tooltip("The ARCameraManager which will produce frame events.")]
-    ARCameraManager m_CameraManager;
-
-    /// <summary>
-    /// Get or set the <c>ARCameraManager</c>.
-    /// </summary>
-    public ARCameraManager cameraManager
+    public class ARCameraController : MonoBehaviour, IDeviceCamera
     {
-        get { return m_CameraManager; }
-        set { m_CameraManager = value; }
-    }
+        [SerializeField]
+        [Tooltip("The ARCameraManager which will produce frame events.")]
+        ARCameraManager m_CameraManager;
 
-    [SerializeField]
-    RawImage m_RawImage;
-
-    /// <summary>
-    /// The UI RawImage used to display the image on screen.
-    /// </summary>
-    public RawImage rawImage
-    {
-        get { return m_RawImage; }
-        set { m_RawImage = value; }
-    }
-
-    [SerializeField]
-    Text m_ImageInfo;
-
-    Texture2D m_Texture;
-
-    /// <summary>
-    /// The UI Text used to display information about the image on screen.
-    /// </summary>
-    public Text imageInfo
-    {
-        get { return m_ImageInfo; }
-        set { m_ImageInfo = value; }
-    }
-
-    public unsafe void GetScreenShot()
-    {
-        // Attempt to get the latest camera image. If this method succeeds,
-        // it acquires a native resource that must be disposed (see below).
-        XRCameraImage image;
-        if (!cameraManager.TryGetLatestImage(out image))
+        /// <summary>
+        /// Get or set the <c>ARCameraManager</c>.
+        /// </summary>
+        public ARCameraManager cameraManager
         {
-            return;
+            get { return m_CameraManager; }
+            set { m_CameraManager = value; }
         }
 
-        // Display some information about the camera image
-        m_ImageInfo.text = string.Format(
-            "Image info:\n\twidth: {0}\n\theight: {1}\n\tplaneCount: {2}\n\ttimestamp: {3}\n\tformat: {4}",
-            image.width, image.height, image.planeCount, image.timestamp, image.format);
+        Texture2D camTexture;
 
-        // Once we have a valid XRCameraImage, we can access the individual image "planes"
-        // (the separate channels in the image). XRCameraImage.GetPlane provides
-        // low-overhead access to this data. This could then be passed to a
-        // computer vision algorithm. Here, we will convert the camera image
-        // to an RGBA texture and draw it on the screen.
-
-        // Choose an RGBA format.
-        // See XRCameraImage.FormatSupported for a complete list of supported formats.
-        var format = TextureFormat.RGBA32;
-
-        if (m_Texture == null || m_Texture.width != image.width || m_Texture.height != image.height)
+        public unsafe void GetScreenShot()
         {
-            m_Texture = new Texture2D(image.width, image.height, format, false);
+            // Attempt to get the latest camera image. If this method succeeds,
+            // it acquires a native resource that must be disposed (see below).
+            XRCameraImage image;
+            if (!cameraManager.TryGetLatestImage(out image))
+            {
+                return;
+            }
+
+            // Once we have a valid XRCameraImage, we can access the individual image "planes"
+            // (the separate channels in the image). XRCameraImage.GetPlane provides
+            // low-overhead access to this data. This could then be passed to a
+            // computer vision algorithm. Here, we will convert the camera image
+            // to an RGBA texture and draw it on the screen.
+
+            // Choose an RGBA format.
+            // See XRCameraImage.FormatSupported for a complete list of supported formats.
+            var format = TextureFormat.RGBA32;
+
+            if (camTexture == null || camTexture.width != image.width || camTexture.height != image.height)
+            {
+                camTexture = new Texture2D(image.width, image.height, format, false);
+            }
+
+            // Convert the image to format, flipping the image across the Y axis.
+            // We can also get a sub rectangle, but we'll get the full image here.
+            var conversionParams = new XRCameraImageConversionParams(image, format, CameraImageTransformation.MirrorY);
+
+            // Texture2D allows us write directly to the raw texture data
+            // This allows us to do the conversion in-place without making any copies.
+            var rawTextureData = camTexture.GetRawTextureData<byte>();
+            try
+            {
+                image.Convert(conversionParams, new IntPtr(rawTextureData.GetUnsafePtr()), rawTextureData.Length);
+            }
+            finally
+            {
+                // We must dispose of the XRCameraImage after we're finished
+                // with it to avoid leaking native resources.
+                image.Dispose();
+            }
+
+            // Apply the updated texture data to our texture
+            camTexture.Apply();
         }
 
-        // Convert the image to format, flipping the image across the Y axis.
-        // We can also get a sub rectangle, but we'll get the full image here.
-        var conversionParams = new XRCameraImageConversionParams(image, format, CameraImageTransformation.MirrorY);
+        public unsafe void GetCameraImage()
+        {
+            XRCameraImage image;
+            if (!cameraManager.TryGetLatestImage(out image))
+                return;
 
-        // Texture2D allows us write directly to the raw texture data
-        // This allows us to do the conversion in-place without making any copies.
-        var rawTextureData = m_Texture.GetRawTextureData<byte>();
-        try
-        {
-            image.Convert(conversionParams, new IntPtr(rawTextureData.GetUnsafePtr()), rawTextureData.Length);
-        }
-        finally
-        {
-            // We must dispose of the XRCameraImage after we're finished
-            // with it to avoid leaking native resources.
+            var conversionParams = new XRCameraImageConversionParams
+            {
+                // Get the entire image
+                inputRect = new RectInt(0, 0, image.width, image.height),
+
+                // Downsample by 2
+                outputDimensions = new Vector2Int(image.width / 2, image.height / 2),
+
+                // Choose RGBA format
+                outputFormat = TextureFormat.RGBA32,
+
+                // Flip across the vertical axis (mirror image)
+                transformation = CameraImageTransformation.MirrorY
+            };
+
+            // See how many bytes we need to store the final image.
+            int size = image.GetConvertedDataSize(conversionParams);
+
+            // Allocate a buffer to store the image
+            var buffer = new NativeArray<byte>(size, Allocator.Temp);
+
+            // Extract the image data
+            image.Convert(conversionParams, new IntPtr(buffer.GetUnsafePtr()), buffer.Length);
+
+            // The image was converted to RGBA32 format and written into the provided buffer
+            // so we can dispose of the CameraImage. We must do this or it will leak resources.
             image.Dispose();
+
+            // At this point, we could process the image, pass it to a computer vision algorithm, etc.
+            // In this example, we'll just apply it to a texture to visualize it.
+
+            // We've got the data; let's put it into a texture so we can visualize it.
+            camTexture = new Texture2D(
+                conversionParams.outputDimensions.x,
+                conversionParams.outputDimensions.y,
+                conversionParams.outputFormat,
+                false);
+
+            camTexture.LoadRawTextureData(buffer);
+            camTexture.Apply();
+
+            // Done with our temporary data
+            buffer.Dispose();
         }
 
-        // Apply the updated texture data to our texture
-        m_Texture.Apply();
-
-        // Set the RawImage's texture so we can visualize it.
-        m_RawImage.texture = m_Texture;
-    }
-
-    public unsafe void GetCameraImage()
-    {
-        XRCameraImage image;
-        if (!cameraManager.TryGetLatestImage(out image))
-            return;
-
-        var conversionParams = new XRCameraImageConversionParams
+        public Texture2D TakeScreenShot()
         {
-            // Get the entire image
-            inputRect = new RectInt(0, 0, image.width, image.height),
+            GetScreenShot();
 
-            // Downsample by 2
-            outputDimensions = new Vector2Int(image.width / 2, image.height / 2),
+            //GetCameraImage();
 
-            // Choose RGBA format
-            outputFormat = TextureFormat.RGBA32,
+            switch (Screen.orientation)
+            {
+                case ScreenOrientation.Portrait:
+                    camTexture = TextureTools.RotateTexture(camTexture, -90);
+                    break;
+                case ScreenOrientation.PortraitUpsideDown:
+                    camTexture = TextureTools.RotateTexture(camTexture, 90);
+                    break;
+                case ScreenOrientation.LandscapeRight:
+                    camTexture = TextureTools.RotateTexture(camTexture, 180);
+                    break;
+            }
+            return camTexture;
+        }
 
-            // Flip across the vertical axis (mirror image)
-            transformation = CameraImageTransformation.MirrorY
-        };
+        public void SwitchCamera()
+        {
+            throw new NotImplementedException();
+        }
 
-        // See how many bytes we need to store the final image.
-        int size = image.GetConvertedDataSize(conversionParams);
+        public void SaveScreenShot(Texture2D snap)
+        {
+            throw new NotImplementedException();
+        }
 
-        // Allocate a buffer to store the image
-        var buffer = new NativeArray<byte>(size, Allocator.Temp);
+        public void SetCamera(DeviceCamera.Cameras camTexture)
+        {
+            //throw new NotImplementedException();
+        }
 
-        // Extract the image data
-        image.Convert(conversionParams, new IntPtr(buffer.GetUnsafePtr()), buffer.Length);
-
-        // The image was converted to RGBA32 format and written into the provided buffer
-        // so we can dispose of the CameraImage. We must do this or it will leak resources.
-        image.Dispose();
-
-        // At this point, we could process the image, pass it to a computer vision algorithm, etc.
-        // In this example, we'll just apply it to a texture to visualize it.
-
-        // We've got the data; let's put it into a texture so we can visualize it.
-        m_Texture = new Texture2D(
-            conversionParams.outputDimensions.x,
-            conversionParams.outputDimensions.y,
-            conversionParams.outputFormat,
-            false);
-
-        m_Texture.LoadRawTextureData(buffer);
-        m_Texture.Apply();
-
-        // Done with our temporary data
-        buffer.Dispose();
+        public void Tick()
+        {
+            //throw new NotImplementedException();
+        }
     }
 
-    public Texture2D TakeScreenShot()
-    {
-        GetCameraImage();
-        return m_Texture;
-    }
-
-    public void SwitchCamera()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SaveScreenShot(Texture2D snap)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SetCamera(DeviceCamera.Cameras camTexture)
-    {
-        //throw new NotImplementedException();
-    }
-
-    public void Tick()
-    {
-        //throw new NotImplementedException();
-    }
 }
