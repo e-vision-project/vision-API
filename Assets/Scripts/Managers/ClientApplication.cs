@@ -12,7 +12,7 @@ namespace EVISION.Camera.plugin
         public IDeviceCamera cam;
         private IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
-        private IModelPrediction _model;
+        private IModelPrediction _classifier;
         [SerializeField] private DeviceCamera.Cameras cameraDevice;
 
         [SerializeField] private TextAsset DLModel;
@@ -31,7 +31,12 @@ namespace EVISION.Camera.plugin
             cam = GetComponent<IDeviceCamera>();
             OCRAnnotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
-            classifier = new TFSharpClassification("input_1", "Logits/Softmax", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.05f);
+            /*
+             * Obsolete method with using the old TFSharp class
+             * classifier = new TFSharpClassification("input_1", "Logits/Softmax", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.05f);
+             */
+             
+            _classifier = new TFClassification("input_1", "Logits/Softmax", 224, 224, 127.0f, 127.0f, DLModel, LabelsFile, 180, 0.05f);
         }
 
         // Start is called before the first frame update
@@ -95,7 +100,7 @@ namespace EVISION.Camera.plugin
         public void CLassify()
         {
             camTexture = cam.TakeScreenShot();
-            var output = classifier.FetchOutput(camTexture);
+            var output = _classifier.FetchOutput<IList, Texture2D>(camTexture);
             foreach (KeyValuePair<string, float> value in output)
             {
                 Debug.Log("class :" + value.Key + "_" + value.Value);

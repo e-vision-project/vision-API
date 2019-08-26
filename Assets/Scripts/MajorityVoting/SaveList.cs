@@ -12,23 +12,28 @@ public class SaveList : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SaveListToTXT("Assets/Resources/masoutis_cat4.txt");
+        SaveListToTXT("Assets/Resources/masoutis_cat2.txt");
 
         //var logFile = File.ReadAllLines("Assets/Resources/test.txt");
         //var logList = new List<string>(logFile);
     }
 
-    void SaveListToTXT(string path)
+    IEnumerator SaveListToTXT(string path)
     {
         MajorityVoting maj = new MajorityVoting();
         maj.ReadDatabaseFile("masoutis_db");
+        while (!maj.database_ready)
+        {
+            yield return null;
+        }
 
         StreamWriter writer = new StreamWriter(path, true);
-        foreach (string s in MajorityVoting.cat4)
+        foreach (string s in MajorityVoting.cat2)
         {
             writer.WriteLine(s);
         }
 
         writer.Close();
+        Debug.Log("File written");
     }
 }

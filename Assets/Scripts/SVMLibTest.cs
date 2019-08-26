@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SVMLibTest : MonoBehaviour
+public class SVMLibTest : IModelPrediction
 {
-    private void Start()
+
+
+
+    T IModelPrediction.FetchOutput<T, U>(U param)
     {
-        
+        throw new System.NotImplementedException();
     }
 }

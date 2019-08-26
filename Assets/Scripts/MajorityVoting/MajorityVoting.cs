@@ -29,31 +29,33 @@ public class MajorityVoting : AsyncBehaviour
     public static List<string> cat3 = new List<string>(115180);
     public static List<string> cat4 = new List<string>(115180);
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
+
     public MasoutisItem masoutis_item { get; set; }
+    string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
 
 
     List<string> wordsOCR = new List<string>();
     List<int> sel_k = new List<int>();
     List<int> cnt_found = new List<int>();
-    public static bool database_ready = false;
+    public bool database_ready = false;
 
     // empty constructor
     public MajorityVoting()
     {
         masoutis_item = new MasoutisItem();
-    } 
+    }
 
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
         // read database to class properties
-        ReadDatabaseFile("masoutis_db");
+        //ReadDatabaseFile("masoutis_db");
+        LoadDatabaseFiles(masoutisFiles);
 
         while (!database_ready)
         {
             yield return null;
         }
-
-        Debug.Log("read database: " + Time.realtimeSinceStartup);
+        
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
         // remove greek accent and make all uppercase
@@ -98,7 +100,7 @@ public class MajorityVoting : AsyncBehaviour
             item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
             item.category_3 = cropped_cat3_unq[count_cat3.IndexOf(count_cat3.Max())];
             item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
-            Debug.Log("why" + item.category_2);
+            Debug.Log("he :" + item.category_2);
             Debug.Log(item.category_3);
             Debug.Log(item.category_4);
             masoutis_item = item;
@@ -108,15 +110,60 @@ public class MajorityVoting : AsyncBehaviour
             Debug.LogError("Problem in category index");
             item.category_2 = "μη αναγνωρίσιμο";
             item.category_3 = "μη αναγνωρίσιμο";
-            item.category_4 = "μη αναγνωρίσιμο";   
+            item.category_4 = "μη αναγνωρίσιμο";
         }
 
     }
 
-    
-    public async void ReadDatabaseFile (string name)
+
+    public void LoadDatabaseFiles(string[] files)
     {
-        if(desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
+        if (desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
+            && cat4.Count == 0 && cat1.Count == 0)
+        {
+            Debug.Log("reading database: " + Time.realtimeSinceStartup);
+            foreach (var file in files)
+            {
+                TextAsset datafile = Resources.Load<TextAsset>(file);
+                string datafile_name = datafile.name;
+                using (var streamReader = new StreamReader(new MemoryStream(datafile.bytes)))
+                {
+                    while (!streamReader.EndOfStream)
+                    {
+                        string inp_ln = streamReader.ReadLine();
+                        switch (datafile_name)
+                        {
+                            case "masoutis_cat2":
+                                cat2.Add(inp_ln);
+                                break;
+                            case "masoutis_cat3":
+                                cat3.Add(inp_ln);
+                                break;
+                            case "masoutis_cat4":
+                                cat4.Add(inp_ln);
+                                break;
+                            case "masoutis_desc":
+                                desc.Add(inp_ln);
+                                break;
+                        }
+                    }
+                }
+                
+            }
+            Debug.Log("files read: " + Time.realtimeSinceStartup);
+            for (int i = 0; i < desc.Count; i++)
+            {
+                string[] splitted = desc[i].Split(' ');
+                HashSet<string> temp_hash = new HashSet<string>(splitted);
+                descSplitted.Add(temp_hash);
+            }
+        }
+        database_ready = true;
+    }
+
+    public async void ReadDatabaseFile(string name)
+    {
+        if (desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
             && cat4.Count == 0 && cat1.Count == 0)
         {
             TextAsset database = Resources.Load<TextAsset>(name);
@@ -159,7 +206,7 @@ public class MajorityVoting : AsyncBehaviour
             database_ready = true;
             return;
         }
-    } 
+    }
 
     private void LoadDataToDict(List<string> desc)
     {
@@ -190,7 +237,7 @@ public class MajorityVoting : AsyncBehaviour
         return cat_count;
     }
 
-    private List<string> GetValidWordsFromDbSequential (List<string> words, List<string> masoutisDesc)
+    private List<string> GetValidWordsFromDbSequential(List<string> words, List<string> masoutisDesc)
     {
         List<string> validWords = new List<string>();
         int cnt = 0;
@@ -222,12 +269,12 @@ public class MajorityVoting : AsyncBehaviour
         return validWords.Distinct().ToList();
     }
 
-    private List<string> GetValidWordsFromDb (List<string> words, List<HashSet<string>> masoutisDesc)
+    private List<string> GetValidWordsFromDb(List<string> words, List<HashSet<string>> masoutisDesc)
     {
         List<string> validWords = new List<string>();
         int cnt = 0;
 
-        foreach(var word in words)
+        foreach (var word in words)
         {
             for (int i = 0; i < masoutisDesc.Count; i++)
             {
@@ -236,7 +283,7 @@ public class MajorityVoting : AsyncBehaviour
                     cnt += 1;
                     sel_k.Add(i);
                     validWords.Add(word);
-                } 
+                }
             }
             if (cnt != 0)
             {
@@ -248,7 +295,7 @@ public class MajorityVoting : AsyncBehaviour
         return validWords.Distinct().ToList();
     }
 
-    private List<string> KeepElementsWithLen (List<string> words, int len)
+    private List<string> KeepElementsWithLen(List<string> words, int len)
     {
         List<string> wordsEdited = new List<string>();
 
@@ -265,7 +312,7 @@ public class MajorityVoting : AsyncBehaviour
     /* 
      * Also apart from the accent returns the list elements to upper case.
      */
-    private List<string> RemoveGreekAccentSequential (List<string> words)
+    private List<string> RemoveGreekAccentSequential(List<string> words)
     {
         List<string> wordsEdited = new List<string>();
 

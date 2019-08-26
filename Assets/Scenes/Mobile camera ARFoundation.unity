@@ -190,7 +190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Annotating ...
+  m_Text: Processing database..... please wait
 --- !u!222 &152659775
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -485,7 +485,6 @@ MonoBehaviour:
   cameraDevice: 1
   DLModel: {fileID: 4900000, guid: f5950a9b6af743d4dbe99a2eec7cb495, type: 3}
   LabelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
-  text: "\u03C3\u03BF\u03BA\u03BF\u03BB\u03AC\u03C4\u03B1 LACTA"
 --- !u!114 &275421736
 MonoBehaviour:
   m_ObjectHideFlags: 0

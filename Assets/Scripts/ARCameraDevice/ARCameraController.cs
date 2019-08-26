@@ -150,8 +150,6 @@ namespace EVISION.Camera.plugin
         {
             GetScreenShot();
 
-            //GetCameraImage();
-
             switch (Screen.orientation)
             {
                 case ScreenOrientation.Portrait:
