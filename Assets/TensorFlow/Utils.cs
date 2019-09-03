@@ -130,6 +130,7 @@ public static class Utils
                                         float mean, float std, int angle, Flip flip)
     {
         var pixels = GetPixels(texture, width, height, angle, flip);
+        
 
         int pixel = 0;
         int index = 0;

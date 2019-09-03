@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 using TensorFlow;
+using System.Runtime.InteropServices;
 
 public class TFSharpClassification : TFSharpModel
 {
@@ -43,17 +44,17 @@ public class TFSharpClassification : TFSharpModel
 
         Flip flip = Flip.NONE;
 
-        if (input.OutputType == TFDataType.Float)
+        if (input.OutputType == TFDataType.Float || input.OutputType == TFDataType.UInt8)
         {
             float[] imgData = Utils.DecodeTexture(tex, inputWidth, inputHeight,
                                                   inputMean, inputStd, angle, flip);
             inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
         }
-        else if (input.OutputType == TFDataType.UInt8)
-        {
-            byte[] imgData = Utils.DecodeTexture(tex, inputWidth, inputHeight, angle, flip);
-            inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
-        }
+        //else if (input.OutputType == TFDataType.UInt8)
+        //{
+        //    byte[] imgData = Utils.DecodeTexture(tex, inputWidth, inputHeight, angle, flip);
+        //    inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
+        //}
         else
         {
             throw new Exception($"Input date type {input.OutputType} is not supported.");
@@ -81,28 +82,14 @@ public class TFSharpClassification : TFSharpModel
 
     public override IList FetchOutput(Texture2D tex) 
     {
-        var shape = new TFShape(1, inputWidth, inputHeight, 3);
+        Debug.Log("Shekrio");
+        var scaled = TextureTools.scaled(tex, 224, 224, FilterMode.Trilinear);
+        var rotated = TextureTools.RotateImageMatrix(scaled.GetPixels32(), scaled.width, scaled.height,180);
+
+      
         var input = graph[inputName][0];
-        TFTensor inputTensor = null;
-
-        Flip flip = Flip.NONE;
-
-        if (input.OutputType == TFDataType.Float)
-        {
-            float[] imgData = Utils.DecodeTexture(tex, inputWidth, inputHeight,
-                                                  inputMean, inputStd, angle, flip);
-            inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
-        }
-        else if (input.OutputType == TFDataType.UInt8)
-        {
-            byte[] imgData = Utils.DecodeTexture(tex, inputWidth, inputHeight, angle, flip);
-            inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
-        }
-        else
-        {
-            throw new Exception($"Input date type {input.OutputType} is not supported.");
-        }
-
+        var inputTensor = TransformInput(rotated, 224, 224);
+        
         var runner = session.GetRunner();
         runner.AddInput(input, inputTensor).Fetch(graph[outputName][0]);
 
@@ -117,13 +104,39 @@ public class TFSharpClassification : TFSharpModel
         for (int i = 0; i < labels.Length; i++)
         {
             var confidence = outputs[0, i];
-            if (confidence < 0.05f) continue;
+            if (confidence < 0.01f) continue;
 
             list.Add(new KeyValuePair<string, float>(labels[i], confidence));
         }
 
         var results = list.OrderByDescending(i => i.Value).Take(numOfResults).ToList();
         return results;
+    }
+
+    public static TFTensor TransformInput(Color32[] pic, int width, int height)
+    {
+        float[] floatValues = new float[width * height * 3];
+
+        for (int i = 0; i < pic.Length; ++i)
+        {
+            var color = pic[i];
+
+            floatValues[i * 3 + 0] = (color.r - 127.5f) / 127.0f;
+            floatValues[i * 3 + 1] = (color.g - 127.5f) / 127.0f;
+            floatValues[i * 3 + 2] = (color.b - 127.5f) / 127.0f;
+        }
+
+        // save image
+        //Texture2D target = new Texture2D(224, 224);
+        //target.SetPixels32();
+        //target.Apply();
+        //var img = target.EncodeToJPG();
+        //System.IO.File.WriteAllBytes(Application.dataPath + "/captureImage.jpg", img);
+        //Debug.Log("saved at: " + Application.dataPath);
+
+        TFShape shape = new TFShape(1, width, height, 3);
+
+        return TFTensor.FromBuffer(shape, floatValues, 0, floatValues.Length);
     }
 
 }

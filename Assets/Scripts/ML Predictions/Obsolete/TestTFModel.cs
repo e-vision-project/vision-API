@@ -8,41 +8,53 @@ public class TestTFModel : MonoBehaviour
 
     public TextAsset model;
     public TextAsset labelsFile;
-    public RawImage img;
+    public string image_file;
     public int angle;
     private IModelPrediction classifier_2;
     // Start is called before the first frame update
     void Start()
     {
 
-        RawImage img = GameObject.Find("img").GetComponent<RawImage>();
-        TFSharpClassification classifier = new TFSharpClassification("input_1", "block_15_project/convolution", 224, 224, 127.0f, 127.0f, model, labelsFile, angle, 0.05f);
+        TFSharpClassification classifier = new TFSharpClassification("input_1", "Logits/Softmax", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.05f);
 
-        classifier_2 = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.0f, 127.0f, model, labelsFile, angle, 0.05f);
+        //var tex = Resources.Load<Texture2D>("Textures/Masoutis/" + image_file);
+        var tex = Resources.Load<Texture2D>("Textures/" + image_file);
 
-        Texture2D tex = new Texture2D(img.texture.width, img.texture.height);
-        tex = img.texture as Texture2D;
+        //Texture2D tex = new Texture2D(img.texture.width, img.texture.height);
+        //tex = img.texture as Texture2D;
 
         RawImage img2 = GameObject.Find("img2").GetComponent<RawImage>();
-        img2.texture = tex;
+        img2.texture = tex;;
 
-        var output = classifier.FetchIntermidiateOutput(tex);
-        print(output[0]);
+        var oute = classifier.FetchOutput(tex);
+        foreach (KeyValuePair<string, float> value in oute)
+        {
+            //Debug.Log("class :" + value.Key + ": " + value.Value);
+        }
 
-        var output_2 = classifier_2.FetchOutput<IList, Texture2D>(tex);
-        print(output_2[0]);
+        
 
-        //var output = classifier.FetchOutput<IList,Texture2D>(tex);
+        print("===============================");
+
+        //IModelPrediction classifier_3 = new TFClassification("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.01f);
+
+        //var output = classifier_3.FetchOutput<List<float>, Texture2D>(tex);
         //foreach (KeyValuePair<string, float> value in output)
         //{
-        //    Debug.Log("class :" + value.Key + ": " + value.Value);
+        //    //Debug.Log("class :" + value.Key + ": " + value.Value);
         //}
 
-    }
+        IModelPrediction classifier_4 = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.01f);
+        var output = classifier_4.FetchOutput<List<float>, Texture2D>(tex);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+
+        SVMClassification obj = new SVMClassification();
+        obj.SetModelParameters("Model_SVM");
+        IModelPrediction svm = obj;
+        var probs = svm.FetchOutput<List<float>, List<float>>(output);
+        foreach (var item in probs)
+        {
+            Debug.Log(item);
+        }
     }
 }

@@ -5,6 +5,6 @@ using FrostweepGames.Plugins.GoogleCloud.TextToSpeech;
 
 public interface ITextToVoice
 {
-    void PerformSpeechFromText(string text);
+    IEnumerator PerformSpeechFromText(string text);
     void StopSpeech();
 }

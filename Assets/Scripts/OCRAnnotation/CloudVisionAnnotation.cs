@@ -124,6 +124,7 @@ namespace EVISION.Camera.plugin
             {
                 Debug.LogError("Annotation was successfull but no responses were found");
                 annotationCompleted = true;
+                textAnnotation = string.Empty;
             }
         }
     }

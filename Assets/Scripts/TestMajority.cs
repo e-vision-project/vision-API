@@ -31,6 +31,5 @@ public class TestMajority : MonoBehaviour
     {
         MajorityVoting maj = new MajorityVoting();
         yield return maj.PerformMajorityVoting(words);
-        Debug.Log(Time.realtimeSinceStartup);
     }
 }

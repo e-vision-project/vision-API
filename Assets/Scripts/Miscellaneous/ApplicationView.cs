@@ -10,11 +10,12 @@ namespace EVISION.Camera.plugin
     {
         public GameObject image;
         public GameObject imageDd;
+        public GameObject button;
         public Text text;
         public ClientApplication clientApp;
         public ARCameraController ARCamera;
         public DeviceCamera cam;
-        public Text deviceNumberText;
+        public Text wordsText;
         public Text resolutionText;
         public RawImage helperImage;
         [SerializeField] private CameraType cameraType;
@@ -38,18 +39,20 @@ namespace EVISION.Camera.plugin
             if (clientApp.annotationProccessBusy)
             {
                 image.SetActive(true);
+                button.SetActive(false);
                 //Debug.Log("Annotating");
             }
             else if (!clientApp.annotationProccessBusy)
             {
                 image.SetActive(false);
+                button.SetActive(true);
             }
-            if (cameraType == CameraType.Webcam)
-            {
-                deviceNumberText.text = WebCamTexture.devices.Length.ToString();
-                resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
-                    + cam.GetCamTextureWidthHeight().y.ToString();
-            }
+            //if (cameraType == CameraType.Webcam)
+            //{
+            //    deviceNumberText.text = WebCamTexture.devices.Length.ToString();
+            //    resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
+            //        + cam.GetCamTextureWidthHeight().y.ToString();
+            //}
         }
     }
 }

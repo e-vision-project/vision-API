@@ -15,11 +15,15 @@ namespace EVISION.Camera.plugin
         private List<string> voices = new List<string>();
         private Voice _currentVoice;
         [SerializeField] private Enumerators.LanguageCode currentLanguage;
+        private bool speechSynthesisCompleted = false;
 
-        public void PerformSpeechFromText(string voiceOverText)
+        public IEnumerator PerformSpeechFromText(string voiceOverText)
         {
             SynthesizeHandler(voiceOverText);
-            
+            while (speechSynthesisCompleted != true)
+            {
+                yield return null;
+            }
         }
 
         public void StopSpeech()
@@ -109,6 +113,7 @@ namespace EVISION.Camera.plugin
         private void _gcTextToSpeech_SynthesizeSuccessEvent(PostSynthesizeResponse response)
         {
             audioSource.clip = _gcTextToSpeech.GetAudioClipFromBase64(response.audioContent, Constants.DEFAULT_AUDIO_ENCODING);
+            speechSynthesisCompleted = true;
             audioSource.Play();
         }
 

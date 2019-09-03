@@ -30,7 +30,7 @@ public class MajorityVoting : AsyncBehaviour
     public static List<string> cat4 = new List<string>(115180);
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
 
-    public MasoutisItem masoutis_item { get; set; }
+    public MasoutisItem masoutis_item;
     string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
 
 
@@ -42,27 +42,27 @@ public class MajorityVoting : AsyncBehaviour
     // empty constructor
     public MajorityVoting()
     {
-        masoutis_item = new MasoutisItem();
+        //masoutis_item = new MasoutisItem();
     }
 
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
+        
         // read database to class properties
-        //ReadDatabaseFile("masoutis_db");
         LoadDatabaseFiles(masoutisFiles);
 
         while (!database_ready)
         {
             yield return null;
         }
-        
+
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
         // remove greek accent and make all uppercase
         wordsOCR = RemoveGreekAccentParallel(wordsOCR);
         //Get valid words from db
         wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
-        Debug.Log("get valid words: " + Time.realtimeSinceStartup);
+        //Debug.Log("get valid words: " + Time.realtimeSinceStartup);
         wordsOCR.ForEach(Debug.Log);
 
         //Get all products from the db that contain the valid words.
@@ -90,44 +90,43 @@ public class MajorityVoting : AsyncBehaviour
         List<int> count_cat3 = GetCategoryCount(cropped_cat3, cropped_cat3_unq);
         List<int> count_cat4 = GetCategoryCount(cropped_cat4, cropped_cat4_unq);
         List<int> count_desc = GetCategoryCount(cropped_desc, cropped_desc_unq);
-        Debug.Log("End: " + Time.realtimeSinceStartup);
+        //Debug.Log("End: " + Time.realtimeSinceStartup);
 
-        MasoutisItem item = new MasoutisItem();
+        masoutis_item = new MasoutisItem();
 
         try
         {
-            //Debug.Log("Set Item");
-            item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
-            item.category_3 = cropped_cat3_unq[count_cat3.IndexOf(count_cat3.Max())];
-            item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
-            Debug.Log("he :" + item.category_2);
-            Debug.Log(item.category_3);
-            Debug.Log(item.category_4);
-            masoutis_item = item;
+            masoutis_item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
+            masoutis_item.category_3 = cropped_cat3_unq[count_cat3.IndexOf(count_cat3.Max())];
+            masoutis_item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
+            Debug.Log(masoutis_item.category_2);
+            Debug.Log(masoutis_item.category_3);
+            Debug.Log(masoutis_item.category_4);    
         }
         catch (System.Exception)
         {
             Debug.LogError("Problem in category index");
-            item.category_2 = "μη αναγνωρίσιμο";
-            item.category_3 = "μη αναγνωρίσιμο";
-            item.category_4 = "μη αναγνωρίσιμο";
+            masoutis_item.category_2 = "μη αναγνωρίσιμο";
+            masoutis_item.category_3 = "μη αναγνωρίσιμο";
+            masoutis_item.category_4 = "μη αναγνωρίσιμο";
         }
 
     }
 
 
-    public void LoadDatabaseFiles(string[] files)
+    public async void LoadDatabaseFiles(string[] files)
     {
         if (desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
             && cat4.Count == 0 && cat1.Count == 0)
         {
-            Debug.Log("reading database: " + Time.realtimeSinceStartup);
+            //Debug.Log("reading database: " + Time.realtimeSinceStartup);
             foreach (var file in files)
             {
                 TextAsset datafile = Resources.Load<TextAsset>(file);
                 string datafile_name = datafile.name;
                 using (var streamReader = new StreamReader(new MemoryStream(datafile.bytes)))
                 {
+                    await new WaitForBackgroundThread();
                     while (!streamReader.EndOfStream)
                     {
                         string inp_ln = streamReader.ReadLine();
@@ -147,10 +146,10 @@ public class MajorityVoting : AsyncBehaviour
                                 break;
                         }
                     }
+                    await new WaitForUpdate();
                 }
-                
             }
-            Debug.Log("files read: " + Time.realtimeSinceStartup);
+            //Debug.Log("files read: " + Time.realtimeSinceStartup);
             for (int i = 0; i < desc.Count; i++)
             {
                 string[] splitted = desc[i].Split(' ');

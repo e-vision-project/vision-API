@@ -57,11 +57,11 @@ public class TFClassification : IModelPrediction
                                                   inputMean, inputStd, angle, flip);
             inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
         }
-        else if (input.OutputType == TFDataType.UInt8)
-        {
-            byte[] imgData = Utils.DecodeTexture(inputTex as Texture2D, inputWidth, inputHeight, angle, flip);
-            inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
-        }
+        //else if (input.OutputType == TFDataType.UInt8)
+        //{
+        //    byte[] imgData = Utils.DecodeTexture(inputTex as Texture2D, inputWidth, inputHeight, angle, flip);
+        //    inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
+        //}
         else
         {
             throw new Exception($"Input date type {input.OutputType} is not supported.");
@@ -81,7 +81,7 @@ public class TFClassification : IModelPrediction
         for (int i = 0; i < labels.Length; i++)
         {
             var confidence = outputs[0, i];
-            if (confidence < 0.05f) continue;
+            if (confidence < 0.01f) continue;
 
             list.Add(new KeyValuePair<string, float>(labels[i], confidence));
         }
