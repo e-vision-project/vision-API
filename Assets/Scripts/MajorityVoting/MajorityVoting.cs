@@ -10,6 +10,7 @@ using CsvHelper;
 using System.Text;
 using UnityAsync;
 using System.Threading.Tasks;
+using EVISION.Camera.plugin;
 
 [Serializable]
 public struct MasoutisItem
@@ -56,6 +57,7 @@ public class MajorityVoting : AsyncBehaviour
             yield return null;
         }
 
+        ApplicationView.wordsText.text = string.Join(", ", wordsOCR.ToArray());
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
         // remove greek accent and make all uppercase
@@ -63,7 +65,8 @@ public class MajorityVoting : AsyncBehaviour
         //Get valid words from db
         wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
         //Debug.Log("get valid words: " + Time.realtimeSinceStartup);
-        wordsOCR.ForEach(Debug.Log);
+        //wordsOCR.ForEach(Debug.Log);
+        ApplicationView.MajorityText.text = string.Join(", ", wordsOCR.ToArray());
 
         //Get all products from the db that contain the valid words.
         List<string> cropped_cat2 = new List<string>(), cropped_cat3 = new List<string>();
@@ -101,7 +104,7 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
             Debug.Log(masoutis_item.category_2);
             Debug.Log(masoutis_item.category_3);
-            Debug.Log(masoutis_item.category_4);    
+            Debug.Log(masoutis_item.category_4);
         }
         catch (System.Exception)
         {

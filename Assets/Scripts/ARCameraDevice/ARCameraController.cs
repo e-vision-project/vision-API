@@ -172,7 +172,8 @@ namespace EVISION.Camera.plugin
 
         public void SaveScreenShot(Texture2D snap)
         {
-            string name = string.Format("{0}_Capture{1}.png", Application.productName, "{0}");
+            string name = string.Format("{0}_Capture{1}.png", Application.productName, ApplicationView.capture_count.ToString());
+            ApplicationView.capture_count++;
             Debug.Log("Permission result: " + NativeGallery.SaveImageToGallery(snap, "e-vision", name));
         }
 

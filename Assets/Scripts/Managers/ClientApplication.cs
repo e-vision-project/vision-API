@@ -21,12 +21,15 @@ namespace EVISION.Camera.plugin
         //[SerializeField] private DeviceCamera.Cameras cameraDevice;
         [SerializeField] private TextAsset DLModel;
         [SerializeField] private TextAsset LabelsFile;
+        [SerializeField] private string image_name;
 
         private Texture2D camTexture;
         private MasoutisItem masoutis_obj;
         private string annotationText;
         public string AnnotationText { get; }
         public bool annotationProccessBusy { get; set; }
+
+        public static string file_name;
         #endregion
 
 
@@ -85,9 +88,10 @@ namespace EVISION.Camera.plugin
             while (annotationProccessBusy)
             {
                 // Get camera texture.
-                //camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + "product_2");
+                //camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
                 camTexture = cam.TakeScreenShot();
-                SaveScreenShot();
+                ApplicationView.SaveImageFile(camTexture);
+
 
                 int category = ClassifyCategory();
 
@@ -121,10 +125,14 @@ namespace EVISION.Camera.plugin
             // Perform majority voting
             if (!string.IsNullOrEmpty(annotationText))
             {
-                Debug.Log("Non empty test");
                 List<string> OCR_List = GenericUtils.SplitStringToList(annotationText);
                 MajorityVoting majVoting = new MajorityVoting();
                 yield return majVoting.PerformMajorityVoting(OCR_List);
+
+                //save to file
+                ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
+                                 ApplicationView.MajorityText.text + "\ntrail: " + majVoting.masoutis_item.category_2 + ", shelf: " + majVoting.masoutis_item.category_3 + ", product: " + majVoting.masoutis_item.category_4
+                                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
 
                 switch (category)
                 {
@@ -150,9 +158,16 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                Debug.Log("empty test");
-                category += 2;
-                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("κατηγορία " + category.ToString() +" Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
+                string cat = "κενό";
+                if(category == 0) { cat = "διάδρομος";}
+                if(category == 1) { cat = "ράφι";}
+                if(category == 2) { cat = "προϊόν"; }
+                if(category == 3) { cat = "άλλο"; }
+
+                ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + "OCR_EMPTY"
+                                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
+
+                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("κατηγορία " + cat + ", Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
             }
         }
 
