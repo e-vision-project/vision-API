@@ -17,8 +17,8 @@ public class TestTFModel : MonoBehaviour
 
         TFSharpClassification classifier = new TFSharpClassification("input_1", "Logits/Softmax", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.05f);
 
-        //var tex = Resources.Load<Texture2D>("Textures/Masoutis/" + image_file);
-        var tex = Resources.Load<Texture2D>("Textures/" + image_file);
+        var tex = Resources.Load<Texture2D>("Textures/Masoutis/" + image_file);
+        //var tex = Resources.Load<Texture2D>("Textures/" + image_file);
 
         //Texture2D tex = new Texture2D(img.texture.width, img.texture.height);
         //tex = img.texture as Texture2D;
@@ -26,22 +26,22 @@ public class TestTFModel : MonoBehaviour
         RawImage img2 = GameObject.Find("img2").GetComponent<RawImage>();
         img2.texture = tex;;
 
-        var oute = classifier.FetchOutput(tex);
-        foreach (KeyValuePair<string, float> value in oute)
-        {
-            //Debug.Log("class :" + value.Key + ": " + value.Value);
-        }
+        //var oute = classifier.FetchOutput(tex);
+        //foreach (KeyValuePair<string, float> value in oute)
+        //{
+        //    Debug.Log("class :" + value.Key + ": " + value.Value);
+        //}
 
-        
 
-        print("===============================");
 
-        //IModelPrediction classifier_3 = new TFClassification("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.01f);
+        //print("===============================");
 
-        //var output = classifier_3.FetchOutput<List<float>, Texture2D>(tex);
+        //IModelPrediction classifier_3 = new TFClassification("input_1", "Logits/Softmax", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.01f);
+
+        //var output = classifier_3.FetchOutput<IList, Texture2D>(tex);
         //foreach (KeyValuePair<string, float> value in output)
         //{
-        //    //Debug.Log("class :" + value.Key + ": " + value.Value);
+        //    Debug.Log("class :" + value.Key + ": " + value.Value);
         //}
 
         IModelPrediction classifier_4 = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.01f);

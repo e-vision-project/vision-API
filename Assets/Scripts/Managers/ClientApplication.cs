@@ -39,7 +39,6 @@ namespace EVISION.Camera.plugin
             OCRAnnotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
              
-            _classifier = new TFClassification("input_1", "Logits/Softmax", 224, 224, 127.0f, 127.0f, DLModel, LabelsFile, 180, 0.05f);
             featureExtractor = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.01f);
             
             // set svm model
@@ -74,7 +73,6 @@ namespace EVISION.Camera.plugin
         {
             if (annotationProccessBusy)
             {
-               
                 return;
             }
             StartCoroutine(ClassifyScreenshotAsync());
@@ -85,27 +83,29 @@ namespace EVISION.Camera.plugin
             // lock the process so the user cannot access it.
             annotationProccessBusy = true;
 
-            while (annotationProccessBusy)
+            // Get camera texture.
+            if(Application.isEditor)
             {
-                // Get camera texture.
-                //camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
+                camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
+            }
+            else
+            {
                 camTexture = cam.TakeScreenShot();
                 ApplicationView.SaveImageFile(camTexture);
-
-
-                int category = ClassifyCategory();
-
-                yield return StartCoroutine(GetCategoryDescription(category));
-
-                annotationProccessBusy = false;
             }
+
+
+            int category = ClassifyCategory(camTexture);
+
+            yield return StartCoroutine(GetCategoryDescription(category));
+
+            annotationProccessBusy = false;
             
         }
 
-        private int ClassifyCategory()
+        private int ClassifyCategory(Texture2D input_tex)
         {
-
-            var featureVector = featureExtractor.FetchOutput<List<float>, Texture2D>(camTexture);
+            var featureVector = featureExtractor.FetchOutput<List<float>, Texture2D>(input_tex);
 
             var probs = svmClassifier.FetchOutput<List<float>, List<float>>(featureVector);
 
@@ -129,10 +129,10 @@ namespace EVISION.Camera.plugin
                 MajorityVoting majVoting = new MajorityVoting();
                 yield return majVoting.PerformMajorityVoting(OCR_List);
 
-                //save to file
-                ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
-                                 ApplicationView.MajorityText.text + "\ntrail: " + majVoting.masoutis_item.category_2 + ", shelf: " + majVoting.masoutis_item.category_3 + ", product: " + majVoting.masoutis_item.category_4
-                                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
+                ////save to file
+                //ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
+                //                 ApplicationView.MajorityText.text + "\ntrail: " + majVoting.masoutis_item.category_2 + ", shelf: " + majVoting.masoutis_item.category_3 + ", product: " + majVoting.masoutis_item.category_4
+                //                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
 
                 switch (category)
                 {
@@ -164,8 +164,8 @@ namespace EVISION.Camera.plugin
                 if(category == 2) { cat = "προϊόν"; }
                 if(category == 3) { cat = "άλλο"; }
 
-                ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + "OCR_EMPTY"
-                                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
+                //ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + "OCR_EMPTY"
+                //                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
 
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("κατηγορία " + cat + ", Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
             }
@@ -177,7 +177,8 @@ namespace EVISION.Camera.plugin
             annotationProccessBusy = true;
 
             // Get camera texture.
-            camTexture = cam.TakeScreenShot();
+            //camTexture = cam.TakeScreenShot();
+            camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
 
             //wait until the annotation process returns
             yield return StartCoroutine(OCRAnnotator.PerformAnnotation(camTexture));
@@ -198,7 +199,7 @@ namespace EVISION.Camera.plugin
                 voiceSynthesizer.PerformSpeechFromText("μη αναγνωρίσιμο");
             }
 
-            SaveScreenShot();
+            
             annotationProccessBusy = false;
         }
 
@@ -219,3 +220,15 @@ namespace EVISION.Camera.plugin
         }
     }
 }
+
+
+//Texture2D input_tex = new Texture2D(camTexture.width, camTexture.height);
+
+//if (SystemInfo.copyTextureSupport == UnityEngine.Rendering.CopyTextureSupport.None)
+//{
+//    Debug.Log("High allocs here");
+//}
+//else
+//{
+//    Graphics.CopyTexture(camTexture, input_tex);
+//}

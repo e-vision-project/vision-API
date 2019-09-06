@@ -17,7 +17,8 @@ namespace EVISION.Camera.plugin
         public ARCameraController ARCamera;
         public DeviceCamera cam;
         public static Text wordsText;
-        public static Text MajorityText;
+        public static Text MajorityValidText;
+        public static Text MajorityFinalText;
         public Text resolutionText;
         public RawImage helperImage;
         public static int capture_count = 0;
@@ -29,14 +30,15 @@ namespace EVISION.Camera.plugin
         void Start()
         {
             wordsText = GameObject.FindGameObjectWithTag("OCR_TEXT").GetComponent<Text>();
-            MajorityText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
+            MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
+            MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
             image.SetActive(false);
         }
 
         public void OnButtonPressed()
         {
-            Texture2D tex = ARCamera.TakeScreenShot();
-            helperImage.texture = tex;
+            //Texture2D tex = ARCamera.TakeScreenShot();
+            //helperImage.texture = tex;
         }
 
         // Update is called once per frame

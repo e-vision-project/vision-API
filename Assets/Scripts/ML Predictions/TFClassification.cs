@@ -5,6 +5,13 @@ using System;
 using System.Linq;
 using TensorFlow;
 
+/// <summary>
+/// This class implements the IModelPrediction interface
+/// and aims to extract features from a pre-trained tensorflow
+/// model. To fetch output the input is a texture2D and the output
+/// is an IList (IList< string , float >).
+/// </summary>
+
 public class TFClassification : IModelPrediction
 {
     private string inputName;
@@ -45,27 +52,16 @@ public class TFClassification : IModelPrediction
 
     public T FetchOutput<T,U>(U inputTex) where T: class, IList where U : class
     {
+        //////// TODO : shape should be passed as argument to Transform Input
         var shape = new TFShape(1, inputWidth, inputHeight, 3);
+        ////////
+        
+        var scaled = TextureTools.scaled(inputTex as Texture2D, 224, 224, FilterMode.Trilinear);
+        var rotated = TextureTools.RotateImageMatrix(scaled.GetPixels32(), scaled.width, scaled.height, 180);
+
         var input = graph[inputName][0];
-        TFTensor inputTensor = null;
 
-        Flip flip = Flip.NONE;
-
-        if (input.OutputType == TFDataType.Float)
-        {
-            float[] imgData = Utils.DecodeTexture(inputTex as Texture2D, inputWidth, inputHeight,
-                                                  inputMean, inputStd, angle, flip);
-            inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
-        }
-        //else if (input.OutputType == TFDataType.UInt8)
-        //{
-        //    byte[] imgData = Utils.DecodeTexture(inputTex as Texture2D, inputWidth, inputHeight, angle, flip);
-        //    inputTensor = TFTensor.FromBuffer(shape, imgData, 0, imgData.Length);
-        //}
-        else
-        {
-            throw new Exception($"Input date type {input.OutputType} is not supported.");
-        }
+        var inputTensor = TFSharpUtils.TransformInput(rotated, 224, 224, inputMean, inputStd);
 
         var runner = session.GetRunner();
         runner.AddInput(input, inputTensor).Fetch(graph[outputName][0]);
@@ -87,6 +83,7 @@ public class TFClassification : IModelPrediction
         }
 
         var results = list.OrderByDescending(i => i.Value).Take(numOfResults).ToList();
+
         return results as T;
     }
 }
