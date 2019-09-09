@@ -58,7 +58,6 @@ public class MajorityVoting : AsyncBehaviour
             yield return null;
         }
 
-        ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
 
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
@@ -70,11 +69,13 @@ public class MajorityVoting : AsyncBehaviour
         wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
         Debug.Log("get valid words: " + Time.realtimeSinceStartup);
         //wordsOCR.ForEach(Debug.Log);
+        ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
 
         Debug.Log("load db: " + Time.realtimeSinceStartup);
 
 
         //Get all products from the db that contain the valid words.
+        //List<string> cropped_cat2 = new List<string>(), cropped_cat3 = new List<string>();
         List<string> cropped_cat2 = new List<string>(), cropped_cat3 = new List<string>();
         List<string> cropped_cat4 = new List<string>(), cropped_desc = new List<string>();
 
@@ -244,9 +245,13 @@ public class MajorityVoting : AsyncBehaviour
     private List<int> GetCategoryCount(List<string> cat, List<string> cat_unq)
     {
         List<int> cat_count = new List<int>();
-        for (int i = 0; i < cat_unq.Count; i++)
+
+        string[] cat_arr = cat.ToArray();
+        string[] cat_unq_arr = cat_unq.ToArray();
+
+        for (int i = 0; i < cat_unq_arr.Length; i++)
         {
-            cat_count.Add(cat.Where(x => x.Equals(cat_unq[i])).Count());
+            cat_count.Add(cat_arr.Where(x => x.Equals(cat_unq_arr[i])).Count());
         }
 
         return cat_count;

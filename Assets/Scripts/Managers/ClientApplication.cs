@@ -91,7 +91,7 @@ namespace EVISION.Camera.plugin
             else
             {
                 camTexture = cam.TakeScreenShot();
-                ApplicationView.SaveImageFile(camTexture);
+                //ApplicationView.SaveImageFile(camTexture);
             }
 
 
@@ -127,7 +127,7 @@ namespace EVISION.Camera.plugin
             {
                 List<string> OCR_List = GenericUtils.SplitStringToList(annotationText);
                 MajorityVoting majVoting = new MajorityVoting();
-                yield return majVoting.PerformMajorityVoting(OCR_List);
+                yield return StartCoroutine(majVoting.PerformMajorityVoting(OCR_List));
 
                 ////save to file
                 //ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
