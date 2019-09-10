@@ -49,6 +49,7 @@ public class MajorityVoting : AsyncBehaviour
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
         Debug.Log("OCR: " + Time.realtimeSinceStartup);
+
         ApplicationView.wordsText.text = string.Join(", ", wordsOCR.ToArray());
 
         // read database to class properties
@@ -246,12 +247,12 @@ public class MajorityVoting : AsyncBehaviour
     {
         List<int> cat_count = new List<int>();
 
-        string[] cat_arr = cat.ToArray();
-        string[] cat_unq_arr = cat_unq.ToArray();
-
-        for (int i = 0; i < cat_unq_arr.Length; i++)
+        //string[] cat_arr = cat.ToArray();
+        //string[] cat_unq_arr = cat_unq.ToArray();
+        HashSet<string> cat_set = new HashSet<string>(cat);
+        for (int i = 0; i < cat_unq.Count; i++)
         {
-            cat_count.Add(cat_arr.Where(x => x.Equals(cat_unq_arr[i])).Count());
+            cat_count.Add(cat_set.Where(x => x.Equals(cat_unq[i])).Count());
         }
 
         return cat_count;

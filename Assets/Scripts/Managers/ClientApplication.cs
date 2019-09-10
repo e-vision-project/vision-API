@@ -24,6 +24,7 @@ namespace EVISION.Camera.plugin
         [SerializeField] private string image_name;
 
         private Texture2D camTexture;
+        public DeviceCamera.Cameras cameraDevice;
         private MasoutisItem masoutis_obj;
         private string annotationText;
         public string AnnotationText { get; }
@@ -51,7 +52,7 @@ namespace EVISION.Camera.plugin
         void Start()
         {
             annotationProccessBusy = false;
-            //cam.SetCamera(cameraDevice);
+            cam.SetCamera(cameraDevice);
         }
 
         // Update is called once per frame
@@ -84,18 +85,26 @@ namespace EVISION.Camera.plugin
             annotationProccessBusy = true;
 
             // Get camera texture.
-            if(Application.isEditor)
+            if (Application.isEditor)
             {
+                Debug.Log("Editor");
                 camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
             }
             else
             {
                 camTexture = cam.TakeScreenShot();
-                //ApplicationView.SaveImageFile(camTexture);
+                ApplicationView.SaveImageFile(camTexture);
             }
 
-
             int category = ClassifyCategory(camTexture);
+
+            string cat = "κενό";
+            if (category == 0) { cat = "διάδρομος"; }
+            if (category == 1) { cat = "ράφι"; }
+            if (category == 2) { cat = "προϊόν"; }
+            if (category == 3) { cat = "άλλο"; }
+            ApplicationView.classText.text = "κατηγορία " + cat;
+
 
             yield return StartCoroutine(GetCategoryDescription(category));
 
@@ -163,6 +172,11 @@ namespace EVISION.Camera.plugin
                 if(category == 1) { cat = "ράφι";}
                 if(category == 2) { cat = "προϊόν"; }
                 if(category == 3) { cat = "άλλο"; }
+
+                ApplicationView.wordsText.text = "κενό";
+                ApplicationView.MajorityFinalText.text = "κενό";
+                ApplicationView.MajorityValidText.text = "κενό";
+                ApplicationView.classText.text = "κενό";
 
                 //ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + "OCR_EMPTY"
                 //                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");

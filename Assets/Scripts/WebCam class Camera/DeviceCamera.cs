@@ -45,12 +45,12 @@ public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
         frontCameraDevice = WebCamTexture.devices.Last();
         backCameraDevice = WebCamTexture.devices.First();
 
-        frontCameraTexture = new WebCamTexture(frontCameraDevice.name, 1920, 1080);
-        backCameraTexture = new WebCamTexture(backCameraDevice.name,1920 ,1080);
+        frontCameraTexture = new WebCamTexture(frontCameraDevice.name, Screen.width, Screen.height);
+        backCameraTexture = new WebCamTexture(backCameraDevice.name, Screen.height, Screen.width);
 
         // Set camera filter modes for a smoother looking image
-        frontCameraTexture.filterMode = FilterMode.Bilinear;
-        backCameraTexture.filterMode = FilterMode.Bilinear;
+        frontCameraTexture.filterMode = FilterMode.Trilinear;
+        backCameraTexture.filterMode = FilterMode.Trilinear;
     }
 
     public abstract void SaveScreenShot(Texture2D snap);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using EVISION.Camera.plugin;
 
 public class AndroidCamera : DeviceCamera
 {
@@ -30,6 +31,60 @@ public class AndroidCamera : DeviceCamera
     }
 
     public override void Tick()
+    {
+        UpdateTick_version2();
+    }
+
+    public override void SwitchCamera()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override Texture2D TakeScreenShot()
+    {
+        Texture2D snap = new Texture2D(activeCameraTexture.width, activeCameraTexture.height);
+        snap.SetPixels(activeCameraTexture.GetPixels());
+        snap.Apply();
+
+        switch (Screen.orientation)
+        {
+            case ScreenOrientation.Portrait:
+                snap = TextureTools.RotateTexture(snap,-90);
+                Debug.Log("Portrait");
+                break;
+            case ScreenOrientation.PortraitUpsideDown:
+                snap = TextureTools.RotateTexture(snap, 90);
+                break;
+            case ScreenOrientation.LandscapeRight:
+                snap = TextureTools.RotateTexture(snap, 180);
+                Debug.Log("Landscape right");
+                break;
+            case ScreenOrientation.LandscapeLeft:
+                //snap = TextureTools.RotateTexture(snap, -180);
+                Debug.Log("Landscape left");
+                break;
+        }
+
+        return snap;
+    }
+
+    public override void SaveScreenShot(Texture2D snap)
+    {
+        string name = string.Format("{0}_Capture{1}.png", Application.productName, "{0}");
+        Debug.Log("Permission result: " + NativeGallery.SaveImageToGallery(snap, "e-vision", name));
+    }
+
+    #endregion
+
+    #region MonoBehaviour Callbacks
+
+    // Start is called before the first frame update
+    void OnEnable()
+    {
+        SetCameraProperties();
+    }
+
+    private void UpdateTick()
     {
         if (WebCamTexture.devices.Length == 0)
         {
@@ -61,33 +116,40 @@ public class AndroidCamera : DeviceCamera
             activeCameraDevice.isFrontFacing ? fixedScale : defaultScale;
     }
 
-    public override void SwitchCamera()
+    private void UpdateTick_version2()
     {
-        throw new System.NotImplementedException();
-    }
+        if (activeCameraTexture.width < 100)
+        {
+            Debug.Log("Still waiting another frame for correct info...");
+            return;
+        }
 
-    public override Texture2D TakeScreenShot()
-    {
-        Texture2D snap = new Texture2D(activeCameraTexture.width, activeCameraTexture.height);
-        snap.SetPixels(activeCameraTexture.GetPixels());
-        snap.Apply();
-        return snap;
-    }
+        // change as user rotates iPhone or Android:
 
-    public override void SaveScreenShot(Texture2D snap)
-    {
-        string name = string.Format("{0}_Capture{1}.png", Application.productName, "{0}");
-        Debug.Log("Permission result: " + NativeGallery.SaveImageToGallery(snap, "e-vision", name));
-    }
+        int cwNeeded = activeCameraTexture.videoRotationAngle;
+        // Unity helpfully returns the _clockwise_ twist needed
+        // guess nobody at Unity noticed their product works in counterclockwise:
+        int ccwNeeded = -cwNeeded;
 
-    #endregion
+        // IF the image needs to be mirrored, it seems that it
+        // ALSO needs to be spun. Strange: but true.
+        if (activeCameraTexture.videoVerticallyMirrored) ccwNeeded += 180;
 
-    #region MonoBehaviour Callbacks
+        // you'll be using a UI RawImage, so simply spin the RectTransform
+        imageParent.localEulerAngles = new Vector3(0f, 0f, ccwNeeded);
 
-    // Start is called before the first frame update
-    void OnEnable()
-    {
-        SetCameraProperties();
+        float videoRatio = (float)activeCameraTexture.width / (float)activeCameraTexture.height;
+
+        // you'll be using an AspectRatioFitter on the Image, so simply set it
+        imageFitter.aspectRatio = videoRatio;
+
+        // alert, the ONLY way to mirror a RAW image, is, the uvRect.
+        // changing the scale is completely broken.
+        if (activeCameraTexture.videoVerticallyMirrored)
+            displayImage.uvRect = new Rect(1, 0, -1, 1);  // means flip on vertical axis
+        else
+            displayImage.uvRect = new Rect(0, 0, 1, 1);  // means no flip
+
     }
 
     #endregion

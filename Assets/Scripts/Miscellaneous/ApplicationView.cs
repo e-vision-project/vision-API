@@ -10,20 +10,17 @@ namespace EVISION.Camera.plugin
     public class ApplicationView : MonoBehaviour
     {
         public GameObject image;
-        public GameObject imageDd;
         public GameObject button;
         public Text text;
         public ClientApplication clientApp;
-        public ARCameraController ARCamera;
         public DeviceCamera cam;
         public static Text wordsText;
         public static Text MajorityValidText;
         public static Text MajorityFinalText;
+        public static Text classText;
         public Text resolutionText;
-        public RawImage helperImage;
         public static int capture_count = 0;
         public static string capture_name = "";
-        [SerializeField] private CameraType cameraType;
 
 
         // Start is called before the first frame update
@@ -32,18 +29,21 @@ namespace EVISION.Camera.plugin
             wordsText = GameObject.FindGameObjectWithTag("OCR_TEXT").GetComponent<Text>();
             MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
             MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
+            classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
             image.SetActive(false);
         }
 
         public void OnButtonPressed()
         {
-            //Texture2D tex = ARCamera.TakeScreenShot();
+            //Texture2D tex = cam.TakeScreenShot();
             //helperImage.texture = tex;
         }
 
         // Update is called once per frame
         void Update()
         {
+
+
             if (clientApp.annotationProccessBusy)
             {
                 image.SetActive(true);
@@ -55,12 +55,13 @@ namespace EVISION.Camera.plugin
                 image.SetActive(false);
                 button.SetActive(true);
             }
-            //if (cameraType == CameraType.Webcam)
-            //{
-            //    deviceNumberText.text = WebCamTexture.devices.Length.ToString();
-            //    resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
-            //        + cam.GetCamTextureWidthHeight().y.ToString();
-            //}
+
+            //devices.text = WebCamTexture.devices.Length.ToString();
+           
+            resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
+                + cam.GetCamTextureWidthHeight().y.ToString();
+            
+            
         }
 
         public static void SaveTXT(string text)
@@ -92,7 +93,14 @@ namespace EVISION.Camera.plugin
         {
             string imagePath = "";
 
-            imagePath = Application.persistentDataPath + "/captured_images";
+            if (Application.isEditor)
+            {
+                imagePath = Application.dataPath + "/captured_images";
+            }
+            else
+            {
+                imagePath = Application.persistentDataPath + "/captured_images";
+            }
 
             if (!Directory.Exists(imagePath))
             {

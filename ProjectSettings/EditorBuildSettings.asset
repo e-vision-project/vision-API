@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Tensorflow.unity
     guid: 92d4e898d1b218e43b93d3872a030b3e
   - enabled: 1
+    path: Assets/Scenes/Mobile camera WebTexture.unity
+    guid: 4c60198c9768fee4f8afaf29bc273192
+  - enabled: 0
     path: Assets/Scenes/Mobile camera ARFoundation.unity
     guid: 6f8eafae88b31eb4aa8cc7821dea72a3
   m_configObjects: {}
