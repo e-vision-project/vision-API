@@ -7,6 +7,7 @@ TagManager:
   - OCR_TEXT
   - MAJORITY_TEXT
   - MAJORITY_FINAL
+  - CLASS
   layers:
   - Default
   - TransparentFX
