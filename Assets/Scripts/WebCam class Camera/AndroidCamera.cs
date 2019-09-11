@@ -138,7 +138,7 @@ public class AndroidCamera : DeviceCamera
         // you'll be using a UI RawImage, so simply spin the RectTransform
         imageParent.localEulerAngles = new Vector3(0f, 0f, ccwNeeded);
 
-        float videoRatio = (float)activeCameraTexture.width / (float)activeCameraTexture.height;
+        float videoRatio = (float)activeCameraTexture.height / (float)activeCameraTexture.width;
 
         // you'll be using an AspectRatioFitter on the Image, so simply set it
         imageFitter.aspectRatio = videoRatio;

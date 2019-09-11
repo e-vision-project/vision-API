@@ -8,6 +8,7 @@ TagManager:
   - MAJORITY_TEXT
   - MAJORITY_FINAL
   - CLASS
+  - HELPER_IMAGE
   layers:
   - Default
   - TransparentFX

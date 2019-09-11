@@ -89,11 +89,15 @@ namespace EVISION.Camera.plugin
             {
                 Debug.Log("Editor");
                 camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
+                //camTexture = cam.TakeScreenShot();
+                ApplicationView.helperImage.texture = camTexture;
             }
             else
             {
                 camTexture = cam.TakeScreenShot();
+                ApplicationView.helperImage.texture = camTexture;
                 ApplicationView.SaveImageFile(camTexture);
+
             }
 
             int category = ClassifyCategory(camTexture);
@@ -225,24 +229,32 @@ namespace EVISION.Camera.plugin
 
         public void CLassify()
         {
-            camTexture = cam.TakeScreenShot();
-            var output = _classifier.FetchOutput<IList, Texture2D>(camTexture);
-            foreach (KeyValuePair<string, float> value in output)
+            int category = 0;
+
+            if (Application.isEditor)
             {
-                Debug.Log("class :" + value.Key + "_" + value.Value);
+                Debug.Log("Editor");
+                camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
+                category = ClassifyCategory(camTexture);
             }
+            else
+            {
+                camTexture = cam.TakeScreenShot();
+                category = ClassifyCategory(camTexture);
+                ApplicationView.SaveImageFile(camTexture);
+
+            }
+
+            string cat = "κενό";
+            if (category == 0) { cat = "διάδρομος"; }
+            if (category == 1) { cat = "ράφι"; }
+            if (category == 2) { cat = "προϊόν"; }
+            if (category == 3) { cat = "άλλο"; }
+            ApplicationView.classText.text = "κατηγορία " + cat;
+            ApplicationView.wordsText.text = "κενό";
+            ApplicationView.MajorityFinalText.text = "κενό";
+            ApplicationView.MajorityValidText.text = "κενό";
         }
     }
 }
 
-
-//Texture2D input_tex = new Texture2D(camTexture.width, camTexture.height);
-
-//if (SystemInfo.copyTextureSupport == UnityEngine.Rendering.CopyTextureSupport.None)
-//{
-//    Debug.Log("High allocs here");
-//}
-//else
-//{
-//    Graphics.CopyTexture(camTexture, input_tex);
-//}

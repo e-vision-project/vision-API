@@ -252,7 +252,7 @@ public class MajorityVoting : AsyncBehaviour
         HashSet<string> cat_set = new HashSet<string>(cat);
         for (int i = 0; i < cat_unq.Count; i++)
         {
-            cat_count.Add(cat_set.Where(x => x.Equals(cat_unq[i])).Count());
+            cat_count.Add(cat.Where(x => x.Equals(cat_unq[i])).Count());
         }
 
         return cat_count;

@@ -10,6 +10,7 @@ namespace EVISION.Camera.plugin
     public class ApplicationView : MonoBehaviour
     {
         public GameObject image;
+        public static RawImage helperImage;
         public GameObject button;
         public Text text;
         public ClientApplication clientApp;
@@ -35,15 +36,12 @@ namespace EVISION.Camera.plugin
 
         public void OnButtonPressed()
         {
-            //Texture2D tex = cam.TakeScreenShot();
-            //helperImage.texture = tex;
+
         }
 
         // Update is called once per frame
         void Update()
         {
-
-
             if (clientApp.annotationProccessBusy)
             {
                 image.SetActive(true);
@@ -59,9 +57,7 @@ namespace EVISION.Camera.plugin
             //devices.text = WebCamTexture.devices.Length.ToString();
            
             resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
-                + cam.GetCamTextureWidthHeight().y.ToString();
-            
-            
+                + cam.GetCamTextureWidthHeight().y.ToString();  
         }
 
         public static void SaveTXT(string text)
