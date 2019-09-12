@@ -48,7 +48,6 @@ public class MajorityVoting : AsyncBehaviour
 
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
-        Debug.Log("OCR: " + Time.realtimeSinceStartup);
 
         ApplicationView.wordsText.text = string.Join(", ", wordsOCR.ToArray());
 
@@ -62,17 +61,13 @@ public class MajorityVoting : AsyncBehaviour
 
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
-        Debug.Log("get len words: " + Time.realtimeSinceStartup);
         // remove greek accent and make all uppercase
         wordsOCR = RemoveGreekAccentSequential(wordsOCR);
-        Debug.Log("Remove tones words: " + Time.realtimeSinceStartup);
         //Get valid words from db
         wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
-        Debug.Log("get valid words: " + Time.realtimeSinceStartup);
         //wordsOCR.ForEach(Debug.Log);
         ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
 
-        Debug.Log("load db: " + Time.realtimeSinceStartup);
 
 
         //Get all products from the db that contain the valid words.
@@ -90,21 +85,18 @@ public class MajorityVoting : AsyncBehaviour
                 //cropped_desc.Add(desc[sel_k[j]]);
             }
         }
-        Debug.Log("cropped categories: " + Time.realtimeSinceStartup);
 
         // keep only distinct elemets in each category
         List<string> cropped_cat2_unq = cropped_cat2.Distinct().ToList();
         List<string> cropped_cat3_unq = cropped_cat3.Distinct().ToList();
         List<string> cropped_cat4_unq = cropped_cat4.Distinct().ToList();
         //List<string> cropped_desc_unq = cropped_desc.Distinct().ToList();
-        Debug.Log("distinct cropped categories: " + Time.realtimeSinceStartup);
 
         // get number of occurancies of each element in every category
         List<int> count_cat2 = GetCategoryCount(cropped_cat2, cropped_cat2_unq);
         List<int> count_cat3 = GetCategoryCount(cropped_cat3, cropped_cat3_unq);
         List<int> count_cat4 = GetCategoryCount(cropped_cat4, cropped_cat4_unq);
         //List<int> count_desc = GetCategoryCount(cropped_desc, cropped_desc_unq);
-        Debug.Log("Category count " + Time.realtimeSinceStartup);
 
         masoutis_item = new MasoutisItem();
 
@@ -116,7 +108,7 @@ public class MajorityVoting : AsyncBehaviour
             Debug.Log(masoutis_item.category_2);
             Debug.Log(masoutis_item.category_3);
             Debug.Log(masoutis_item.category_4);
-            ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+            ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
 
 
         }
@@ -247,12 +239,28 @@ public class MajorityVoting : AsyncBehaviour
     {
         List<int> cat_count = new List<int>();
 
-        //string[] cat_arr = cat.ToArray();
-        //string[] cat_unq_arr = cat_unq.ToArray();
-        HashSet<string> cat_set = new HashSet<string>(cat);
+        string[] cat_arr = cat.ToArray();
+        string[] cat_unq_arr = cat_unq.ToArray();
+
         for (int i = 0; i < cat_unq.Count; i++)
         {
-            cat_count.Add(cat.Where(x => x.Equals(cat_unq[i])).Count());
+            cat_count.Add(cat_arr.Where(x => x.Equals(cat_unq_arr[i])).Count());
+        }
+
+        return cat_count;
+    }
+
+    private List<int> GetCategoryCountParallel(List<string> cat, List<string> cat_unq)
+    {
+        List<int> cat_count = new List<int>();
+
+        string[] cat_arr = cat.ToArray();
+        string[] cat_unq_arr = cat_unq.ToArray();
+
+
+        for (int i = 0; i < cat_unq.Count; i++)
+        {
+            cat_count.Add(cat_arr.Where(x => x.Equals(cat_unq_arr[i])).Count());
         }
 
         return cat_count;

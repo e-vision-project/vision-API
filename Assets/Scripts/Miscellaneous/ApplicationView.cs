@@ -19,6 +19,7 @@ namespace EVISION.Camera.plugin
         public static Text MajorityValidText;
         public static Text MajorityFinalText;
         public static Text classText;
+        public static Text TimeText;
         public Text resolutionText;
         public static int capture_count = 0;
         public static string capture_name = "";
@@ -31,6 +32,7 @@ namespace EVISION.Camera.plugin
             MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
             MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
             classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
+            TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
             image.SetActive(false);
         }
 
@@ -78,11 +80,9 @@ namespace EVISION.Camera.plugin
             if (!File.Exists(path))
             {
                 File.WriteAllText(path,"Debbuging app \n");
-                Debug.Log("File created" + path);
             }
 
             File.AppendAllText(path, text);
-            Debug.Log("appended in" + path);
         }
 
         public static void SaveImageFile(Texture2D tex)
@@ -101,13 +101,11 @@ namespace EVISION.Camera.plugin
             if (!Directory.Exists(imagePath))
             {
                 Directory.CreateDirectory(imagePath);
-                Debug.Log("images directory created");
             }
 
             var bytes = tex.EncodeToPNG();
             Destroy(tex);
             capture_name = string.Format("/{0}_Capture{1}.png", Application.productName, capture_count.ToString());
-            Debug.Log("Image saved");
             System.IO.File.WriteAllBytes(imagePath + capture_name, bytes);
             capture_count++;
         }

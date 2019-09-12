@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: CERTH
-  productName: e Vision Landscape
+  productName: e Vision backend
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -160,7 +160,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.CERTH.eVision.camera.Landscape
+    Android: com.CERTH.eVision.backend
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 23
@@ -274,7 +274,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 1066be8e7b994b94c8a182b8dbe30705, type: 3}
+      m_Icon: {fileID: 2800000, guid: 3fec5a2d91d3abe4db26bffe663f69bb, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0

@@ -29,8 +29,10 @@ namespace EVISION.Camera.plugin
         private string annotationText;
         public string AnnotationText { get; }
         public bool annotationProccessBusy { get; set; }
+        private float OCRtime;
+        private float Majoritytime;
 
-        public static string file_name;
+
         #endregion
 
 
@@ -39,10 +41,11 @@ namespace EVISION.Camera.plugin
             cam = GetComponent<IDeviceCamera>();
             OCRAnnotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
-             
+            
+            //Get feautures from model
             featureExtractor = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.01f);
             
-            // set svm model
+            // set and load svm model
             SVMClassification svm_model = new SVMClassification();
             svm_model.SetModelParameters("Model_SVM");
             svmClassifier = svm_model;
@@ -87,9 +90,8 @@ namespace EVISION.Camera.plugin
             // Get camera texture.
             if (Application.isEditor)
             {
-                Debug.Log("Editor");
-                //camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
-                camTexture = cam.TakeScreenShot();
+                camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
+                //camTexture = cam.TakeScreenShot();
             }
             else
             {
@@ -107,8 +109,10 @@ namespace EVISION.Camera.plugin
             if (category == 3) { cat = "άλλο"; }
             ApplicationView.classText.text = "κατηγορία " + cat;
 
-
             yield return StartCoroutine(GetCategoryDescription(category));
+
+            ApplicationView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime).ToString() + "\nOCRtime: " + OCRtime.ToString()
+                + "\nMajorityTime: " + Majoritytime.ToString();
 
             annotationProccessBusy = false;
             
@@ -129,16 +133,28 @@ namespace EVISION.Camera.plugin
 
         public IEnumerator GetCategoryDescription(int category)
         {
+            float startOCRt = Time.realtimeSinceStartup;
+            
             //wait until the annotation process returns
             yield return StartCoroutine(OCRAnnotator.PerformAnnotation(camTexture));
             annotationText = OCRAnnotator.GetAnnotationText();
 
+            float endOCRt = Time.realtimeSinceStartup;
+
+            OCRtime = CalculateTimeDifference(startOCRt, endOCRt);
+
             // Perform majority voting
             if (!string.IsNullOrEmpty(annotationText))
             {
+
+                float startMajt = Time.realtimeSinceStartup;
+
                 List<string> OCR_List = GenericUtils.SplitStringToList(annotationText);
                 MajorityVoting majVoting = new MajorityVoting();
                 yield return StartCoroutine(majVoting.PerformMajorityVoting(OCR_List));
+
+                float endMajt = Time.realtimeSinceStartup;
+                Majoritytime = CalculateTimeDifference(startMajt, endMajt);
 
                 ////save to file
                 //ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
@@ -191,7 +207,7 @@ namespace EVISION.Camera.plugin
         {
             // lock the process so the user cannot access it.
             annotationProccessBusy = true;
-
+            
             // Get camera texture.
             //camTexture = cam.TakeScreenShot();
             camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
@@ -252,6 +268,15 @@ namespace EVISION.Camera.plugin
             ApplicationView.wordsText.text = "κενό";
             ApplicationView.MajorityFinalText.text = "κενό";
             ApplicationView.MajorityValidText.text = "κενό";
+        }
+
+        public float CalculateTimeDifference(float start, float end)
+        {
+            float timeToCompleteSec = 0;
+
+            timeToCompleteSec = (float)System.Math.Round(end - start,2);
+
+            return timeToCompleteSec;
         }
     }
 }
