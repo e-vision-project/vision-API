@@ -124,21 +124,13 @@ public class AndroidCamera : DeviceCamera
             return;
         }
 
-        // change as user rotates iPhone or Android:
-
-        int cwNeeded = activeCameraTexture.videoRotationAngle;
         // Unity helpfully returns the _clockwise_ twist needed
-        // guess nobody at Unity noticed their product works in counterclockwise:
-        int ccwNeeded = -cwNeeded;
-
-        // IF the image needs to be mirrored, it seems that it
-        // ALSO needs to be spun. Strange: but true.
-        if (activeCameraTexture.videoVerticallyMirrored) ccwNeeded += 180;
+        int ccwNeeded = -activeCameraTexture.videoRotationAngle;
 
         // you'll be using a UI RawImage, so simply spin the RectTransform
         imageParent.localEulerAngles = new Vector3(0f, 0f, ccwNeeded);
 
-        float videoRatio = (float)activeCameraTexture.height / (float)activeCameraTexture.width;
+        float videoRatio = (float)activeCameraTexture.width / (float)activeCameraTexture.height;
 
         // you'll be using an AspectRatioFitter on the Image, so simply set it
         imageFitter.aspectRatio = videoRatio;

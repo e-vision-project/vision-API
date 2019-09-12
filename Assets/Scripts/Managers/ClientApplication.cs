@@ -88,14 +88,12 @@ namespace EVISION.Camera.plugin
             if (Application.isEditor)
             {
                 Debug.Log("Editor");
-                camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
-                //camTexture = cam.TakeScreenShot();
-                ApplicationView.helperImage.texture = camTexture;
+                //camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
+                camTexture = cam.TakeScreenShot();
             }
             else
             {
                 camTexture = cam.TakeScreenShot();
-                ApplicationView.helperImage.texture = camTexture;
                 ApplicationView.SaveImageFile(camTexture);
 
             }
