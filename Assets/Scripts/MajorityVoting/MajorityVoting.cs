@@ -237,17 +237,8 @@ public class MajorityVoting : AsyncBehaviour
 
     private List<int> GetCategoryCount(List<string> cat, List<string> cat_unq)
     {
-        List<int> cat_count = new List<int>();
-
-        string[] cat_arr = cat.ToArray();
-        string[] cat_unq_arr = cat_unq.ToArray();
-
-        for (int i = 0; i < cat_unq.Count; i++)
-        {
-            cat_count.Add(cat_arr.Where(x => x.Equals(cat_unq_arr[i])).Count());
-        }
-
-        return cat_count;
+        var catsDict = cat.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count());
+        return cat_unq.Select(c => catsDict[c]).ToList();
     }
 
     private List<int> GetCategoryCountParallel(List<string> cat, List<string> cat_unq)
@@ -256,7 +247,6 @@ public class MajorityVoting : AsyncBehaviour
 
         string[] cat_arr = cat.ToArray();
         string[] cat_unq_arr = cat_unq.ToArray();
-
 
         for (int i = 0; i < cat_unq.Count; i++)
         {

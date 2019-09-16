@@ -542,7 +542,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DLModel: {fileID: 4900000, guid: f5950a9b6af743d4dbe99a2eec7cb495, type: 3}
   LabelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
-  image_name: shelf
+  image_name: p_1
   cameraDevice: 1
 --- !u!114 &275421736
 MonoBehaviour:
