@@ -58,7 +58,6 @@ public class MajorityVoting : AsyncBehaviour
             yield return null;
         }
 
-
         // keep only elements with lenght >= 3
         wordsOCR = KeepElementsWithLen(wordsOCR, 3);
         // remove greek accent and make all uppercase
@@ -90,12 +89,12 @@ public class MajorityVoting : AsyncBehaviour
         List<string> cropped_cat2_unq = cropped_cat2.Distinct().ToList();
         List<string> cropped_cat3_unq = cropped_cat3.Distinct().ToList();
         List<string> cropped_cat4_unq = cropped_cat4.Distinct().ToList();
-        //List<string> cropped_desc_unq = cropped_desc.Distinct().ToList();
+        List<string> cropped_desc_unq = cropped_desc.Distinct().ToList();
 
         // get number of occurancies of each element in every category
-        List<int> count_cat2 = GetCategoryCount(cropped_cat2, cropped_cat2_unq);
-        List<int> count_cat3 = GetCategoryCount(cropped_cat3, cropped_cat3_unq);
-        List<int> count_cat4 = GetCategoryCount(cropped_cat4, cropped_cat4_unq);
+        List<int> count_cat2 = GetCategoryCount(cropped_cat2);
+        List<int> count_cat3 = GetCategoryCount(cropped_cat3);
+        List<int> count_cat4 = GetCategoryCount(cropped_cat4);
         //List<int> count_desc = GetCategoryCount(cropped_desc, cropped_desc_unq);
 
         masoutis_item = new MasoutisItem();
@@ -227,18 +226,21 @@ public class MajorityVoting : AsyncBehaviour
             desc.AddRange(splitted);
         }
 
-        Dictionary<string, int[]> dict = new Dictionary<string, int[]>();
-        for (int i = 0; i < descSplitted.Count; i++)
-        {
-            // get all indexes of the element (desc[i])
-        }
+        //Dictionary<string, int[]> dict = new Dictionary<string, int[]>();
+        //for (int i = 0; i < descSplitted.Count; i++)
+        //{
+        //    // get all indexes of the element (desc[i])
+        //}
 
     }
 
-    private List<int> GetCategoryCount(List<string> cat, List<string> cat_unq)
+
+    /// <summary>
+    /// Group categories based on number of occurences and return the count of each group.
+    /// </summary>
+    private List<int> GetCategoryCount(List<string> cat)
     {
-        var catsDict = cat.GroupBy(x => x).ToDictionary(k => k.Key, v => v.Count());
-        return cat_unq.Select(c => catsDict[c]).ToList();
+        return cat.GroupBy(x => x).Select(g => g.Count()).ToList();
     }
 
     private List<int> GetCategoryCountParallel(List<string> cat, List<string> cat_unq)
