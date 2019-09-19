@@ -44,7 +44,7 @@ namespace EVISION.Camera.plugin
             annotationCompleted = false;
 
             var features = new List<Feature>();
-            features.Add(new Feature() { maxResults = 100, type = Enumerators.FeatureType.TEXT_DETECTION });
+            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION });
 
             var img = new FrostweepGames.Plugins.GoogleCloud.Vision.Image();
             if (string.IsNullOrEmpty(imageData))

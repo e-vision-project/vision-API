@@ -29,6 +29,8 @@ public class MajorityVoting : AsyncBehaviour
     public static List<string> cat2 = new List<string>(115180);
     public static List<string> cat3 = new List<string>(115180);
     public static List<string> cat4 = new List<string>(115180);
+
+    private static readonly Dictionary<string, List<int>> tryOut = new Dictionary<string, List<int>>();
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
 
     public MasoutisItem masoutis_item;
@@ -52,33 +54,33 @@ public class MajorityVoting : AsyncBehaviour
     {
 
         ApplicationView.wordsText.text = string.Join(", ", wordsOCR.ToArray());
-        Debug.Log("load db start :" + Time.realtimeSinceStartup);
+        //Debug.Log("load db start :" + Time.realtimeSinceStartup);
         // read database to class properties
         LoadDatabaseFiles(masoutisFiles);
         while (!database_ready)
         {
             yield return null;
         }
-        Debug.Log("load db end :" + Time.realtimeSinceStartup);
+        //Debug.Log("load db end :" + Time.realtimeSinceStartup);
 
         // keep only elements with lenght >= 3
-        Debug.Log("Elements with len start :" + Time.realtimeSinceStartup);
+        //Debug.Log("Elements with len start :" + Time.realtimeSinceStartup);
         wordsOCR = KeepElementsWithLen(wordsOCR, 4);
-        Debug.Log("Elements with len end :" + Time.realtimeSinceStartup);
+        //Debug.Log("Elements with len end :" + Time.realtimeSinceStartup);
         // remove greek accent and make all uppercase
-        Debug.Log("Accent start :" + Time.realtimeSinceStartup);
+        //Debug.Log("Accent start :" + Time.realtimeSinceStartup);
         wordsOCR = RemoveGreekAccentSequential(wordsOCR);
-        Debug.Log("Accent end :" + Time.realtimeSinceStartup);
+        //Debug.Log("Accent end :" + Time.realtimeSinceStartup);
 
         //var dict = desc.Select((s, i) => new { s, i }).ToDictionary(x => x.i, x => x.s);
 
-        //Optimizing(wordsOCR);
+        Optimizing(wordsOCR);
 
-        Debug.Log("Valid words start :" + Time.realtimeSinceStartup);
+        //Debug.Log("Valid words start :" + Time.realtimeSinceStartup);
         wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
-        Debug.Log("Valid words end :" + Time.realtimeSinceStartup);
+        //Debug.Log("Valid words end :" + Time.realtimeSinceStartup);
         //wordsOCR.ForEach(Debug.Log);
-        ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
+        //ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
 
 
 
@@ -102,9 +104,9 @@ public class MajorityVoting : AsyncBehaviour
             }
         }
 
-        Debug.Log("cropp categories end :" + Time.realtimeSinceStartup);
+        //Debug.Log("cropp categories end :" + Time.realtimeSinceStartup);
 
-        Debug.Log("distinct start :" + Time.realtimeSinceStartup);
+        //Debug.Log("distinct start :" + Time.realtimeSinceStartup);
 
         // keep only distinct elemets in each category
         List<string> cropped_cat2_unq = cropped_cat2.Distinct().ToList();
@@ -112,27 +114,22 @@ public class MajorityVoting : AsyncBehaviour
         List<string> cropped_cat4_unq = cropped_cat4.Distinct().ToList();
         List<string> cropped_desc_unq = cropped_desc.Distinct().ToList();
 
-        Debug.Log("distinct end :" + Time.realtimeSinceStartup);
+        //Debug.Log("distinct end :" + Time.realtimeSinceStartup);
 
-        Debug.Log("category count start :" + Time.realtimeSinceStartup);
+        //Debug.Log("category count start :" + Time.realtimeSinceStartup);
         // get number of occurancies of each element in every category
         List<int> count_cat2 = GetCategoryCount(cropped_cat2);
         List<int> count_cat3 = GetCategoryCount(cropped_cat3);
         List<int> count_cat4 = GetCategoryCount(cropped_cat4);
-        Debug.Log("category count end :" + Time.realtimeSinceStartup);
+        //Debug.Log("category count end :" + Time.realtimeSinceStartup);
 
         masoutis_item = new MasoutisItem();
 
         try
         {
-            Debug.Log("masoutis item start :" + Time.realtimeSinceStartup);
             masoutis_item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
             masoutis_item.category_3 = cropped_cat3_unq[count_cat3.IndexOf(count_cat3.Max())];
             masoutis_item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
-            Debug.Log("masoutis item end :" + Time.realtimeSinceStartup);
-            Debug.Log(masoutis_item.category_2);
-            Debug.Log(masoutis_item.category_3);
-            Debug.Log(masoutis_item.category_4);
             ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
 
 
@@ -152,39 +149,57 @@ public class MajorityVoting : AsyncBehaviour
     {
         Debug.Log("dict start :" + Time.realtimeSinceStartup);
 
-        var dict = desc.Select((x, i) => new { Value = x, Index = i })
-                  .GroupBy(x => x.Value)
-                  .ToDictionary(x => x.Key, x => x.Select(y => y.Index)
-                                                  .ToArray());
+        //var dict = desc.Select((x, i) => new { Value = x, Index = i })
+        //          .GroupBy(x => x.Value)
+        //          .ToDictionary(x => x.Key, x => x.Select(y => y.Index)
+        //                                          .ToArray());
 
         Dictionary<string, List<int>> dict_2 = new Dictionary<string, List<int>>();
 
-        foreach (var key in dict.Keys)
-        {
-            string[] splitted = key.Split(' ');
+        //description index to count
+        var counter = new Dictionary<int, int>();
 
-            foreach (string s in splitted)
+        foreach (var foundTerm in wordsOCR.Where(s => tryOut.ContainsKey(s)))
+        {
+            foreach (var idx in tryOut[foundTerm])
             {
-                foreach (var word in wordsOCR)
+                if (!counter.ContainsKey(idx))
                 {
-                    if (s.Equals(word))
-                    {
-                        if (dict_2.ContainsKey(s))
-                        {
-                            dict_2[s].AddRange(dict[key]);
-                        }
-                        else
-                        {
-                            dict_2.Add(s, dict[key].ToList());
-                        }
-                    }
+                    counter[idx] = 1;
+                }
+                else
+                {
+                    counter[idx]++;
                 }
             }
         }
 
+        var mx = counter.Values.Max();
+        var result = counter.FirstOrDefault(kvp => kvp.Value == mx).Key;
+        Debug.Log(cat2[result]);
+        Debug.Log(cat3[result]);
+        Debug.Log(cat4[result]);
+
+        //foreach (var key in dict.Keys)
+        //{
+        //    string[] splitted = key.Split(' ');
+
+        //    foreach (string s in splitted)
+        //    {
+        //        if (dict_2.ContainsKey(s))
+        //        {
+        //            dict_2[s].AddRange(dict[key]);
+        //        }
+        //        else
+        //        {
+        //            dict_2.Add(s, dict[key].ToList());
+        //        }
+        //    }
+        //}
 
 
-        Debug.Log("dict end :" + Time.realtimeSinceStartup);
+
+        //Debug.Log("dict end :" + Time.realtimeSinceStartup);
 
     }
 
@@ -229,6 +244,20 @@ public class MajorityVoting : AsyncBehaviour
                 string[] splitted = desc[i].Split(' ');
                 HashSet<string> temp_hash = new HashSet<string>(splitted);
                 descSplitted.Add(temp_hash);
+
+                List<int> ls;
+
+                foreach (var it in temp_hash)
+                {
+                    if (!tryOut.TryGetValue(it, out ls))
+                    {
+                        ls = new List<int>(3);
+                        tryOut[it] = ls;
+                    }
+
+                    ls.Add(i);
+
+                }
             }
         }
         database_ready = true;
