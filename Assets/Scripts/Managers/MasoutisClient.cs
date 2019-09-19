@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 namespace EVISION.Camera.plugin
 {
 
-    public class ClientApplication : MonoBehaviour
+    public class MasoutisClient : MonoBehaviour
     {
         #region properties
  
         public IDeviceCamera cam;
         private IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
-        private IModelPrediction _classifier;
         private IModelPrediction featureExtractor;
         private IModelPrediction svmClassifier;
 
@@ -156,10 +155,6 @@ namespace EVISION.Camera.plugin
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
 
-                ////save to file
-                //ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
-                //                 ApplicationView.MajorityText.text + "\ntrail: " + majVoting.masoutis_item.category_2 + ", shelf: " + majVoting.masoutis_item.category_3 + ", product: " + majVoting.masoutis_item.category_4
-                //                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
 
                 switch (category)
                 {
@@ -195,9 +190,6 @@ namespace EVISION.Camera.plugin
                 ApplicationView.MajorityFinalText.text = "κενό";
                 ApplicationView.MajorityValidText.text = "κενό";
                 ApplicationView.classText.text = "κενό";
-
-                //ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + "OCR_EMPTY"
-                //                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");
 
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("κατηγορία " + cat + ", Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
             }
@@ -281,3 +273,7 @@ namespace EVISION.Camera.plugin
     }
 }
 
+////save to file
+//ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
+//                 ApplicationView.MajorityText.text + "\ntrail: " + majVoting.masoutis_item.category_2 + ", shelf: " + majVoting.masoutis_item.category_3 + ", product: " + majVoting.masoutis_item.category_4
+//                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");

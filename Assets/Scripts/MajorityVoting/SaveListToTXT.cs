@@ -7,18 +7,18 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
 [Serializable]
-public class SaveList : MonoBehaviour
+public class SaveListToTXT : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        SaveListToTXT("Assets/Resources/masoutis_cat2.txt");
+        SaveList("Assets/Resources/masoutis_cat2.txt");
 
         //var logFile = File.ReadAllLines("Assets/Resources/test.txt");
         //var logList = new List<string>(logFile);
     }
 
-    IEnumerator SaveListToTXT(string path)
+    IEnumerator SaveList(string path)
     {
         MajorityVoting maj = new MajorityVoting();
         maj.ReadDatabaseFile("masoutis_db");

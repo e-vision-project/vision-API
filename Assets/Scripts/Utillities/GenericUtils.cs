@@ -47,5 +47,10 @@ namespace EVISION.Camera.plugin
             rotatedTexture.Apply();
             return rotatedTexture;
         }
+
+        public static void ScaleTexture(Texture2D originalTexture, int width, int height)
+        {
+            TextureScale.Bilinear(originalTexture, width, height);
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace EVISION.Camera.plugin
         public static RawImage helperImage;
         public GameObject button;
         public Text text;
-        public ClientApplication clientApp;
+        public MasoutisClient clientApp;
         public DeviceCamera cam;
         public static Text wordsText;
         public static Text MajorityValidText;

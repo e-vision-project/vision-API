@@ -67,7 +67,7 @@ public class MajorityVoting : AsyncBehaviour
         // OCR words sanitization
         wordsOCR = KeepElementsWithLen(wordsOCR, 4);
         wordsOCR = RemoveGreekAccentSequential(wordsOCR);
-        
+        wordsOCR = RemoveHotWords(wordsOCR);
         // Get desc index with the most votes
         var maxDescIndex = FindMaxVotingIndex(wordsOCR);
 
@@ -471,6 +471,21 @@ public class MajorityVoting : AsyncBehaviour
         });
 
         return wordsEdited;
+    }
+
+    // TODO Optimize with a hashset and txt to read words.
+    private List<string> RemoveHotWords(List<string> wordsOCR)
+    {
+        var wordsSanitized = new List<string>();
+        foreach (var word in wordsOCR)
+        {
+            if (word != "GRAND" && word != "ΔΩΡΟ" && word != "SUPER" && word != "ΠΑΙΧΝΙΔΙ" && word != "KIDS")
+            {
+                wordsSanitized.Add(word);
+            }
+        }
+
+        return wordsSanitized;
     }
 
 }

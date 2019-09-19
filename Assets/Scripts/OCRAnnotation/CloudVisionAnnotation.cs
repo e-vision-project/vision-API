@@ -5,6 +5,15 @@ using FrostweepGames.Plugins.GoogleCloud.Vision;
 
 namespace EVISION.Camera.plugin
 {
+
+    /// <summary>
+    /// Make calls to the Cloud vision API for getting the OCR words.
+    /// For optimization check :
+    /// a) GenericUtils.ScaleTexture in Perform annotation, faster with slight loss in accuracy.
+    /// b) Max results in AnnotateImage, set to 50 as default.
+    /// </summary>
+
+
     public class CloudVisionAnnotation : MonoBehaviour, IAnnotate
     {
         private GCVision _gcVision;
@@ -15,7 +24,12 @@ namespace EVISION.Camera.plugin
 
         public IEnumerator PerformAnnotation(Texture2D snap)
         {
+            // Rescale texture for faster perfomance but loss in accuracy
+            //GenericUtils.ScaleTexture(snap, (int)(snap.width * 0.9f), (int)(snap.height * 0.9f));
+
+            // Convert to base64 encoding.
             string _selectedImageData = ImageConvert.Convert(snap);
+
             AnnotateImage(_selectedImageData);
             while (annotationCompleted != true)
             {
