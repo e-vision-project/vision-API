@@ -30,7 +30,7 @@ public class MajorityVoting : AsyncBehaviour
     public static List<string> cat3 = new List<string>(115180);
     public static List<string> cat4 = new List<string>(115180);
 
-    private static readonly Dictionary<string, List<int>> tryOut = new Dictionary<string, List<int>>();
+    private static readonly Dictionary<string, List<int>> dictOfIdx = new Dictionary<string, List<int>>();
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
 
     public MasoutisItem masoutis_item;
@@ -42,8 +42,6 @@ public class MajorityVoting : AsyncBehaviour
     List<int> cnt_found = new List<int>();
     public bool database_ready = false;
 
-    Dictionary<string, int[]> dictOfIndexes;
-
     // empty constructor
     public MajorityVoting()
     {
@@ -52,43 +50,58 @@ public class MajorityVoting : AsyncBehaviour
 
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
+        if(ApplicationView.wordsText.text != null)
+        {
+            ApplicationView.wordsText.text = string.Join(", ", wordsOCR.ToArray());
+        }
 
-        ApplicationView.wordsText.text = string.Join(", ", wordsOCR.ToArray());
-        //Debug.Log("load db start :" + Time.realtimeSinceStartup);
+        Debug.Log("load db start :" + Time.realtimeSinceStartup);
         // read database to class properties
         LoadDatabaseFiles(masoutisFiles);
         while (!database_ready)
         {
             yield return null;
         }
-        //Debug.Log("load db end :" + Time.realtimeSinceStartup);
+        Debug.Log("load db end :" + Time.realtimeSinceStartup);
 
-        // keep only elements with lenght >= 3
-        //Debug.Log("Elements with len start :" + Time.realtimeSinceStartup);
+        // OCR words sanitization
         wordsOCR = KeepElementsWithLen(wordsOCR, 4);
-        //Debug.Log("Elements with len end :" + Time.realtimeSinceStartup);
-        // remove greek accent and make all uppercase
-        //Debug.Log("Accent start :" + Time.realtimeSinceStartup);
         wordsOCR = RemoveGreekAccentSequential(wordsOCR);
-        //Debug.Log("Accent end :" + Time.realtimeSinceStartup);
+        
+        // Get desc index with the most votes
+        var maxDescIndex = FindMaxVotingIndex(wordsOCR);
 
-        //var dict = desc.Select((s, i) => new { s, i }).ToDictionary(x => x.i, x => x.s);
+        masoutis_item = new MasoutisItem();
 
-        Optimizing(wordsOCR);
+        try
+        {
+            masoutis_item.category_2 = cat2[maxDescIndex];
+            masoutis_item.category_3 = cat3[maxDescIndex];
+            masoutis_item.category_4 = cat4[maxDescIndex];
+            ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
+        }
+        catch (System.Exception)
+        {
+            Debug.LogError("Problem in category index");
+            masoutis_item.category_2 = "μη αναγνωρίσιμο";
+            masoutis_item.category_3 = "μη αναγνωρίσιμο";
+            masoutis_item.category_4 = "μη αναγνωρίσιμο";
+            ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+        }
 
-        //Debug.Log("Valid words start :" + Time.realtimeSinceStartup);
+    }
+
+    private void FindMaxIndex_OBSOLETE(List<string> wordsOCR)
+    {
         wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
-        //Debug.Log("Valid words end :" + Time.realtimeSinceStartup);
         //wordsOCR.ForEach(Debug.Log);
-        //ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
+        ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
 
 
 
         //Get all products from the db that contain the valid words.
         List<string> cropped_cat2 = new List<string>(), cropped_cat3 = new List<string>();
         List<string> cropped_cat4 = new List<string>(), cropped_desc = new List<string>();
-
-        Debug.Log("cropp categories start :" + Time.realtimeSinceStartup);
 
         // iterate for all unique valid words
         for (int i = 0; i < cnt_found.Count; i++)
@@ -104,19 +117,13 @@ public class MajorityVoting : AsyncBehaviour
             }
         }
 
-        //Debug.Log("cropp categories end :" + Time.realtimeSinceStartup);
-
-        //Debug.Log("distinct start :" + Time.realtimeSinceStartup);
-
         // keep only distinct elemets in each category
         List<string> cropped_cat2_unq = cropped_cat2.Distinct().ToList();
         List<string> cropped_cat3_unq = cropped_cat3.Distinct().ToList();
         List<string> cropped_cat4_unq = cropped_cat4.Distinct().ToList();
         List<string> cropped_desc_unq = cropped_desc.Distinct().ToList();
 
-        //Debug.Log("distinct end :" + Time.realtimeSinceStartup);
 
-        //Debug.Log("category count start :" + Time.realtimeSinceStartup);
         // get number of occurancies of each element in every category
         List<int> count_cat2 = GetCategoryCount(cropped_cat2);
         List<int> count_cat3 = GetCategoryCount(cropped_cat3);
@@ -142,26 +149,19 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_4 = "μη αναγνωρίσιμο";
             ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
         }
-
     }
 
-    private static void Optimizing(List<string> wordsOCR)
+    private static int FindMaxVotingIndex(List<string> wordsOCR)
     {
-        Debug.Log("dict start :" + Time.realtimeSinceStartup);
+        Debug.Log("dict start :" + Time.realtimeSinceStartup);  
 
-        //var dict = desc.Select((x, i) => new { Value = x, Index = i })
-        //          .GroupBy(x => x.Value)
-        //          .ToDictionary(x => x.Key, x => x.Select(y => y.Index)
-        //                                          .ToArray());
-
-        Dictionary<string, List<int>> dict_2 = new Dictionary<string, List<int>>();
-
-        //description index to count
+        //description index to count of index
         var counter = new Dictionary<int, int>();
+        var validWords = new List<string>(3);
 
-        foreach (var foundTerm in wordsOCR.Where(s => tryOut.ContainsKey(s)))
+        foreach (var foundTerm in wordsOCR.Where(s => dictOfIdx.ContainsKey(s)))
         {
-            foreach (var idx in tryOut[foundTerm])
+            foreach (var idx in dictOfIdx[foundTerm])
             {
                 if (!counter.ContainsKey(idx))
                 {
@@ -172,34 +172,15 @@ public class MajorityVoting : AsyncBehaviour
                     counter[idx]++;
                 }
             }
+            validWords.Add(foundTerm);
         }
 
+
+        ApplicationView.MajorityValidText.text = string.Join(", ", validWords.Distinct().ToList().ToArray());
         var mx = counter.Values.Max();
         var result = counter.FirstOrDefault(kvp => kvp.Value == mx).Key;
-        Debug.Log(cat2[result]);
-        Debug.Log(cat3[result]);
-        Debug.Log(cat4[result]);
-
-        //foreach (var key in dict.Keys)
-        //{
-        //    string[] splitted = key.Split(' ');
-
-        //    foreach (string s in splitted)
-        //    {
-        //        if (dict_2.ContainsKey(s))
-        //        {
-        //            dict_2[s].AddRange(dict[key]);
-        //        }
-        //        else
-        //        {
-        //            dict_2.Add(s, dict[key].ToList());
-        //        }
-        //    }
-        //}
-
-
-
-        //Debug.Log("dict end :" + Time.realtimeSinceStartup);
+        Debug.Log("dict end :" + Time.realtimeSinceStartup);
+        return result;
 
     }
 
@@ -238,7 +219,6 @@ public class MajorityVoting : AsyncBehaviour
                     await new WaitForUpdate();
                 }
             }
-            //Debug.Log("files read: " + Time.realtimeSinceStartup);
             for (int i = 0; i < desc.Count; i++)
             {
                 string[] splitted = desc[i].Split(' ');
@@ -249,10 +229,10 @@ public class MajorityVoting : AsyncBehaviour
 
                 foreach (var it in temp_hash)
                 {
-                    if (!tryOut.TryGetValue(it, out ls))
+                    if (!dictOfIdx.TryGetValue(it, out ls))
                     {
-                        ls = new List<int>(3);
-                        tryOut[it] = ls;
+                        ls = new List<int>();
+                        dictOfIdx[it] = ls;
                     }
 
                     ls.Add(i);
@@ -436,30 +416,12 @@ public class MajorityVoting : AsyncBehaviour
         return validWords.Distinct().ToList();
     }
 
-    private Dictionary<string, int[]> GetValidWords(List<string> wordsOCR)
-    {
-        Dictionary<string, int[]> croppedDict = new Dictionary<string, int[]>();
-
-        foreach (var word in wordsOCR)
-        {
-            if (dictOfIndexes.ContainsKey(word))
-            {
-                croppedDict.Add(word, dictOfIndexes[word]);
-            }
-        }
-
-        return croppedDict;
-    }
-
     private List<string> KeepElementsWithLen(List<string> words, int len)
     {
-
         // keep elements with length >= len
         var croppedList = (from word in words
                            where word.Length >= len
                            select word).ToList();
-
-
         return croppedList;
     }
 
@@ -527,4 +489,32 @@ public class MajorityVoting : AsyncBehaviour
 //    string[] splitted = x.Split(' ');
 //    descSplit.AddRange(splitted);
 //    dict.Add(descSplit, dictOfIndexes[key.ToString()]);
+//}
+
+
+//var dict = desc.Select((s, i) => new { s, i }).ToDictionary(x => x.i, x => x.s);
+
+
+//var dict = desc.Select((x, i) => new { Value = x, Index = i })
+//          .GroupBy(x => x.Value)
+//          .ToDictionary(x => x.Key, x => x.Select(y => y.Index)
+//                                          .ToArray());
+
+//Dictionary<string, List<int>> dict_2 = new Dictionary<string, List<int>>();
+
+//foreach (var key in dict.Keys)
+//{
+//    string[] splitted = key.Split(' ');
+
+//    foreach (string s in splitted)
+//    {
+//        if (dict_2.ContainsKey(s))
+//        {
+//            dict_2[s].AddRange(dict[key]);
+//        }
+//        else
+//        {
+//            dict_2.Add(s, dict[key].ToList());
+//        }
+//    }
 //}
