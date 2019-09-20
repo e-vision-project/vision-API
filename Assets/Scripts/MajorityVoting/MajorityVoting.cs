@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using CsvHelper;
 using System.Text;
 using UnityAsync;
-using System.Threading.Tasks;
 using EVISION.Camera.plugin;
 
 [Serializable]
@@ -189,7 +188,6 @@ public class MajorityVoting : AsyncBehaviour
         if (desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
             && cat4.Count == 0 && cat1.Count == 0)
         {
-            //Debug.Log("reading database: " + Time.realtimeSinceStartup);
             foreach (var file in files)
             {
                 TextAsset datafile = Resources.Load<TextAsset>(file);
@@ -219,6 +217,8 @@ public class MajorityVoting : AsyncBehaviour
                     await new WaitForUpdate();
                 }
             }
+
+            // split desc elements and add to dictinonary (splitted word to unsplitted parent index).
             for (int i = 0; i < desc.Count; i++)
             {
                 string[] splitted = desc[i].Split(' ');
@@ -234,9 +234,7 @@ public class MajorityVoting : AsyncBehaviour
                         ls = new List<int>();
                         dictOfIdx[it] = ls;
                     }
-
                     ls.Add(i);
-
                 }
             }
         }
