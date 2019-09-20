@@ -99,7 +99,8 @@ namespace EVISION.Camera.plugin
 
             }
 
-            int category = ClassifyCategory(camTexture);
+            //int category = ClassifyCategory(camTexture);
+            int category = 2;
 
             string cat = "κενό";
             if (category == 0) { cat = "διάδρομος"; }

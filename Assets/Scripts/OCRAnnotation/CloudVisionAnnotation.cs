@@ -19,13 +19,21 @@ namespace EVISION.Camera.plugin
         private GCVision _gcVision;
         private string textAnnotation = null;
         private bool annotationCompleted = false;
+        [Header("Rescale Image")]
+        public bool RescaleInput = false;
+        [Tooltip("The resolution to be scaled")]
+        public Vector2 scaleResolution;
 
         #region IAnnotate callbacks
 
         public IEnumerator PerformAnnotation(Texture2D snap)
         {
             // Rescale texture for faster perfomance but loss in accuracy
-            //GenericUtils.ScaleTexture(snap, (int)(snap.width * 0.9f), (int)(snap.height * 0.9f));
+            if (RescaleInput)
+            {
+                GenericUtils.ScaleTexture(snap, (int)scaleResolution.x, (int)scaleResolution.y);
+                Debug.Log(snap.width + " ," + snap.height);
+            }
 
             // Convert to base64 encoding.
             string _selectedImageData = ImageConvert.Convert(snap);

@@ -12,7 +12,7 @@ namespace EVISION.Camera.plugin
         public GameObject image;
         public static RawImage helperImage;
         public GameObject button;
-        public Text text;
+        //public Text text;
         public MasoutisClient clientApp;
         public DeviceCamera cam;
         public static Text wordsText;
@@ -21,6 +21,7 @@ namespace EVISION.Camera.plugin
         public static Text classText;
         public static Text TimeText;
         public Text resolutionText;
+        public Text devicesText;
         public static int capture_count = 0;
         public static string capture_name = "";
 
@@ -28,7 +29,6 @@ namespace EVISION.Camera.plugin
         // Start is called before the first frame update
         void Start()
         {
-            wordsText = GameObject.FindGameObjectWithTag("OCR_TEXT").GetComponent<Text>();
             MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
             MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
             classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
@@ -56,7 +56,7 @@ namespace EVISION.Camera.plugin
                 button.SetActive(true);
             }
 
-            //devices.text = WebCamTexture.devices.Length.ToString();
+            devicesText.text = WebCamTexture.devices.Length.ToString();
            
             resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
                 + cam.GetCamTextureWidthHeight().y.ToString();  

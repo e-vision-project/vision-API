@@ -49,10 +49,6 @@ public class MajorityVoting : AsyncBehaviour
 
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
-        if(ApplicationView.wordsText.text != null)
-        {
-            ApplicationView.wordsText.text = string.Join(", ", wordsOCR.ToArray());
-        }
 
         Debug.Log("load db start :" + Time.realtimeSinceStartup);
         // read database to class properties
@@ -72,6 +68,14 @@ public class MajorityVoting : AsyncBehaviour
 
         masoutis_item = new MasoutisItem();
 
+
+        if (maxDescIndex == -1)
+        {
+            HandlingUnlocatedIndex();
+            yield return null;
+        }
+
+
         try
         {
             masoutis_item.category_2 = cat2[maxDescIndex];
@@ -81,13 +85,18 @@ public class MajorityVoting : AsyncBehaviour
         }
         catch (System.Exception)
         {
-            Debug.LogError("Problem in category index");
-            masoutis_item.category_2 = "μη αναγνωρίσιμο";
-            masoutis_item.category_3 = "μη αναγνωρίσιμο";
-            masoutis_item.category_4 = "μη αναγνωρίσιμο";
-            ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+            HandlingUnlocatedIndex();
         }
 
+    }
+
+    private void HandlingUnlocatedIndex()
+    {
+        Debug.LogError("Problem in category index");
+        masoutis_item.category_2 = "μη αναγνωρίσιμο";
+        masoutis_item.category_3 = "μη αναγνωρίσιμο";
+        masoutis_item.category_4 = "μη αναγνωρίσιμο";
+        ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
     }
 
     private void FindMaxIndex_OBSOLETE(List<string> wordsOCR)
@@ -152,7 +161,6 @@ public class MajorityVoting : AsyncBehaviour
 
     private static int FindMaxVotingIndex(List<string> wordsOCR)
     {
-        Debug.Log("dict start :" + Time.realtimeSinceStartup);  
 
         //description index to count of index
         var counter = new Dictionary<int, int>();
@@ -176,11 +184,19 @@ public class MajorityVoting : AsyncBehaviour
 
 
         ApplicationView.MajorityValidText.text = string.Join(", ", validWords.Distinct().ToList().ToArray());
-        var mx = counter.Values.Max();
-        var result = counter.FirstOrDefault(kvp => kvp.Value == mx).Key;
-        Debug.Log("dict end :" + Time.realtimeSinceStartup);
-        return result;
 
+        try
+        {
+            var mx = counter.Values.Max();
+            var result = counter.FirstOrDefault(kvp => kvp.Value == mx).Key;
+            return result;
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Problem in locating max category");
+            return -1;
+        }
+        
     }
 
     public async void LoadDatabaseFiles(string[] files)
@@ -477,7 +493,7 @@ public class MajorityVoting : AsyncBehaviour
         var wordsSanitized = new List<string>();
         foreach (var word in wordsOCR)
         {
-            if (word != "GRAND" && word != "ΔΩΡΟ" && word != "SUPER" && word != "ΠΑΙΧΝΙΔΙ" && word != "KIDS")
+            if (word != "GRAND" && word != "ΔΩΡΟ" && word != "SUPER" && word != "ΠΑΙΧΝΙΔΙ" && word != "KIDS" && word != "HELLAS")
             {
                 wordsSanitized.Add(word);
             }
