@@ -107,12 +107,19 @@ namespace EVISION.Camera.plugin
             if (category == 1) { cat = "ράφι"; }
             if (category == 2) { cat = "προϊόν"; }
             if (category == 3) { cat = "άλλο"; }
-            ApplicationView.classText.text = "κατηγορία " + cat;
+
+            if (ApplicationView.classText != null)
+            {
+                ApplicationView.classText.text = "κατηγορία " + cat;
+            }
 
             yield return StartCoroutine(GetCategoryDescription(category));
 
-            ApplicationView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime).ToString() + "\nOCRtime: " + OCRtime.ToString()
-                + "\nMajorityTime: " + Majoritytime.ToString();
+            if (ApplicationView.TimeText != null)
+            {
+                ApplicationView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime).ToString() + "\nOCRtime: " + OCRtime.ToString()
+                    + "\nMajorityTime: " + Majoritytime.ToString();
+            }
 
             annotationProccessBusy = false;
             
@@ -187,10 +194,15 @@ namespace EVISION.Camera.plugin
                 if(category == 2) { cat = "προϊόν"; }
                 if(category == 3) { cat = "άλλο"; }
 
-                ApplicationView.wordsText.text = "κενό";
-                ApplicationView.MajorityFinalText.text = "κενό";
-                ApplicationView.MajorityValidText.text = "κενό";
-                ApplicationView.classText.text = "κενό";
+                if (ApplicationView.MajorityFinalText != null && ApplicationView.MajorityValidText != null)
+                {
+                    ApplicationView.MajorityFinalText.text = "κενό";
+                    ApplicationView.MajorityValidText.text = "κενό";
+                }
+                if (ApplicationView.classText != null)
+                {
+                    ApplicationView.classText.text = "κενό";
+                }
 
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("κατηγορία " + cat + ", Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
             }

@@ -81,7 +81,10 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_2 = cat2[maxDescIndex];
             masoutis_item.category_3 = cat3[maxDescIndex];
             masoutis_item.category_4 = cat4[maxDescIndex];
-            ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
+            if (ApplicationView.MajorityFinalText != null)
+            {
+                ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
+            }
         }
         catch (System.Exception)
         {
@@ -96,7 +99,10 @@ public class MajorityVoting : AsyncBehaviour
         masoutis_item.category_2 = "μη αναγνωρίσιμο";
         masoutis_item.category_3 = "μη αναγνωρίσιμο";
         masoutis_item.category_4 = "μη αναγνωρίσιμο";
-        ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+        if (ApplicationView.MajorityFinalText != null)
+        {
+            ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+        }
     }
 
     private void FindMaxIndex_OBSOLETE(List<string> wordsOCR)
@@ -182,8 +188,10 @@ public class MajorityVoting : AsyncBehaviour
             validWords.Add(foundTerm);
         }
 
-
-        ApplicationView.MajorityValidText.text = string.Join(", ", validWords.Distinct().ToList().ToArray());
+        if (ApplicationView.MajorityValidText != null)
+        {
+            ApplicationView.MajorityValidText.text = string.Join(", ", validWords.Distinct().ToList().ToArray());
+        }
 
         try
         {
