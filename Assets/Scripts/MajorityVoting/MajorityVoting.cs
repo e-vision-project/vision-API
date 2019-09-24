@@ -50,14 +50,14 @@ public class MajorityVoting : AsyncBehaviour
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
 
-        Debug.Log("load db start :" + Time.realtimeSinceStartup);
+        //Debug.Log("load db start :" + Time.realtimeSinceStartup);
         // read database to class properties
         LoadDatabaseFiles(masoutisFiles);
         while (!database_ready)
         {
             yield return null;
         }
-        Debug.Log("load db end :" + Time.realtimeSinceStartup);
+        //Debug.Log("load db end :" + Time.realtimeSinceStartup);
 
         // OCR words sanitization
         wordsOCR = KeepElementsWithLen(wordsOCR, 4);
@@ -83,7 +83,7 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_4 = cat4[maxDescIndex];
             if (ApplicationView.MajorityFinalText != null)
             {
-                ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
+                ApplicationView.MajorityFinalText.text = "\n  Διάδρομος: " + masoutis_item.category_2 + "\n\n  Ράφι: " + masoutis_item.category_3 + "\n\n  Προϊόν: " + masoutis_item.category_4;
             }
         }
         catch (System.Exception)
@@ -101,7 +101,7 @@ public class MajorityVoting : AsyncBehaviour
         masoutis_item.category_4 = "μη αναγνωρίσιμο";
         if (ApplicationView.MajorityFinalText != null)
         {
-            ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+            ApplicationView.MajorityFinalText.text = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
         }
     }
 
@@ -151,7 +151,7 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
             masoutis_item.category_3 = cropped_cat3_unq[count_cat3.IndexOf(count_cat3.Max())];
             masoutis_item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
-            ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
+            //ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
 
 
         }
@@ -161,7 +161,7 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_2 = "μη αναγνωρίσιμο";
             masoutis_item.category_3 = "μη αναγνωρίσιμο";
             masoutis_item.category_4 = "μη αναγνωρίσιμο";
-            ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+            //ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
         }
     }
 
@@ -187,6 +187,9 @@ public class MajorityVoting : AsyncBehaviour
             }
             validWords.Add(foundTerm);
         }
+
+        var x = validWords.Distinct().ToList();
+        x.ForEach(Debug.Log);
 
         if (ApplicationView.MajorityValidText != null)
         {

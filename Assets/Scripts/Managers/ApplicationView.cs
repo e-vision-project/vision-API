@@ -38,7 +38,7 @@ namespace EVISION.Camera.plugin
 
         public void OnButtonPressed()
         {
-
+            MajorityFinalText.text = "";
         }
 
         // Update is called once per frame
@@ -48,18 +48,19 @@ namespace EVISION.Camera.plugin
             {
                 image.SetActive(true);
                 button.SetActive(false);
-                //Debug.Log("Annotating");
             }
             else if (!clientApp.annotationProccessBusy)
             {
                 image.SetActive(false);
                 button.SetActive(true);
             }
+            if (devicesText != null && resolutionText != null)
+            {
+                devicesText.text = WebCamTexture.devices.Length.ToString();
 
-            devicesText.text = WebCamTexture.devices.Length.ToString();
-           
-            resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
-                + cam.GetCamTextureWidthHeight().y.ToString();  
+                resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
+                    + cam.GetCamTextureWidthHeight().y.ToString();
+            }
         }
 
         public static void SaveTXT(string text)

@@ -95,7 +95,7 @@ namespace EVISION.Camera.plugin
             else
             {
                 camTexture = cam.TakeScreenShot();
-                ApplicationView.SaveImageFile(camTexture);
+                //ApplicationView.SaveImageFile(camTexture);
 
             }
 
@@ -140,6 +140,8 @@ namespace EVISION.Camera.plugin
 
         public IEnumerator GetCategoryDescription(int category)
         {
+            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Παρακαλώ περιμένετε"));
+
             float startOCRt = Time.realtimeSinceStartup;
             
             //wait until the annotation process returns
@@ -176,7 +178,9 @@ namespace EVISION.Camera.plugin
                         break;
                     case (int)Enums.MasoutisCategories.product:
                         Debug.Log("category 4 : product");
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("προϊόν, " + majVoting.masoutis_item.category_4));
+                        //yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("προϊόν, " + majVoting.masoutis_item.category_4));
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + majVoting.masoutis_item.category_2 + 
+                            "..ράφι, " + majVoting.masoutis_item.category_3 + "..προϊόν, " + majVoting.masoutis_item.category_4));
                         break;
                     case (int)Enums.MasoutisCategories.other:
                         Debug.Log("non reckognizable : other");
@@ -194,9 +198,12 @@ namespace EVISION.Camera.plugin
                 if(category == 2) { cat = "προϊόν"; }
                 if(category == 3) { cat = "άλλο"; }
 
-                if (ApplicationView.MajorityFinalText != null && ApplicationView.MajorityValidText != null)
+                if (ApplicationView.MajorityFinalText != null)
                 {
-                    ApplicationView.MajorityFinalText.text = "κενό";
+                    ApplicationView.MajorityFinalText.text = "Δεν αναγνωρίστηκαν διαθέσιμες λέξεις";
+                }
+                if(ApplicationView.MajorityValidText != null)
+                {
                     ApplicationView.MajorityValidText.text = "κενό";
                 }
                 if (ApplicationView.classText != null)
@@ -204,7 +211,7 @@ namespace EVISION.Camera.plugin
                     ApplicationView.classText.text = "κενό";
                 }
 
-                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("κατηγορία " + cat + ", Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
+                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
             }
         }
 
