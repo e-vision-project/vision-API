@@ -50,18 +50,18 @@ public class AndroidCamera : DeviceCamera
         {
             case ScreenOrientation.Portrait:
                 snap = TextureTools.RotateTexture(snap,-90);
-                Debug.Log("Portrait");
+                //Debug.Log("Portrait");
                 break;
             case ScreenOrientation.PortraitUpsideDown:
                 snap = TextureTools.RotateTexture(snap, 90);
                 break;
             case ScreenOrientation.LandscapeRight:
                 snap = TextureTools.RotateTexture(snap, 180);
-                Debug.Log("Landscape right");
+                //Debug.Log("Landscape right");
                 break;
             case ScreenOrientation.LandscapeLeft:
                 //snap = TextureTools.RotateTexture(snap, -180);
-                Debug.Log("Landscape left");
+                //Debug.Log("Landscape left");
                 break;
         }
 

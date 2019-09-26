@@ -169,21 +169,20 @@ namespace EVISION.Camera.plugin
                 switch (category)
                 {
                     case (int)Enums.MasoutisCategories.trail:
-                        Debug.Log("category 2 : Trail");
+                        //Debug.Log("category 2 : Trail");
                         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + majVoting.masoutis_item.category_2));
                         break;
                     case (int)Enums.MasoutisCategories.shelf:
-                        Debug.Log("category 3 : shelf");
+                        //Debug.Log("category 3 : shelf");
                         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + majVoting.masoutis_item.category_3));
                         break;
                     case (int)Enums.MasoutisCategories.product:
-                        Debug.Log("category 4 : product");
+                        //Debug.Log("category 4 : product");
                         //yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("προϊόν, " + majVoting.masoutis_item.category_4));
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + majVoting.masoutis_item.category_2 + 
-                            "..ράφι, " + majVoting.masoutis_item.category_3 + "..προϊόν, " + majVoting.masoutis_item.category_4));
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("προϊόν, " + majVoting.masoutis_item.category_4));
                         break;
                     case (int)Enums.MasoutisCategories.other:
-                        Debug.Log("non reckognizable : other");
+                       //Debug.Log("non reckognizable : other");
                         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο"));
                         break;
                     default:

@@ -30,6 +30,7 @@ public class TFClassification : IModelPrediction
     private TFGraph graph;
     private TFSession session;
 
+    // Constructor of the class
     public TFClassification(string inputName, string outputName, int inputHeight, int inputWidth, float inputMean,
         float inputStd, TextAsset modelFile, TextAsset labelFile, int angle, float thresshold)
     {
@@ -50,6 +51,14 @@ public class TFClassification : IModelPrediction
         labels = labelFile.text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
     }
 
+    /// <summary>
+    /// This is the model inference method. You specify an input and the relevant output
+    /// of the model is extracted.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
+    /// <param name="inputTex"></param>
+    /// <returns></returns>
     public T FetchOutput<T,U>(U inputTex) where T: class, IList where U : class
     {
         //////// TODO : shape should be passed as argument to Transform Input

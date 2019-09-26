@@ -29,6 +29,11 @@ namespace EVISION.Camera.plugin
         // Start is called before the first frame update
         void Start()
         {
+            Debug.Log("Devices: " + WebCamTexture.devices.Length.ToString());
+
+            Debug.Log("Res: " + cam.GetCamTextureWidthHeight().x.ToString() + "*"
+                + cam.GetCamTextureWidthHeight().y.ToString());
+
             MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
             MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
             classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
