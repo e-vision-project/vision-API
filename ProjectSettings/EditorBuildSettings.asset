@@ -26,10 +26,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Mobile camera WebTexture.unity
     guid: 4c60198c9768fee4f8afaf29bc273192
+  - enabled: 1
+    path: Assets/Scenes/Masoutis Client Final.unity
+    guid: a35de50a72e3cfc4d87e6c081dc347d4
   - enabled: 0
     path: Assets/Scenes/Mobile camera ARFoundation.unity
     guid: 6f8eafae88b31eb4aa8cc7821dea72a3
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Mobile camera WebTexture Researchers Night UI.unity
     guid: 094d6f73b6ba23e4bbf3b377c1480f75
   m_configObjects: {}

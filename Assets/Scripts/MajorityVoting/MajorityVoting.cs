@@ -80,9 +80,11 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_2 = cat2[maxDescIndex];
             masoutis_item.category_3 = cat3[maxDescIndex];
             masoutis_item.category_4 = cat4[maxDescIndex];
+            masoutis_item.product_description = desc[maxDescIndex];
             if (ApplicationView.MajorityFinalText != null)
             {
-                ApplicationView.MajorityFinalText.text = "\n  Διάδρομος: " + masoutis_item.category_2 + "\n  Ράφι: " + masoutis_item.category_3 + "\n  Προϊόν: " + masoutis_item.category_4;
+                ApplicationView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 + "\n  Ράφι: " + masoutis_item.category_3 + "\n  Ράφι 2: " + masoutis_item.category_4 + "\n  Προϊόν: " + 
+                    masoutis_item.product_description;
             }
         }
         catch (System.Exception)

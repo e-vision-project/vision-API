@@ -31,10 +31,10 @@ namespace EVISION.Camera.plugin
         {
             Debug.Log("Devices: " + WebCamTexture.devices.Length.ToString());
 
-            //MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
             MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
             //classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
-            //TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
+            MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
+            TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
             image.SetActive(false);
         }
 
