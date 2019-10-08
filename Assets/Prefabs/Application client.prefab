@@ -190,7 +190,7 @@ RectTransform:
   m_Children:
   - {fileID: 1094245651}
   m_Father: {fileID: 917798118088691600}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -255,9 +255,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
-    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.8113208, g: 0.79218584, b: 0.79218584, a: 0.9843137}
     m_PressedColor: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0}
+    m_SelectedColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -529,13 +529,13 @@ RectTransform:
   - {fileID: 917798119770030189}
   - {fileID: 917798119254168076}
   - {fileID: 917798118801448124}
-  - {fileID: 5666717838621073814}
   - {fileID: 917798118767499611}
   - {fileID: 917798119230030601}
   - {fileID: 917798118929321045}
-  - {fileID: 917798119775830871}
   - {fileID: 1915291378}
+  - {fileID: 917798119775830871}
   - {fileID: 917798119271361696}
+  - {fileID: 5666717838621073814}
   m_Father: {fileID: 917798118107009361}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -661,7 +661,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DLModel: {fileID: 4900000, guid: f5950a9b6af743d4dbe99a2eec7cb495, type: 3}
   LabelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
-  image_name: shelf_12
+  image_name: shelf
   cameraDevice: 1
 --- !u!114 &917798118107009364
 MonoBehaviour:
@@ -1043,7 +1043,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 10
     m_MaxSize: 50
-    m_Alignment: 1
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -1080,7 +1080,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 917798118088691600}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1160,7 +1160,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 5.6516113, y: -330.65002}
+  m_AnchoredPosition: {x: 5.6518555, y: -330.6504}
   m_SizeDelta: {x: 4.9001465, y: 189.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &917798118801448126
@@ -1228,7 +1228,7 @@ Transform:
   m_LocalScale: {x: 2.3705006, y: 2.3705006, z: 2.3705006}
   m_Children: []
   m_Father: {fileID: 917798118088691600}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &917798119132885245
 GameObject:
@@ -1340,11 +1340,11 @@ RectTransform:
   m_Children:
   - {fileID: 917798118467694134}
   m_Father: {fileID: 917798118088691600}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.6015625, y: -117.970215}
+  m_AnchoredPosition: {x: 1.6015625, y: -117.9707}
   m_SizeDelta: {x: -3.2, y: 235.95}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &917798119230030603
@@ -1489,7 +1489,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 917798118088691600}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1781,11 +1781,11 @@ RectTransform:
   - {fileID: 2524577153128328194}
   - {fileID: 6966077814467850588}
   m_Father: {fileID: 917798118088691600}
-  m_RootOrder: 5
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 5.6516113, y: -330.65002}
+  m_AnchoredPosition: {x: 5.6518555, y: -520.0508}
   m_SizeDelta: {x: 4.9001465, y: 189.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &695624010012369903
