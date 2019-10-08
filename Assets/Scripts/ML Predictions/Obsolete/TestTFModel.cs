@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using EVISION.Camera.plugin;
 
 public class TestTFModel : MonoBehaviour
 {
@@ -47,11 +48,14 @@ public class TestTFModel : MonoBehaviour
         IModelPrediction classifier_4 = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, model, labelsFile, angle, 0.01f);
         var output = classifier_4.FetchOutput<List<float>, Texture2D>(tex);
 
+        double[] output_array = GenericUtils.ConvertToDouble(output.ToArray());
 
         SVMClassification obj = new SVMClassification();
-        obj.SetModelParameters("Model_SVM");
+        obj.SetModelParameters("SVM_Weights", "mu", "sigma");
+        var norm_fv = obj.NormalizeElements(output_array, obj.muData, obj.sigmaData);
+        List<double> norm_fv_list = new List<double>(norm_fv);
         IModelPrediction svm = obj;
-        var probs = svm.FetchOutput<List<float>, List<float>>(output);
+        var probs = svm.FetchOutput<List<float>, List<double>>(norm_fv_list);
         foreach (var item in probs)
         {
             Debug.Log(item);

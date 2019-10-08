@@ -16,6 +16,7 @@ namespace EVISION.Camera.plugin
         private ITextToVoice voiceSynthesizer;
         private IModelPrediction featureExtractor;
         private IModelPrediction svmClassifier;
+        private SVMClassification svm_model;
 
         //[SerializeField] private DeviceCamera.Cameras cameraDevice;
         [SerializeField] private TextAsset DLModel;
@@ -45,8 +46,8 @@ namespace EVISION.Camera.plugin
             featureExtractor = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.01f);
             
             // set and load svm model
-            SVMClassification svm_model = new SVMClassification();
-            svm_model.SetModelParameters("Model_SVM");
+            svm_model = new SVMClassification();
+            svm_model.SetModelParameters("SVM_Weights", "mu", "sigma");
             svmClassifier = svm_model;
         }
 
@@ -95,12 +96,10 @@ namespace EVISION.Camera.plugin
             else
             {
                 camTexture = cam.TakeScreenShot();
-                //ApplicationView.SaveImageFile(camTexture);
-
+                ApplicationView.SaveImageFile(camTexture);
             }
 
-            //int category = ClassifyCategory(camTexture);
-            int category = 2;
+            int category = ClassifyCategory(camTexture);
 
             string cat = "κενό";
             if (category == 0) { cat = "διάδρομος"; }
@@ -128,8 +127,12 @@ namespace EVISION.Camera.plugin
         private int ClassifyCategory(Texture2D input_tex)
         {
             var featureVector = featureExtractor.FetchOutput<List<float>, Texture2D>(input_tex);
-
-            var probs = svmClassifier.FetchOutput<List<float>, List<float>>(featureVector);
+            // normalize feature vector
+            var output_array = GenericUtils.ConvertToDouble(featureVector.ToArray());
+            var norm_fv = svm_model.NormalizeElements(output_array, svm_model.muData, svm_model.sigmaData);
+            List<double> norm_fv_list = new List<double>(norm_fv);
+            // calculate propabilities
+            var probs = svmClassifier.FetchOutput<List<float>, List<double>>(norm_fv_list);
 
             float maxValue = probs.Max();
 
@@ -266,8 +269,6 @@ namespace EVISION.Camera.plugin
             {
                 camTexture = cam.TakeScreenShot();
                 category = ClassifyCategory(camTexture);
-                ApplicationView.SaveImageFile(camTexture);
-
             }
 
             string cat = "κενό";

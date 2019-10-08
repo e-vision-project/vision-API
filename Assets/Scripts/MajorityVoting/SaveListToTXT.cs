@@ -12,8 +12,7 @@ public class SaveListToTXT : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SaveList("Assets/Resources/masoutis_cat2.txt");
-
+        StartCoroutine(SaveList("Assets/Resources/masoutis_desc_cleaned.txt"));
         //var logFile = File.ReadAllLines("Assets/Resources/test.txt");
         //var logList = new List<string>(logFile);
     }
@@ -21,14 +20,14 @@ public class SaveListToTXT : MonoBehaviour
     IEnumerator SaveList(string path)
     {
         MajorityVoting maj = new MajorityVoting();
-        maj.ReadDatabaseFile("masoutis_db");
+        maj.ReadDatabaseFile("masoutis_db_cleaned_2019");
         while (!maj.database_ready)
         {
             yield return null;
         }
 
         StreamWriter writer = new StreamWriter(path, true);
-        foreach (string s in MajorityVoting.cat2)
+        foreach (string s in MajorityVoting.desc)
         {
             writer.WriteLine(s);
         }

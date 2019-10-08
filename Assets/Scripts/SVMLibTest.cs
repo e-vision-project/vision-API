@@ -11,7 +11,7 @@ public class SVMLibTest : MonoBehaviour
     void Start()
     {
         SVMClassification obj = new SVMClassification();
-        obj.SetModelParameters("Model_SVM");
+
         IModelPrediction svm = obj;
     }
 }

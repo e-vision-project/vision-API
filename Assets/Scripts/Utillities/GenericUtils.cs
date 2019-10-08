@@ -52,5 +52,17 @@ namespace EVISION.Camera.plugin
         {
             TextureScale.Bilinear(originalTexture, width, height);
         }
+
+        public static double[] ConvertToDouble(float[] inputArray)
+        {
+            if (inputArray == null)
+                return null;
+
+            double[] output = new double[inputArray.Length];
+            for (int i = 0; i < inputArray.Length; i++)
+                output[i] = inputArray[i];
+
+            return output;
+        }
     }
 }

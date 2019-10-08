@@ -31,13 +31,10 @@ namespace EVISION.Camera.plugin
         {
             Debug.Log("Devices: " + WebCamTexture.devices.Length.ToString());
 
-            Debug.Log("Res: " + cam.GetCamTextureWidthHeight().x.ToString() + "*"
-                + cam.GetCamTextureWidthHeight().y.ToString());
-
-            MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
+            //MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
             MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
-            classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
-            TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
+            //classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
+            //TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
             image.SetActive(false);
         }
 
@@ -62,9 +59,6 @@ namespace EVISION.Camera.plugin
             if (devicesText != null && resolutionText != null)
             {
                 devicesText.text = WebCamTexture.devices.Length.ToString();
-
-                resolutionText.text = cam.GetCamTextureWidthHeight().x.ToString() + " "
-                    + cam.GetCamTextureWidthHeight().y.ToString();
             }
         }
 

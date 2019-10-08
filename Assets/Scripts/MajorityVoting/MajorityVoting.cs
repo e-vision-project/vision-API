@@ -33,7 +33,8 @@ public class MajorityVoting : AsyncBehaviour
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
 
     public MasoutisItem masoutis_item;
-    string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
+    //string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
+    string[] masoutisFiles = { "masoutis_cat2_cleaned", "masoutis_cat3_cleaned", "masoutis_cat4_cleaned", "masoutis_desc_cleaned" };
 
 
     List<string> wordsOCR = new List<string>();
@@ -50,14 +51,12 @@ public class MajorityVoting : AsyncBehaviour
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
 
-        //Debug.Log("load db start :" + Time.realtimeSinceStartup);
         // read database to class properties
         LoadDatabaseFiles(masoutisFiles);
         while (!database_ready)
         {
             yield return null;
         }
-        //Debug.Log("load db end :" + Time.realtimeSinceStartup);
 
         // OCR words sanitization
         wordsOCR = KeepElementsWithLen(wordsOCR, 4);
@@ -83,7 +82,7 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_4 = cat4[maxDescIndex];
             if (ApplicationView.MajorityFinalText != null)
             {
-                ApplicationView.MajorityFinalText.text = "\n  Ράφι: " + masoutis_item.category_3 + "\n\n  Προϊόν: " + masoutis_item.category_4;
+                ApplicationView.MajorityFinalText.text = "\n  Διάδρομος: " + masoutis_item.category_2 + "\n  Ράφι: " + masoutis_item.category_3 + "\n  Προϊόν: " + masoutis_item.category_4;
             }
         }
         catch (System.Exception)
@@ -101,7 +100,7 @@ public class MajorityVoting : AsyncBehaviour
         masoutis_item.category_4 = "μη αναγνωρίσιμο";
         if (ApplicationView.MajorityFinalText != null)
         {
-            ApplicationView.MajorityFinalText.text = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
+            ApplicationView.MajorityFinalText.text = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Προϊόν: " + masoutis_item.category_4;
         }
     }
 
@@ -109,7 +108,7 @@ public class MajorityVoting : AsyncBehaviour
     {
         wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
         //wordsOCR.ForEach(Debug.Log);
-        ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
+        //ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
 
 
 
@@ -227,16 +226,16 @@ public class MajorityVoting : AsyncBehaviour
                         string inp_ln = streamReader.ReadLine();
                         switch (datafile_name)
                         {
-                            case "masoutis_cat2":
+                            case "masoutis_cat2_cleaned":
                                 cat2.Add(inp_ln);
                                 break;
-                            case "masoutis_cat3":
+                            case "masoutis_cat3_cleaned":
                                 cat3.Add(inp_ln);
                                 break;
-                            case "masoutis_cat4":
+                            case "masoutis_cat4_cleaned":
                                 cat4.Add(inp_ln);
                                 break;
-                            case "masoutis_desc":
+                            case "masoutis_desc_cleaned":
                                 desc.Add(inp_ln);
                                 break;
                         }
@@ -268,17 +267,18 @@ public class MajorityVoting : AsyncBehaviour
         database_ready = true;
     }
 
-    public async void ReadDatabaseFile(string name)
+    public void ReadDatabaseFile(string name)
     {
         if (desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
             && cat4.Count == 0 && cat1.Count == 0)
         {
+            Debug.Log("reading");
             TextAsset database = Resources.Load<TextAsset>(name);
             using (var streamReader = new StreamReader(new MemoryStream(database.bytes)))
             {
                 using (var csv = new CsvReader(streamReader))
                 {
-                    await new WaitForBackgroundThread();
+                    //await new WaitForBackgroundThread();
                     // ENTER THE NEW THREAD
                     csv.Read();
                     csv.ReadHeader();
@@ -290,13 +290,13 @@ public class MajorityVoting : AsyncBehaviour
                         string cat3Field = csv.GetField<string>("Unnamed: 5");
                         string cat4Field = csv.GetField<string>("Unnamed: 7");
                         desc.Add(descField);
-                        cat1.Add(cat1Field);
+                        //cat1.Add(cat1Field);
                         cat2.Add(cat2Field);
                         cat3.Add(cat3Field);
                         cat4.Add(cat4Field);
                     }
 
-                    await new WaitForUpdate();
+                    //await new WaitForUpdate();
                     // RETURN TO MAIN UNITY THREAD
                 }
             }

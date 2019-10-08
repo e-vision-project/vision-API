@@ -27,9 +27,11 @@ public struct SVM_Model
 [Serializable]
 public class SVMClassification : IModelPrediction
 {
-    double[][] lineData;
-    private int classNum = 4;
-    SVM_Model[] svms = new SVM_Model[4];
+    private double[][] weightData;
+    public double[] muData;
+    public double[] sigmaData;
+    private int classNum = 3;
+    SVM_Model[] svms = new SVM_Model[3];
     
 
     T IModelPrediction.FetchOutput<T, U>(U fVector)
@@ -47,7 +49,7 @@ public class SVMClassification : IModelPrediction
                 svms[i].bias *= -1;
             }
 
-            float[] feautures = (fVector as List<float>).ToArray();
+            double[] feautures = (fVector as List<double>).ToArray();
 
             var y = (feautures.Zip(svms[i].weights, (x1, x2) => x1 * x2).Sum() + svms[i].bias) * svms[i].probA + svms[i].probB;
 
@@ -72,29 +74,64 @@ public class SVMClassification : IModelPrediction
         return class_prob as T;
     }
 
-    public void SetModelParameters(string filename)
+    public void SetModelParameters(string filenameWeights, string filenameMU, string filenameSigma)
+    {
+        weightData = ReadWeightsFile(filenameWeights);
+        muData = ReadTXTFile(filenameMU);
+        sigmaData = ReadTXTFile(filenameSigma);
+
+        SVM_Model smvClass1 = new SVM_Model(weightData[0], 0.375351793893002, -5.238364113657447, 0.3182509645140308, 0);
+        SVM_Model smvClass2 = new SVM_Model(weightData[1], 0.17534581098550536, -5.158183725130971, 0.18130600962167662, 0);
+        SVM_Model smvClass3 = new SVM_Model(weightData[2], -0.6832487663989988, -6.237363912024131, -0.3252349452083724, 1);
+        //SVM_Model smvClass4 = new SVM_Model(lineData[3], 0.64504533684299536, -4.1485740812047123, 1.0796708491407188, 0);
+        svms[0] = smvClass1;
+        svms[1] = smvClass2;
+        svms[2] = smvClass3;
+        //svms[3] = smvClass4;
+
+    }
+
+    private double[][] ReadWeightsFile(string filenameWeights)
+    {
+        TextAsset file = Resources.Load<TextAsset>(filenameWeights);
+        using (var streamReader = new StreamReader(new MemoryStream(file.bytes)))
+        {
+            string text = streamReader.ReadToEnd();
+            var lines = text.Split("\n"[0]);
+            var fileData = new double[lines.Length][];
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var data_str = (lines[i].Trim()).Split(","[0]);
+                var data = Array.ConvertAll(data_str, double.Parse);
+                fileData[i] = new double[data.Length];
+                fileData[i] = data;
+            }
+            return fileData;
+        }
+    }
+
+    private double[] ReadTXTFile(string filename)
     {
         TextAsset file = Resources.Load<TextAsset>(filename);
         using (var streamReader = new StreamReader(new MemoryStream(file.bytes)))
         {
             string text = streamReader.ReadToEnd();
-            var lines = text.Split("\n"[0]);
-            lineData = new double[lines.Length][];
-            for (int i = 0; i < lines.Length; i++)
-            {
-                var data_str = (lines[i].Trim()).Split(","[0]);
-                var data = Array.ConvertAll(data_str, double.Parse);
-                lineData[i] = new double[data.Length];
-                lineData[i] = data;
-            }
+            string[] splittedText = text.Split(',');
+            //var data = new double[splittedText.Length];
+            var data = Array.ConvertAll(splittedText, double.Parse);
+            return data;
         }
-        SVM_Model smvClass1 = new SVM_Model(lineData[0], 0.59267967767095653, -5.13194210631268, 0.92507592350160261, 0);
-        SVM_Model smvClass2 = new SVM_Model(lineData[1], 0.49120650582242237, -4.3241794097144188, 0.24364938814918963, 0);
-        SVM_Model smvClass3 = new SVM_Model(lineData[2], -0.29671019075683935, -3.8673131634685123, -0.22813251638919005, 1);
-        SVM_Model smvClass4 = new SVM_Model(lineData[3], 0.64504533684299536, -4.1485740812047123, 1.0796708491407188, 0);
-        svms[0] = smvClass1;
-        svms[1] = smvClass2;
-        svms[2] = smvClass3;
-        svms[3] = smvClass4;
+    }
+
+    public double[] NormalizeElements(double[] fv, double[] MU, double[] Sigma)
+    {
+        double[] norm_array = new double[fv.Length];
+
+        for (int i = 0; i < fv.Length; i++)
+        {
+            norm_array[i] = fv[i] - MU[i];
+            norm_array[i] = norm_array[i] / Sigma[i];
+        }
+        return norm_array;
     }
 }
