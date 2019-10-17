@@ -16,7 +16,8 @@ namespace FrostweepGames.Plugins.GoogleCloud.SpeechRecognition
         Dictionary<OperationLongRecognizeResponse, Enumerators.NetworkRequestStatus> OperationNames { get; set; }
 
         void SetConfig(Config config);
-        void Recognize(AudioClip clip, List<string[]> contexts, Enumerators.LanguageCode language);
-        void GetOperation(string name);
+        long Recognize(AudioClip clip, List<string[]> contexts, Enumerators.LanguageCode language);
+        long GetOperation(string name);
+        void CancelRequest(long id);
     }
 }

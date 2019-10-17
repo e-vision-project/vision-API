@@ -87,8 +87,6 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             _currentVisionResponse = obj;
 
             FillHeaders();
-
-            //Debug.Log(obj.responses[0].fullTextAnnotation.ToString());
         }
 
         private void AnnotateButtonOnClickHandler()
@@ -105,10 +103,9 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
 
 
             //include all features
-            int length = Enum.GetNames(typeof(Enumerators.FeatureType)).Length;
             var features = new List<Feature>();
-            for (int i = 0; i < length; i++)
-                features.Add(new Feature() { maxResults = 10, type = (Enumerators.FeatureType)i });
+            for (int i = 0; i < Enum.GetNames(typeof(Enumerators.FeatureType)).Length; i++)
+                features.Add(new Feature() { maxResults = 10, type = ((Enumerators.FeatureType)i).ToString() });
 
 
             var img = new Image();
@@ -188,7 +185,6 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             {
                 _selectedImageText.text = item.name;
                _selectedImageData = ImageConvert.Convert(ImageConvert.GetTextureFromPath(item.path));
-                Debug.Log(_selectedImageData);
             }
             else
             {

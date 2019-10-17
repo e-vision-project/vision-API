@@ -10,6 +10,7 @@ namespace EVISION.Camera.plugin
     public class ApplicationView : MonoBehaviour
     {
         public GameObject image;
+        public GameObject imageDB;
         public static RawImage helperImage;
         public GameObject button;
         //public Text text;
@@ -46,6 +47,16 @@ namespace EVISION.Camera.plugin
         // Update is called once per frame
         void Update()
         {
+            if (clientApp.DB_LoadProccessBusy)
+            {
+                imageDB.SetActive(true);
+                button.SetActive(false);
+            }
+            else if (!clientApp.DB_LoadProccessBusy)
+            {
+                imageDB.SetActive(false);
+                button.SetActive(true);
+            }
             if (clientApp.annotationProccessBusy)
             {
                 image.SetActive(true);

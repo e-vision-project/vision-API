@@ -51,12 +51,17 @@ namespace FrostweepGames.Plugins.GoogleCloud.SpeechRecognition
             _networking.Dispose();
         }
 
+        public void CancelRequest(long id)
+        {
+            _networking.CancelRequest(id);
+        }
+
         public void SetConfig(Config config)
         {
             _currentConfig = config;
         }
 
-        public void Recognize(AudioClip clip, List<string[]> contexts, Enumerators.LanguageCode language)
+        public long Recognize(AudioClip clip, List<string[]> contexts, Enumerators.LanguageCode language)
         {
             if (_currentConfig == null)
                 throw new NotImplementedException("Config isn't seted! Use SetConfig method!");
@@ -99,10 +104,10 @@ namespace FrostweepGames.Plugins.GoogleCloud.SpeechRecognition
                     throw new NotSupportedException(_currentConfig.recognitionType + " doesn't supported!");
             }
 
-            _networking.SendRequest(uri, postData, NetworkEnumerators.RequestType.POST, new object[] { _currentConfig.recognitionType });
+           return _networking.SendRequest(uri, postData, NetworkEnumerators.RequestType.POST, new object[] { _currentConfig.recognitionType });
         }
 
-        public void GetOperation(string name)
+        public long GetOperation(string name)
         {
             string uri = string.Empty;
 
@@ -111,7 +116,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.SpeechRecognition
             else
                 uri = Constants.OPERATIONS_REQUEST_URL + name + Constants.API_KEY_PARAM + _gcSpeechRecognition.apiKey;
 
-            _networking.SendRequest(uri, string.Empty, NetworkEnumerators.RequestType.GET, new object[] { Enumerators.GoogleServiceRequestType.GET_OPERATION });
+            return _networking.SendRequest(uri, string.Empty, NetworkEnumerators.RequestType.GET, new object[] { Enumerators.GoogleServiceRequestType.GET_OPERATION });
         }
 
         private void NetworkResponseEventHandler(NetworkResponse response)

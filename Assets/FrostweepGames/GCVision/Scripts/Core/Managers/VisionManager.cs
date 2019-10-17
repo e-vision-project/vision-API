@@ -60,7 +60,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision
             if(!string.IsNullOrEmpty(response.error))
             {
                 if(AnnotateFailedEvent != null)
-                    AnnotateFailedEvent(response.error, response.netPacketIndex);
+                    AnnotateFailedEvent(response.error + "; " +response.response, response.netPacketIndex);
             }
             else
             {

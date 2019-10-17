@@ -21,7 +21,7 @@ public class SaveListToTXT : MonoBehaviour
     {
         MajorityVoting maj = new MajorityVoting();
         maj.ReadDatabaseFile("masoutis_db_cleaned_2019");
-        while (!maj.database_ready)
+        while (!MajorityVoting.database_ready)
         {
             yield return null;
         }

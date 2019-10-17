@@ -5,7 +5,11 @@
         public enum RequestType
         {
             GET,
-            POST
+            POST,
+            DELETE,
+            CREATE,
+            PATCH,
+            PUT
         }
 
         public enum NetworkMethod

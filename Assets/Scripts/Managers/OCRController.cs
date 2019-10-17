@@ -38,7 +38,7 @@ public class OCRController : MonoBehaviour
     public void AnnotateImage(string imageData)
     {
         var features = new List<Feature>();
-        features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION });
+        features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION.ToString() });
 
         var img = new FrostweepGames.Plugins.GoogleCloud.Vision.Image();
         if (string.IsNullOrEmpty(imageData))
@@ -100,7 +100,7 @@ public class OCRController : MonoBehaviour
     public void AnnotateImageFromURL(string url)
     {
         var features = new List<Feature>();
-        features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION });
+        features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION.ToString() });
 
         _gcVision.Annotate(new List<AnnotateRequest>()
             {

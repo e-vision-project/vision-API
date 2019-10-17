@@ -3,6 +3,7 @@ using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 
 namespace FrostweepGames.Plugins.GoogleCloud.TextToSpeech
 {
@@ -12,6 +13,8 @@ namespace FrostweepGames.Plugins.GoogleCloud.TextToSpeech
 
         private Voice[] _voices;
         private Voice _currentVoice;
+
+        private CultureInfo _provider;
 
         public Button synthesizeButton;
         public Button getVoicesButton;
@@ -43,6 +46,9 @@ namespace FrostweepGames.Plugins.GoogleCloud.TextToSpeech
 
             voicesDropdown.onValueChanged.AddListener(VoiceSelectedDropdownOnChangedHandler);
             voiceTypesDropdown.onValueChanged.AddListener(VoiceTypeSelectedDropdownOnChangedHandler);
+
+            _provider = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+            _provider.NumberFormat.NumberDecimalSeparator = ".";
 
 
             int length = Enum.GetNames(typeof(Enumerators.LanguageCode)).Length;
@@ -82,8 +88,8 @@ namespace FrostweepGames.Plugins.GoogleCloud.TextToSpeech
                 name = _currentVoice.name
             },
             ssmlToggle.isOn,
-            double.Parse(pitchInputField.text),
-            double.Parse(speakingRateInputField.text),
+            double.Parse(pitchInputField.text, _provider),
+            double.Parse(speakingRateInputField.text, _provider),
             _currentVoice.naturalSampleRateHertz);
         }
 

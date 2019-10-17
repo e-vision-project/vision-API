@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using EVISION.Camera.plugin;
-using System.Linq;
 
 namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
 {
@@ -32,7 +30,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
 
             annotateButton.onClick.AddListener(AnnotateButtonOnClickHandler);
 
-            urlInputField.text = "https://ageliesergasias.gr/wp-content/uploads/2016/05/masoutis-thessnews-kouponi-696x383.jpg"; // dafault value     
+            urlInputField.text = "http://fabricjs.com/article_assets/2_7.png"; // dafault value     
         }
 
         private void AnnotateButtonOnClickHandler()
@@ -44,7 +42,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         public void AnnotateImage(string url)
         {
             var features = new List<Feature>();
-            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION });
+            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION.ToString() });
 
             _gcVision.Annotate(new List<AnnotateRequest>()
             {
@@ -76,7 +74,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             UnityWebRequest _webRequest = UnityWebRequest.Get(uri);
 
             // _webRequest.SendWebRequest(); // use it in the new Unity versions instead of:
-            var asyncOperation = _webRequest.Send();
+            var asyncOperation = _webRequest.SendWebRequest();
 
             while (!asyncOperation.isDone)
                 yield return asyncOperation;
@@ -84,7 +82,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             if (_loadedTexture != null)
                 Destroy(_loadedTexture);
 
-            _loadedTexture = new Texture2D(2, 2, TextureFormat.ARGB32, false, true);
+            _loadedTexture = new Texture2D(2, 2, TextureFormat.ARGB32,  false, true);
             _loadedTexture.LoadImage(_webRequest.downloadHandler.data);
             _loadedTexture.Apply();
 
@@ -106,39 +104,10 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         private void _gcVision_AnnotateSuccessEvent(VisionResponse arg1, long arg2)
         {
             statusImage.color = UnityEngine.Color.green;
-            print(arg1.responses[0].textAnnotations[0].description);
-            print("==============================");
-            print(arg1.responses[0].fullTextAnnotation.text);
-            var list = GenericUtils.SplitStringToList(arg1.responses[0].textAnnotations[0].description);
-            //list.ForEach(Debug.Log);
+
             foreach (var response in arg1.responses)
                 foreach (var entity in response.textAnnotations)
-                    InternalTools.ProcessImage(entity.boundingPoly.vertices, ref _loadedTexture, color);
-
-            List<Vector2> vertices = new List<Vector2>();
-            foreach (var response in arg1.responses)
-            {
-                foreach (var entity in response.textAnnotations)
-                {
-                    foreach (var vertex in entity.boundingPoly.vertices)
-                    if(vertex != null)
-                    {
-                        Vector2 vert = new Vector2((float) vertex.x, (float) vertex.y);
-                        vertices.Add(vert);
-                    }
-                }
-            }
-
-            List<float> boundingBoxArea = new List<float>();
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                float area = vertices[i].x * vertices[i].y;
-                boundingBoxArea.Add(area);
-            }
-
-            float max_Area = boundingBoxArea.Max();
-            Vector2 maxBox = vertices[boundingBoxArea.IndexOf(max_Area)];
-            Debug.Log(maxBox.x + ","+ maxBox.y);
+                    InternalTools.ProcessImage(entity.boundingPoly.vertices, ref _loadedTexture, color);            
         }
     }
 }

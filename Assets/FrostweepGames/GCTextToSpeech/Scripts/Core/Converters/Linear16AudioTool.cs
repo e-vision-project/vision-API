@@ -51,8 +51,8 @@ namespace FrostweepGames.Plugins.GoogleCloud.TextToSpeech
                     throw new Exception(bitDepth + " bit depth isn't supported");
             }
 
-            AudioClip audioClip = AudioClip.Create(name, data.Length, (int)channels, sampleRate, false);
-            audioClip.SetData(data, 0);
+            AudioClip audioClip = AudioClip.Create(name, data.Length, channels, sampleRate, false);
+            audioClip.SetData(data, offsetSamples);
             return audioClip;
         }
 

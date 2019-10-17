@@ -24,7 +24,9 @@ public class TestMajority : MonoBehaviour
 
     public void OnButtonClick()
     {
-        StartCoroutine(TestMajorityVoring());
+        //StartCoroutine(TestMajorityVoring());
+        Debug.Log(LevenshteinDistance.Compute("lACTA 1KG oreo", "oreo 1kg lacta"));
+        Debug.Log(LevenshteinDistance.Compute("lACTA", "lACTES"));
     }
 
     public IEnumerator TestMajorityVoring()

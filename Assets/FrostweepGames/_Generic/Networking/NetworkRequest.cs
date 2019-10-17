@@ -1,4 +1,6 @@
-﻿using UnityEngine.Networking;
+﻿#pragma warning disable 0618
+
+using UnityEngine.Networking;
 using System.Text;
 using UnityEngine;
 using System.Collections.Generic;
@@ -107,11 +109,28 @@ namespace FrostweepGames.Plugins.GoogleCloud
                 case NetworkEnumerators.NetworkMethod.WEB_REQUEST:
                     {
                         byte[] bytes = Encoding.UTF8.GetBytes(_data);
-
-                        if (_requestType == NetworkEnumerators.RequestType.GET)
-                            _webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbGET);
-                        else
-                            _webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbPOST);
+                        
+                        switch(_requestType)
+                        {
+                            case NetworkEnumerators.RequestType.GET:
+                                _webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbGET);
+                                break;
+                            case NetworkEnumerators.RequestType.DELETE:
+                                _webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbDELETE);
+                                break;
+                            case NetworkEnumerators.RequestType.POST:
+                                _webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbPOST);
+                                break;
+                            case NetworkEnumerators.RequestType.CREATE:
+                                _webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbCREATE);
+                                break;
+                            case NetworkEnumerators.RequestType.PATCH:
+                                _webRequest = new UnityWebRequest(uri, "PATCH");
+                                break;
+                            case NetworkEnumerators.RequestType.PUT:
+                                _webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbPUT);
+                                break;
+                        }
 
                         if (!string.IsNullOrEmpty(data))
                             _webRequest.uploadHandler = new UploadHandlerRaw(bytes);
@@ -145,27 +164,62 @@ namespace FrostweepGames.Plugins.GoogleCloud
                     break;
                 case NetworkEnumerators.NetworkMethod.WWW:
                     {
-                        byte[] bytes = Encoding.UTF8.GetBytes(_data);
-
-                        var headers = new Dictionary<string, string>();
-                        headers.Add("Content-Type", "application/json");
-
-                        if (_checkCertificate)
+                        switch (_requestType)
                         {
-#if UNITY_ANDROID
-                            headers.Add("X-Android-Package", NetworkConstants.PACKAGE_NAME);
-                            headers.Add("X-Android-Cert", NetworkConstants.KEY_SIGNATURE);
-#elif UNITY_IOS
-                            //need to check are they correct keys
-                            //headers.Add("X-IOS-Package", NetworkConstants.PACKAGE_NAME);
-                            //headers.Add("X-IOS-Cert", NetworkConstants.KEY_SIGNATURE);
-#endif
-                        }
+                            case NetworkEnumerators.RequestType.GET:
+                                _wwwRequest = new WWW(_uri);
+                                break;
+                            case NetworkEnumerators.RequestType.DELETE:
+                                _wwwRequest = new WWW(_uri);
+                                break;
+                            case NetworkEnumerators.RequestType.POST:
+                                if (string.IsNullOrEmpty(_data))
+                                {
+                                    _wwwRequest = new WWW(_uri);
+                                }
+                                else
+                                {
+                                    byte[] bytes = Encoding.UTF8.GetBytes(_data);
 
-                        _wwwRequest = new WWW(_uri, bytes, headers);
+                                    var headers = new Dictionary<string, string>();
+                                    headers.Add("Content-Type", "application/json");
+
+                                    if (_checkCertificate)
+                                    {
+#if UNITY_ANDROID
+                                    headers.Add("X-Android-Package", NetworkConstants.PACKAGE_NAME);
+                                    headers.Add("X-Android-Cert", NetworkConstants.KEY_SIGNATURE);
+#elif UNITY_IOS
+                                    //need to check are they correct keys
+                                    //headers.Add("X-IOS-Package", NetworkConstants.PACKAGE_NAME);
+                                    //headers.Add("X-IOS-Cert", NetworkConstants.KEY_SIGNATURE);
+#endif
+                                    }
+
+                                    _wwwRequest = new WWW(_uri, bytes, headers);
+                                }
+                                break;
+                        }
                     }
                     break;
                 default: break;
+            }
+        }
+
+        public void Cancel()
+        {
+            switch (_method)
+            {
+                case NetworkEnumerators.NetworkMethod.WEB_REQUEST:
+                    _webRequest.Abort();
+                    _webRequest.Dispose();
+                    _webRequest = null;
+                    break;
+                case NetworkEnumerators.NetworkMethod.WWW:
+                    _wwwRequest.Dispose();
+                    _wwwRequest = null;
+                    break;
+
             }
         }
     }

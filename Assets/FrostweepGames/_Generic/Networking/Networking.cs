@@ -59,5 +59,15 @@ namespace FrostweepGames.Plugins.GoogleCloud
 
             return netIndex;
         }
+
+        public void CancelRequest(long id)
+        {
+            var request = _networkRequests.Find(x => x.netPacketIndex == id);
+            if(request != null)
+            {
+                request.request.Cancel();
+                _networkRequests.Remove(request);
+            }
+        }
     }
 }

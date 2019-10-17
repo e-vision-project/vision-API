@@ -42,7 +42,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Helpers
             int pointer1 = 0,
                 pointer2 = 0;
 
-            Vector2 start = Vector2.zero, 
+            Vector2 start = Vector2.zero,
                     end = Vector2.zero;
 
             for (int i = 0; i < vertices.Length; i++)
@@ -60,6 +60,22 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Helpers
             }
 
             texture.Apply();
+        }
+
+        public static void ProcessImage(NormalizedVertex[] normalizedVertices, ref Texture2D texture, UnityEngine.Color color)
+        {
+            Vertex[] vertices = new Vertex[normalizedVertices.Length];
+
+            for (int i = 0; i < normalizedVertices.Length; i++)
+            {
+                vertices[i] = new Vertex()
+                {
+                    x = normalizedVertices[i].x * texture.width,
+                    y = normalizedVertices[i].y * texture.height
+                };
+            }
+
+            ProcessImage(vertices, ref texture, color);
         }
     }
 }

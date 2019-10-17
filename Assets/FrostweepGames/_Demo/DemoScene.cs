@@ -30,4 +30,9 @@ public class DemoScene : MonoBehaviour
     {
         SceneManager.LoadScene(scenes[4]);
     }
+
+    public void GotoGCVI()
+    {
+        SceneManager.LoadScene(scenes[5]);
+    }
 }

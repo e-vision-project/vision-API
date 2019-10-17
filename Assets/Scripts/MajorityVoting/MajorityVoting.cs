@@ -34,13 +34,13 @@ public class MajorityVoting : AsyncBehaviour
 
     public MasoutisItem masoutis_item;
     //string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
-    string[] masoutisFiles = { "masoutis_cat2_cleaned", "masoutis_cat3_cleaned", "masoutis_cat4_cleaned", "masoutis_desc_cleaned" };
+    public static string[] masoutisFiles = { "masoutis_cat2_cleaned", "masoutis_cat3_cleaned", "masoutis_cat4_cleaned", "masoutis_desc_cleaned" };
 
 
     List<string> wordsOCR = new List<string>();
     List<int> sel_k = new List<int>();
     List<int> cnt_found = new List<int>();
-    public bool database_ready = false;
+    public static bool database_ready = false;
 
     // empty constructor
     public MajorityVoting()
@@ -52,16 +52,14 @@ public class MajorityVoting : AsyncBehaviour
     {
 
         // read database to class properties
-        LoadDatabaseFiles(masoutisFiles);
+        //LoadDatabaseFiles(masoutisFiles);
         while (!database_ready)
         {
             yield return null;
         }
 
         // OCR words sanitization
-        wordsOCR = KeepElementsWithLen(wordsOCR, 4);
-        wordsOCR = RemoveGreekAccentSequential(wordsOCR);
-        wordsOCR = RemoveHotWords(wordsOCR);
+        wordsOCR = OCRWordsSanitization(wordsOCR, 4);
         // Get desc index with the most votes
         var maxDescIndex = FindMaxVotingIndex(wordsOCR);
 
@@ -83,8 +81,8 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.product_description = desc[maxDescIndex];
             if (ApplicationView.MajorityFinalText != null)
             {
-                ApplicationView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 + "\n  Ράφι: " + masoutis_item.category_3 + "\n  Ράφι 2: " + masoutis_item.category_4 + "\n  Προϊόν: " + 
-                    masoutis_item.product_description;
+                ApplicationView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 + 
+                    "\n  Ράφι: " + masoutis_item.category_3 + "\n  Κατηγορία Προϊόντος: " + masoutis_item.category_4 + "\n  Προϊόν: " + masoutis_item.product_description;
             }
         }
         catch (System.Exception)
@@ -92,6 +90,14 @@ public class MajorityVoting : AsyncBehaviour
             HandlingUnlocatedIndex();
         }
 
+    }
+
+    private static List<string> OCRWordsSanitization(List<string> wordsOCR, int maxLen)
+    {
+        wordsOCR = KeepElementsWithLen(wordsOCR, maxLen);
+        wordsOCR = RemoveGreekAccentSequential(wordsOCR);
+        wordsOCR = RemoveHotWords(wordsOCR);
+        return wordsOCR;
     }
 
     private void HandlingUnlocatedIndex()
@@ -166,6 +172,50 @@ public class MajorityVoting : AsyncBehaviour
         }
     }
 
+
+    public static void ReturnValidWords(List<string> wordsOCR)
+    {
+        var sanitizedWords = OCRWordsSanitization(wordsOCR, 4);
+
+        var validWords = new List<string>();
+        foreach (var foundTerm in wordsOCR.Where(s => dictOfIdx.ContainsKey(s)))
+        {
+            validWords.Add(foundTerm);
+        }
+        var x = validWords.Distinct().ToList();
+        x = KeepElementsWithLen(x, 3);
+        //x.ForEach(Debug.Log);
+    }
+
+    public static string GetProductDesciption(List<string> wordsOCR)
+    {
+        var _validWords = new List<string>(3);
+        var _sanitizedWords = OCRWordsSanitization(wordsOCR, 4);
+
+        foreach (var foundTerm in _sanitizedWords.Where(s => dictOfIdx.ContainsKey(s)))
+        {
+            _validWords.Add(foundTerm);
+        }
+
+        _validWords = _validWords.Distinct().ToList();
+
+        string _OCRDesc = GenericUtils.ListToString(_validWords);
+        Debug.Log(_OCRDesc);
+        int score = 0;
+        // key : index, value : score
+        Dictionary<int, int> dictOfDescriptions = new Dictionary<int, int>();
+        for (int i = 0; i < desc.Count; i++)
+        {
+            score = LevenshteinDistance.Compute(desc[i], _OCRDesc);
+            dictOfDescriptions.Add(i, score);
+        }
+
+        var min = dictOfDescriptions.Values.Min();
+        var keyMin = dictOfDescriptions.FirstOrDefault(kvp => kvp.Value == min).Key;
+        return desc[keyMin];
+    }
+
+
     private static int FindMaxVotingIndex(List<string> wordsOCR)
     {
 
@@ -211,7 +261,7 @@ public class MajorityVoting : AsyncBehaviour
         
     }
 
-    public async void LoadDatabaseFiles(string[] files)
+    public static async void LoadDatabaseFiles(string[] files)
     {
         if (desc.Count == 0 && cat2.Count == 0 & cat3.Count == 0
             && cat4.Count == 0 && cat1.Count == 0)
@@ -418,7 +468,7 @@ public class MajorityVoting : AsyncBehaviour
         return validWords.Distinct().ToList();
     }
 
-    private List<string> GetValidWordsFromDbParallel(List<string> words, List<HashSet<string>> masoutisDesc)
+    private static List<string> GetValidWordsFromDbParallel(List<string> words, List<HashSet<string>> masoutisDesc)
     {
         List<string> validWords = new List<string>();
         int cnt = 0;
@@ -429,13 +479,13 @@ public class MajorityVoting : AsyncBehaviour
                 if (masoutisDesc[i].Contains(word))
                 {
                     cnt += 1; // Count of that desc id.
-                    sel_k.Add(i); // add index of the desc in the db. Index corresponds also to the categories.
+                    //sel_k.Add(i); // add index of the desc in the db. Index corresponds also to the categories.
                     validWords.Add(word);
                 }
             }
             if (cnt != 0)
             {
-                cnt_found.Add(cnt); // cnt_found keeps the count of each word found in the db.
+                //cnt_found.Add(cnt); // cnt_found keeps the count of each word found in the db.
             }
         });
 
@@ -443,7 +493,7 @@ public class MajorityVoting : AsyncBehaviour
         return validWords.Distinct().ToList();
     }
 
-    private List<string> KeepElementsWithLen(List<string> words, int len)
+    private static List<string> KeepElementsWithLen(List<string> words, int len)
     {
         // keep elements with length >= len
         var croppedList = (from word in words
@@ -455,7 +505,7 @@ public class MajorityVoting : AsyncBehaviour
     /* 
      * Also apart from the accent returns the list elements to upper case.
      */
-    private List<string> RemoveGreekAccentSequential(List<string> words)
+    private static List<string> RemoveGreekAccentSequential(List<string> words)
     {
         List<string> wordsEdited = new List<string>();
 
@@ -501,12 +551,12 @@ public class MajorityVoting : AsyncBehaviour
     }
 
     // TODO Optimize with a hashset and txt to read words.
-    private List<string> RemoveHotWords(List<string> wordsOCR)
+    private static List<string> RemoveHotWords(List<string> wordsOCR)
     {
         var wordsSanitized = new List<string>();
         foreach (var word in wordsOCR)
         {
-            if (word != "GRAND" && word != "ΔΩΡΟ" && word != "SUPER" && word != "ΠΑΙΧΝΙΔΙ" && word != "KIDS" && word != "HELLAS")
+            if (word != "GRAND" && word != "ΔΩΡΟ" && word != "SUPER" && word != "ΠΑΙΧΝΙΔΙ" && word != "KIDS" && word != "HELLAS" && word != " ")
             {
                 wordsSanitized.Add(word);
             }

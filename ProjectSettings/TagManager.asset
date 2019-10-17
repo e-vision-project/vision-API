@@ -10,6 +10,7 @@ TagManager:
   - CLASS
   - HELPER_IMAGE
   - TIME
+  - DISPLAY_IMAGE
   layers:
   - Default
   - TransparentFX

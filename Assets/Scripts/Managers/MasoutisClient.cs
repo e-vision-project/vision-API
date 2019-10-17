@@ -12,7 +12,7 @@ namespace EVISION.Camera.plugin
         #region properties
  
         public IDeviceCamera cam;
-        private IAnnotate OCRAnnotator;
+        public IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
         private IModelPrediction featureExtractor;
         private IModelPrediction svmClassifier;
@@ -29,9 +29,12 @@ namespace EVISION.Camera.plugin
         private string annotationText;
         public string AnnotationText { get; }
         public bool annotationProccessBusy { get; set; }
+        public bool DB_LoadProccessBusy { get; set; }
         private float OCRtime;
         private float Majoritytime;
         private float classificationTime;
+
+        public static int category; 
 
 
         #endregion
@@ -56,31 +59,40 @@ namespace EVISION.Camera.plugin
         void Start()
         {
             annotationProccessBusy = false;
+            StartCoroutine(LoadDatabase());
+            DB_LoadProccessBusy = true;
             cam.SetCamera(cameraDevice);
+        }
+
+        //Load database
+        public IEnumerator LoadDatabase()
+        {
+            annotationProccessBusy = true;
+            MajorityVoting.LoadDatabaseFiles(MajorityVoting.masoutisFiles);
+            while(MajorityVoting.database_ready != true)
+            {
+                yield return null;
+            }
+            annotationProccessBusy = false;
         }
 
         // Update is called once per frame
         void Update()
         {
             cam.Tick();
+            if (MajorityVoting.database_ready && DB_LoadProccessBusy == true) { DB_LoadProccessBusy = false; }
         }
 
-        public void SingleClassification()
+
+        public void LocateProduct()
         {
             if (annotationProccessBusy)
             {
                 return;
             }
-            StartCoroutine(CLassify());
-        }
 
-        public void ClassifyScreenShot()
-        {
-            if (annotationProccessBusy)
-            {
-                return;
-            }
             StartCoroutine(ClassifyScreenshotAsync());
+
         }
 
         public IEnumerator ClassifyScreenshotAsync()
@@ -98,43 +110,41 @@ namespace EVISION.Camera.plugin
                 camTexture = cam.TakeScreenShot();
             }
 
-            int category = ClassifyCategory(camTexture);
+            // get class based on SVM inference.
+            category = ClassifyCategory(camTexture);
 
-            string cat = "κενό";
-            if (category == 0) { cat = "διάδρομος"; }
-            if (category == 1) { cat = "ράφι"; }
-            if (category == 2) { cat = "προϊόν"; }
-            if (category == 3) { cat = "άλλο"; }
-
-            if (ApplicationView.classText != null)
+            // product case
+            if (category == (int)Enums.MasoutisCategories.product)
             {
-                ApplicationView.classText.text = "κατηγορία " + cat;
+                yield return StartCoroutine(GetProductDescription());
+            }
+            else
+            {
+                yield return StartCoroutine(GetCategoryDescription(category));
             }
 
-            yield return StartCoroutine(GetCategoryDescription(category));
-
-            if (ApplicationView.TimeText != null)
-            {
-                ApplicationView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
-                    + "\nMajorityTime: " + Majoritytime.ToString() + "\nClassificationTime: " + classificationTime.ToString();
-            }
+            SetTimeText();
 
             annotationProccessBusy = false;
-            
+
         }
 
+        
         private int ClassifyCategory(Texture2D input_tex)
         {
             float startclass = Time.realtimeSinceStartup;
             
             // extract feautures from network.
             var featureVector = featureExtractor.FetchOutput<List<float>, Texture2D>(input_tex);
+
             // normalize feature vector
             var output_array = GenericUtils.ConvertToDouble(featureVector.ToArray()); // convert to double format.
             var norm_fv = svm_model.NormalizeElements(output_array, svm_model.muData, svm_model.sigmaData);
             List<double> norm_fv_list = new List<double>(norm_fv);
+            
             // calculate propabilities
             var probs = svmClassifier.FetchOutput<List<float>, List<double>>(norm_fv_list);
+            
             // get max propability class.
             float maxValue = probs.Max();
             int category_index = probs.IndexOf(maxValue);
@@ -145,15 +155,44 @@ namespace EVISION.Camera.plugin
             return category_index;
         }
 
+        public IEnumerator GetProductDescription()
+        {
+            // output message to user.
+            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Παρακαλώ περιμένε"));
+
+            float startOCRt = Time.realtimeSinceStartup;
+
+            //ocr annotation.
+            yield return StartCoroutine(OCRAnnotator.PerformAnnotation(camTexture));
+            annotationText = OCRAnnotator.GetAnnotationResults<string>();
+
+            float endOCRt = Time.realtimeSinceStartup;
+            OCRtime = CalculateTimeDifference(startOCRt, endOCRt);
+
+            if (!string.IsNullOrEmpty(annotationText))
+            {
+                float startMajt = Time.realtimeSinceStartup;
+
+                var wordsOCR = GenericUtils.SplitStringToList(annotationText);
+                var product = MajorityVoting.GetProductDesciption(wordsOCR);
+
+                float endMajt = Time.realtimeSinceStartup;
+                Majoritytime = CalculateTimeDifference(startMajt, endMajt);
+
+                //Debug.Log(product);
+            }
+        }
+
         public IEnumerator GetCategoryDescription(int category)
         {
+            // output message to user.
             yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Παρακαλώ περιμένετε"));
 
             float startOCRt = Time.realtimeSinceStartup;
-            
-            //wait until the annotation process returns
+
+            //ocr annotation.
             yield return StartCoroutine(OCRAnnotator.PerformAnnotation(camTexture));
-            annotationText = OCRAnnotator.GetAnnotationText();
+            annotationText = OCRAnnotator.GetAnnotationResults<string>();
 
             float endOCRt = Time.realtimeSinceStartup;
 
@@ -174,20 +213,12 @@ namespace EVISION.Camera.plugin
                 switch (category)
                 {
                     case (int)Enums.MasoutisCategories.trail:
-                        //Debug.Log("category 2 : Trail");
                         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + majVoting.masoutis_item.category_2));
                         break;
                     case (int)Enums.MasoutisCategories.shelf:
-                        //Debug.Log("category 3 : shelf");
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + majVoting.masoutis_item.category_3));
-                        break;
-                    case (int)Enums.MasoutisCategories.product:
-                        //Debug.Log("category 4 : product");
-                        //yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("προϊόν, " + majVoting.masoutis_item.category_4));
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("προϊόν, " + majVoting.masoutis_item.category_4));
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + majVoting.masoutis_item.category_4));
                         break;
                     case (int)Enums.MasoutisCategories.other:
-                       //Debug.Log("non reckognizable : other");
                         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο"));
                         break;
                     default:
@@ -196,55 +227,17 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                string cat = "κενό";
-                if(category == 0) { cat = "διάδρομος";}
-                if(category == 1) { cat = "ράφι";}
-                if(category == 2) { cat = "προϊόν"; }
-                if(category == 3) { cat = "άλλο"; }
-
                 if (ApplicationView.MajorityFinalText != null)
                 {
                     ApplicationView.MajorityFinalText.text = "Δεν αναγνωρίστηκαν διαθέσιμες λέξεις";
                 }
-                if(ApplicationView.MajorityValidText != null)
+                if (ApplicationView.MajorityValidText != null)
                 {
                     ApplicationView.MajorityValidText.text = "κενό";
                 }
 
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
             }
-        }
-
-        public IEnumerator TakeScreenshotSingleThreaded()
-        {
-            // lock the process so the user cannot access it.
-            annotationProccessBusy = true;
-            
-            // Get camera texture.
-            //camTexture = cam.TakeScreenShot();
-            camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
-
-            //wait until the annotation process returns
-            yield return StartCoroutine(OCRAnnotator.PerformAnnotation(camTexture));
-            annotationText = OCRAnnotator.GetAnnotationText();
-
-            // Perform majority voting
-            if (annotationText != null)
-            {
-                List<string> OCR_List = GenericUtils.SplitStringToList(annotationText);
-                MajorityVoting majVoting = new MajorityVoting();
-                yield return majVoting.PerformMajorityVoting(OCR_List);
-                masoutis_obj = majVoting.masoutis_item;
-                // Text to speech
-                voiceSynthesizer.PerformSpeechFromText(masoutis_obj.category_4);
-            }
-            else
-            {
-                voiceSynthesizer.PerformSpeechFromText("μη αναγνωρίσιμο");
-            }
-
-            
-            annotationProccessBusy = false;
         }
 
         public void SaveScreenShot()
@@ -285,6 +278,15 @@ namespace EVISION.Camera.plugin
             timeToCompleteSec = (float)System.Math.Round(end - start,2);
 
             return timeToCompleteSec;
+        }
+
+        private void SetTimeText()
+        {
+            if (ApplicationView.TimeText != null)
+            {
+                ApplicationView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
+                    + "\nMajorityTime: " + Majoritytime.ToString() + "\nClassificationTime: " + classificationTime.ToString();
+            }
         }
     }
 }

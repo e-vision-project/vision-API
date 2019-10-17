@@ -126,9 +126,14 @@ namespace FrostweepGames.Plugins.GoogleCloud.SpeechRecognition
             _mediaManager.StopRecord();
         }
 
-        public void Recognize(AudioClip clip, List<string[]> contexts, Enumerators.LanguageCode language)
+        public long Recognize(AudioClip clip, List<string[]> contexts, Enumerators.LanguageCode language)
         {
-            _speechRecognitionManager.Recognize(clip, contexts, language);
+            return _speechRecognitionManager.Recognize(clip, contexts, language);
+        }
+
+        public void CancelRecognize(long id)
+        {
+            _speechRecognitionManager.CancelRequest(id);
         }
 
         public void SetLanguage(Enumerators.LanguageCode language)

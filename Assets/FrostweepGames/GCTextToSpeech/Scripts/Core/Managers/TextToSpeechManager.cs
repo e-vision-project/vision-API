@@ -73,7 +73,7 @@ namespace FrostweepGames.Plugins.GoogleCloud.TextToSpeech
 
             if (!string.IsNullOrEmpty(response.error))
             {
-                ThrowFailedEvent(response.error, googleCloudRequestType);
+                ThrowFailedEvent(response.error + "; " + response.response, googleCloudRequestType);
             }
             else
             {

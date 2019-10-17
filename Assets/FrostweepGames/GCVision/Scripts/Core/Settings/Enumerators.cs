@@ -14,7 +14,9 @@
             SAFE_SEARCH_DETECTION,
             IMAGE_PROPERTIES,
             CROP_HINTS,
-            WEB_DETECTION
+            WEB_DETECTION,
+            PRODUCT_SEARCH,
+            OBJECT_LOCALIZATION
         }
 
         public enum LandmarkType

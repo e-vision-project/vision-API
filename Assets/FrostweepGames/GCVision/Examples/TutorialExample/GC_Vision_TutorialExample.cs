@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 
 namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
 {
@@ -16,13 +17,38 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
             _gcVision.AnnotateSuccessEvent += _gcVision_AnnotateSuccessEvent;
             _gcVision.AnnotateFailedEvent += _gcVision_AnnotateFailedEvent;
 
-            AnnotateImage("https://images.unsplash.com/photo-1534567059665-cbcfe2e73b91?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");
+
+            AnnotateImage("https://i.stack.imgur.com/vrkIj.png");
+
+            /*
+
+            // encoding from texture2d from resources
+            AnnotateImage(content: Convert.ToBase64String(Resources.Load<Texture2D>("image").EncodeToPNG()));
+
+            // encoding from file from streaming assets
+            AnnotateImage(content: Convert.ToBase64String(File.ReadAllBytes(Path.Combine(Application.streamingAssetsPath,"image.png"))));
+
+            // encoding from file from persistent data path
+            AnnotateImage(content: Convert.ToBase64String(File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "image.png"))));
+
+
+
+            Texture2D texture = new Texture2D(2, 2, TextureFormat.ARGB32, false, false);
+
+            // save file to persistent data path
+            File.WriteAllBytes(Path.Combine(Application.persistentDataPath, "image.png"), texture.EncodeToPNG());
+
+            // save file to streaming assets
+            File.WriteAllBytes(Path.Combine(Application.streamingAssetsPath, "image.png"), texture.EncodeToPNG());
+
+
+            */
         }
 
-        public void AnnotateImage(string url)
+        public void AnnotateImage(string imageUri = "", string content = "", string gcsImageUri = "")
         {
             var features = new List<Feature>();
-            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.TEXT_DETECTION });
+            features.Add(new Feature() { maxResults = 50, type = Enumerators.FeatureType.DOCUMENT_TEXT_DETECTION.ToString() });
 
             _gcVision.Annotate(new List<AnnotateRequest>()
             {
@@ -32,10 +58,10 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
                     {
                         source = new ImageSource()
                         {
-                            imageUri = url,
-                            gcsImageUri = string.Empty
+                            imageUri = imageUri,
+                            gcsImageUri = gcsImageUri
                         },
-                        content = string.Empty
+                        content = content
                     },
                     context = new ImageContext()
                     {
@@ -59,7 +85,10 @@ namespace FrostweepGames.Plugins.GoogleCloud.Vision.Examples
         {
             foreach (var response in arg1.responses)
             {
-                Debug.Log(response.fullTextAnnotation.text);
+                foreach (var annotation in response.textAnnotations)
+                {
+                    Debug.Log(annotation.description);
+                }
             }
         }
     }

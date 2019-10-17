@@ -64,5 +64,17 @@ namespace EVISION.Camera.plugin
 
             return output;
         }
+
+        public static string ListToString(List<string> _validWords)
+        {
+            string OCR_string = "";
+
+            foreach (var word in _validWords)
+            {
+                OCR_string += word + " ";
+            }
+
+            return OCR_string;
+        }
     }
 }
