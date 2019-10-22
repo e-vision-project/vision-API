@@ -1599,7 +1599,7 @@ PrefabInstance:
     - target: {fileID: 114180051822362252, guid: 14ef3b28ec0e8764e8cb5e3fc3ac8b0c,
         type: 3}
       propertyPath: apiKey
-      value: AIzaSyAbAVXi4B67wJrHRfX1vBENpQrecG43zmw
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 14ef3b28ec0e8764e8cb5e3fc3ac8b0c, type: 3}
@@ -2324,7 +2324,7 @@ PrefabInstance:
     - target: {fileID: 114407728469188914, guid: ff13ecf044606aa4692e24e67f795177,
         type: 3}
       propertyPath: apiKey
-      value: AIzaSyAbAVXi4B67wJrHRfX1vBENpQrecG43zmw
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff13ecf044606aa4692e24e67f795177, type: 3}
@@ -2602,6 +2602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1552570736}
+  imageDB: {fileID: 0}
   button: {fileID: 2111981609}
   clientApp: {fileID: 275421735}
   cam: {fileID: 275421736}

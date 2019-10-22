@@ -511,6 +511,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56fc9e41d26d48d49a736bdde3fd66ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RescaleInput: 0
+  scaleResolution: {x: 0, y: 0}
 --- !u!114 &275421738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1814,7 +1816,7 @@ PrefabInstance:
     - target: {fileID: 114180051822362252, guid: 14ef3b28ec0e8764e8cb5e3fc3ac8b0c,
         type: 3}
       propertyPath: apiKey
-      value: AIzaSyAh_HMjTMEnVfuf4Hm-fRtKJWLEJv76S1I
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 14ef3b28ec0e8764e8cb5e3fc3ac8b0c, type: 3}
@@ -2541,7 +2543,7 @@ PrefabInstance:
     - target: {fileID: 114407728469188914, guid: ff13ecf044606aa4692e24e67f795177,
         type: 3}
       propertyPath: apiKey
-      value: AIzaSyAbAVXi4B67wJrHRfX1vBENpQrecG43zmw
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff13ecf044606aa4692e24e67f795177, type: 3}
@@ -2864,12 +2866,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1552570736}
+  imageDB: {fileID: 0}
   button: {fileID: 769881967}
-  text: {fileID: 287660751}
   clientApp: {fileID: 275421735}
   cam: {fileID: 0}
   resolutionText: {fileID: 0}
-  helperImage: {fileID: 729016725}
+  devicesText: {fileID: 0}
 --- !u!1 &2017235303
 GameObject:
   m_ObjectHideFlags: 0
