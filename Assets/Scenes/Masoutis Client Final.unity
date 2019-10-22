@@ -384,6 +384,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 917798118107009368, guid: c3bde637075619b4ebfbe45bcc5f21a6,
         type: 3}
       propertyPath: m_Name
@@ -502,7 +506,7 @@ PrefabInstance:
     - target: {fileID: 917798118107009370, guid: c3bde637075619b4ebfbe45bcc5f21a6,
         type: 3}
       propertyPath: image_name
-      value: product
+      value: product_7
       objectReference: {fileID: 0}
     - target: {fileID: 917798118107009364, guid: c3bde637075619b4ebfbe45bcc5f21a6,
         type: 3}
@@ -532,7 +536,7 @@ PrefabInstance:
     - target: {fileID: 917798119775830870, guid: c3bde637075619b4ebfbe45bcc5f21a6,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LocateProduct
+      value: ScreenshotButtonListener
       objectReference: {fileID: 0}
     - target: {fileID: 917798118467694129, guid: c3bde637075619b4ebfbe45bcc5f21a6,
         type: 3}
@@ -559,11 +563,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -611
       objectReference: {fileID: 0}
-    - target: {fileID: 8792796219294577794, guid: c3bde637075619b4ebfbe45bcc5f21a6,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 917798118298992800, guid: c3bde637075619b4ebfbe45bcc5f21a6,
         type: 3}
       propertyPath: m_TagString
@@ -574,8 +573,7 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8792796219294577794, guid: c3bde637075619b4ebfbe45bcc5f21a6, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3bde637075619b4ebfbe45bcc5f21a6, type: 3}
 --- !u!1001 &6052184611120727283
 PrefabInstance:

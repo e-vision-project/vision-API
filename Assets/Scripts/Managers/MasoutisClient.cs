@@ -84,7 +84,7 @@ namespace EVISION.Camera.plugin
         }
 
 
-        public void LocateProduct()
+        public void ScreenshotButtonListener()
         {
             if (annotationProccessBusy)
             {
@@ -120,7 +120,7 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                yield return StartCoroutine(GetCategoryDescription(category));
+                yield return StartCoroutine(GetTrailShelfDescription(category));
             }
 
             SetTimeText();
@@ -158,7 +158,7 @@ namespace EVISION.Camera.plugin
         public IEnumerator GetProductDescription()
         {
             // output message to user.
-            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Παρακαλώ περιμένε"));
+            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Αναγνώριση προϊόντος"));
 
             float startOCRt = Time.realtimeSinceStartup;
 
@@ -179,11 +179,11 @@ namespace EVISION.Camera.plugin
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
 
-                //Debug.Log(product);
+                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(product));
             }
         }
 
-        public IEnumerator GetCategoryDescription(int category)
+        public IEnumerator GetTrailShelfDescription(int category)
         {
             // output message to user.
             yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Παρακαλώ περιμένετε"));
@@ -290,8 +290,3 @@ namespace EVISION.Camera.plugin
         }
     }
 }
-
-////save to file
-//ApplicationView.SaveTXT("\nclass: " + category.ToString() + "\nOCR: " + ApplicationView.wordsText.text  + "\nMAJ: " +
-//                 ApplicationView.MajorityText.text + "\ntrail: " + majVoting.masoutis_item.category_2 + ", shelf: " + majVoting.masoutis_item.category_3 + ", product: " + majVoting.masoutis_item.category_4
-//                 + "\n" + "Image_name :" + ApplicationView.capture_name + "\n=========================================");

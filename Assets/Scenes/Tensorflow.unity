@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddcc9ed18edf32c4bb8b1b987c5c586f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 4900000, guid: f5950a9b6af743d4dbe99a2eec7cb495, type: 3}
+  model: {fileID: 4900000, guid: a85afc0352c2bc34c9941b4cbfee7246, type: 3}
   labelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
   image_file: AMITA
   angle: 180

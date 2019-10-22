@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using FrostweepGames.Plugins.GoogleCloud.Vision;
 using System.Linq;
 using FrostweepGames.Plugins.GoogleCloud.Vision.Helpers;
@@ -161,6 +162,12 @@ namespace EVISION.Camera.plugin
                 {
                     // vertices from object localization max poly box.
                     var biggestBoxCoords = GetMaxBoxCoords(arg1);
+
+                    //Display Bounding box
+                    //InternalTools.ProcessImage(biggestBoxCoords.ToArray(), ref temp_image, UnityEngine.Color.green);
+                    //var display_img = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
+                    //display_img.texture = temp_image;
+
                     // OCR words that are contained inside the bounding box.
                     textAnnotation = GetTextAnnotation(arg1, biggestBoxCoords);
                 }
@@ -261,6 +268,11 @@ namespace EVISION.Camera.plugin
                         && entity.boundingPoly.vertices[0].y > verticesObj[0].y && entity.boundingPoly.vertices[2].y < verticesObj[2].y)
                     {
                         entities.Add(entity);
+
+                        //Display Bounding box
+                        //InternalTools.ProcessImage(entity.boundingPoly.vertices, ref temp_image, UnityEngine.Color.red);
+                        //var display_img = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
+                        //display_img.texture = temp_image;
                     }
                 }
             }
@@ -272,7 +284,6 @@ namespace EVISION.Camera.plugin
 
             return _description;
         }
-
 
         private void RescaleTexture(Texture2D snap)
         {

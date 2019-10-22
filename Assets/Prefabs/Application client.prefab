@@ -479,7 +479,6 @@ GameObject:
   m_Component:
   - component: {fileID: 917798118107009361}
   - component: {fileID: 917798118107009370}
-  - component: {fileID: 8792796219294577794}
   - component: {fileID: 917798118107009364}
   - component: {fileID: 917798118107009367}
   - component: {fileID: 917798118107009365}
@@ -529,18 +528,6 @@ MonoBehaviour:
   LabelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
   image_name: shelf
   cameraDevice: 1
---- !u!114 &8792796219294577794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 917798118107009368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daf2d19a5b86a7d41b6482ba9c3b9e9e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &917798118107009364
 MonoBehaviour:
   m_ObjectHideFlags: 0

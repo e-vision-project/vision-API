@@ -36,10 +36,6 @@ public class MajorityVoting : AsyncBehaviour
     //string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
     public static string[] masoutisFiles = { "masoutis_cat2_cleaned", "masoutis_cat3_cleaned", "masoutis_cat4_cleaned", "masoutis_desc_cleaned" };
 
-
-    List<string> wordsOCR = new List<string>();
-    List<int> sel_k = new List<int>();
-    List<int> cnt_found = new List<int>();
     public static bool database_ready = false;
 
     // empty constructor
@@ -50,7 +46,6 @@ public class MajorityVoting : AsyncBehaviour
 
     public IEnumerator PerformMajorityVoting(List<string> wordsOCR)
     {
-
         // read database to class properties
         //LoadDatabaseFiles(masoutisFiles);
         while (!database_ready)
@@ -65,13 +60,11 @@ public class MajorityVoting : AsyncBehaviour
 
         masoutis_item = new MasoutisItem();
 
-
         if (maxDescIndex == -1)
         {
             HandlingUnlocatedIndex();
             yield return null;
         }
-
 
         try
         {
@@ -79,10 +72,11 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_3 = cat3[maxDescIndex];
             masoutis_item.category_4 = cat4[maxDescIndex];
             masoutis_item.product_description = desc[maxDescIndex];
+
             if (ApplicationView.MajorityFinalText != null)
             {
                 ApplicationView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 + 
-                    "\n  Ράφι: " + masoutis_item.category_3 + "\n  Κατηγορία Προϊόντος: " + masoutis_item.category_4 + "\n  Προϊόν: " + masoutis_item.product_description;
+                    "\n  Ράφι: " + masoutis_item.category_3 + "\n  Κατηγορία Ραφιού: " + masoutis_item.category_4;
             }
         }
         catch (System.Exception)
@@ -112,109 +106,79 @@ public class MajorityVoting : AsyncBehaviour
         }
     }
 
-    private void FindMaxIndex_OBSOLETE(List<string> wordsOCR)
-    {
-        wordsOCR = GetValidWordsFromDb(wordsOCR, descSplitted);
-        //wordsOCR.ForEach(Debug.Log);
-        //ApplicationView.MajorityValidText.text = string.Join(", ", wordsOCR.ToArray());
-
-
-
-        //Get all products from the db that contain the valid words.
-        List<string> cropped_cat2 = new List<string>(), cropped_cat3 = new List<string>();
-        List<string> cropped_cat4 = new List<string>(), cropped_desc = new List<string>();
-
-        // iterate for all unique valid words
-        for (int i = 0; i < cnt_found.Count; i++)
-        {
-            // occurences of the valid word
-            for (int j = 0; j < cnt_found[i]; j++)
-            {
-                // sel_k gives the index of the valid word.
-                cropped_cat2.Add(cat2[sel_k[j]]);
-                cropped_cat3.Add(cat3[sel_k[j]]);
-                cropped_cat4.Add(cat4[sel_k[j]]);
-                //cropped_desc.Add(desc[sel_k[j]]);
-            }
-        }
-
-        // keep only distinct elemets in each category
-        List<string> cropped_cat2_unq = cropped_cat2.Distinct().ToList();
-        List<string> cropped_cat3_unq = cropped_cat3.Distinct().ToList();
-        List<string> cropped_cat4_unq = cropped_cat4.Distinct().ToList();
-        List<string> cropped_desc_unq = cropped_desc.Distinct().ToList();
-
-
-        // get number of occurancies of each element in every category
-        List<int> count_cat2 = GetCategoryCount(cropped_cat2);
-        List<int> count_cat3 = GetCategoryCount(cropped_cat3);
-        List<int> count_cat4 = GetCategoryCount(cropped_cat4);
-        //Debug.Log("category count end :" + Time.realtimeSinceStartup);
-
-        masoutis_item = new MasoutisItem();
-
-        try
-        {
-            masoutis_item.category_2 = cropped_cat2_unq[count_cat2.IndexOf(count_cat2.Max())];
-            masoutis_item.category_3 = cropped_cat3_unq[count_cat3.IndexOf(count_cat3.Max())];
-            masoutis_item.category_4 = cropped_cat4_unq[count_cat4.IndexOf(count_cat4.Max())];
-            //ApplicationView.MajorityFinalText.text = " Διάδρομος: " + masoutis_item.category_2 + "\n Ράφι: " + masoutis_item.category_3 + "\n Ράφι2: " + masoutis_item.category_4;
-
-
-        }
-        catch (System.Exception)
-        {
-            Debug.LogError("Problem in category index");
-            masoutis_item.category_2 = "μη αναγνωρίσιμο";
-            masoutis_item.category_3 = "μη αναγνωρίσιμο";
-            masoutis_item.category_4 = "μη αναγνωρίσιμο";
-            //ApplicationView.MajorityFinalText.text = "Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Ράφι2: " + masoutis_item.category_4;
-        }
-    }
-
-
-    public static void ReturnValidWords(List<string> wordsOCR)
-    {
-        var sanitizedWords = OCRWordsSanitization(wordsOCR, 4);
-
-        var validWords = new List<string>();
-        foreach (var foundTerm in wordsOCR.Where(s => dictOfIdx.ContainsKey(s)))
-        {
-            validWords.Add(foundTerm);
-        }
-        var x = validWords.Distinct().ToList();
-        x = KeepElementsWithLen(x, 3);
-        //x.ForEach(Debug.Log);
-    }
-
     public static string GetProductDesciption(List<string> wordsOCR)
     {
         var _validWords = new List<string>(3);
         var _sanitizedWords = OCRWordsSanitization(wordsOCR, 4);
 
-        foreach (var foundTerm in _sanitizedWords.Where(s => dictOfIdx.ContainsKey(s)))
+        _validWords = GetDistinctValidWords(_validWords, _sanitizedWords);
+
+        //description index to count of index
+        var counter = new Dictionary<int, int>();
+
+        foreach (string foundTerm in _validWords.Where(s => dictOfIdx.ContainsKey(s)))
+        {
+            foreach (var idx in dictOfIdx[foundTerm])
+            {
+                if (!counter.ContainsKey(idx))
+                {
+                    counter[idx] = 1;
+                }
+                else
+                {
+                    counter[idx]++;
+                }
+            }
+        }
+
+        if (ApplicationView.MajorityValidText != null)
+        {
+            ApplicationView.MajorityValidText.text = string.Join(", ", _validWords.Distinct().ToList().ToArray());
+        }
+
+        try
+        {
+            var maxVals = counter.OrderByDescending(k => k.Value).Take(10).ToList();
+            string _OCRDesc = GenericUtils.ListToString(_validWords);
+            Debug.Log(_OCRDesc);
+
+            int score = 0;
+            // key : index, value : score
+            Dictionary<int, int> dictOfDescriptions = new Dictionary<int, int>();
+            for (int i = 0; i < maxVals.Count; i++)
+            {
+                score = LevenshteinDistance.Compute(desc[maxVals[i].Key], _OCRDesc);
+                dictOfDescriptions.Add(maxVals[i].Key, score);
+            }
+
+            var min = dictOfDescriptions.Values.Min();
+            var keyMin = dictOfDescriptions.FirstOrDefault(kvp => kvp.Value == min).Key;
+
+            if (ApplicationView.MajorityFinalText != null)
+            {
+                ApplicationView.MajorityFinalText.text = "Προϊόν: " + desc[keyMin];
+            }
+
+            return desc[keyMin];
+
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Problem in locating max category");
+            return "Δεν αναγνωρίστηκε προϊόν";
+        }
+    }
+
+    private static List<string> GetDistinctValidWords(List<string> _validWords, List<string> _sanitizedWords)
+    {
+        foreach (string foundTerm in _sanitizedWords.Where(s => dictOfIdx.ContainsKey(s)))
         {
             _validWords.Add(foundTerm);
         }
 
         _validWords = _validWords.Distinct().ToList();
-
-        string _OCRDesc = GenericUtils.ListToString(_validWords);
-        Debug.Log(_OCRDesc);
-        int score = 0;
-        // key : index, value : score
-        Dictionary<int, int> dictOfDescriptions = new Dictionary<int, int>();
-        for (int i = 0; i < desc.Count; i++)
-        {
-            score = LevenshteinDistance.Compute(desc[i], _OCRDesc);
-            dictOfDescriptions.Add(i, score);
-        }
-
-        var min = dictOfDescriptions.Values.Min();
-        var keyMin = dictOfDescriptions.FirstOrDefault(kvp => kvp.Value == min).Key;
-        return desc[keyMin];
+        return _validWords;
     }
-
 
     private static int FindMaxVotingIndex(List<string> wordsOCR)
     {
@@ -410,89 +374,8 @@ public class MajorityVoting : AsyncBehaviour
         return cat_count;
     }
 
-    private List<string> GetValidWordsFromDbSequential(List<string> words, List<string> masoutisDesc)
-    {
-        List<string> validWords = new List<string>();
-        int cnt = 0;
 
-        for (int i = 0; i < words.Count; i++)
-        {
-            for (int k = 0; k < masoutisDesc.Count; k++)
-            {
-                List<string> new_data = new List<string>();
-                string[] splitted = masoutisDesc[k].Split(' ');
-                for (int j = 0; j < splitted.Length; j++)
-                {
-                    new_data.Add(masoutisDesc[k].Split(' ')[j]);
-                }
-                if (new_data.Contains(words[i]))
-                {
-                    cnt += 1;
-                    sel_k.Add(k);
-                    validWords.Add(words[i]);
-                }
-            }
-            if (cnt != 0)
-            {
-                cnt_found.Add(cnt);
-            }
-        }
-
-        //keep only distinct elements from the database.
-        return validWords.Distinct().ToList();
-    }
-
-    private List<string> GetValidWordsFromDb(List<string> words, List<HashSet<string>> masoutisDesc)
-    {
-        List<string> validWords = new List<string>();
-        int cnt = 0;
-
-        foreach (var word in words)
-        {
-            for (int i = 0; i < masoutisDesc.Count; i++)
-            {
-                if (masoutisDesc[i].Contains(word))
-                {
-                    cnt += 1; // Count of that desc id.
-                    sel_k.Add(i); // add index of the desc in the db. Index corresponds also to the categories.
-                    validWords.Add(word);
-                }
-            }
-            if (cnt != 0)
-            {
-                cnt_found.Add(cnt); // cnt_found keeps the count of each word found in the db.
-            }
-        }
-
-        //keep only distinct elements from the database.
-        return validWords.Distinct().ToList();
-    }
-
-    private static List<string> GetValidWordsFromDbParallel(List<string> words, List<HashSet<string>> masoutisDesc)
-    {
-        List<string> validWords = new List<string>();
-        int cnt = 0;
-        Parallel.ForEach(words, word =>
-        {
-            for (int i = 0; i < masoutisDesc.Count; i++)
-            {
-                if (masoutisDesc[i].Contains(word))
-                {
-                    cnt += 1; // Count of that desc id.
-                    //sel_k.Add(i); // add index of the desc in the db. Index corresponds also to the categories.
-                    validWords.Add(word);
-                }
-            }
-            if (cnt != 0)
-            {
-                //cnt_found.Add(cnt); // cnt_found keeps the count of each word found in the db.
-            }
-        });
-
-        //keep only distinct elements from the database.
-        return validWords.Distinct().ToList();
-    }
-
+    
     private static List<string> KeepElementsWithLen(List<string> words, int len)
     {
         // keep elements with length >= len
@@ -566,47 +449,3 @@ public class MajorityVoting : AsyncBehaviour
     }
 
 }
-
-
-
-
-////Get valid words from db
-//dictOfIndexes = LoadDataToDict(desc); 
-//var croppedDict = GetValidWords(wordsOCR.Distinct().ToList());
-//Dictionary<List<string>, int[]> dict = new Dictionary<List<string>, int[]>();
-//foreach (var key in dictOfIndexes.Keys)
-//{
-//    List<string> descSplit = new List<string>();
-//    var x = key.ToString();
-//    string[] splitted = x.Split(' ');
-//    descSplit.AddRange(splitted);
-//    dict.Add(descSplit, dictOfIndexes[key.ToString()]);
-//}
-
-
-//var dict = desc.Select((s, i) => new { s, i }).ToDictionary(x => x.i, x => x.s);
-
-
-//var dict = desc.Select((x, i) => new { Value = x, Index = i })
-//          .GroupBy(x => x.Value)
-//          .ToDictionary(x => x.Key, x => x.Select(y => y.Index)
-//                                          .ToArray());
-
-//Dictionary<string, List<int>> dict_2 = new Dictionary<string, List<int>>();
-
-//foreach (var key in dict.Keys)
-//{
-//    string[] splitted = key.Split(' ');
-
-//    foreach (string s in splitted)
-//    {
-//        if (dict_2.ContainsKey(s))
-//        {
-//            dict_2[s].AddRange(dict[key]);
-//        }
-//        else
-//        {
-//            dict_2.Add(s, dict[key].ToList());
-//        }
-//    }
-//}
