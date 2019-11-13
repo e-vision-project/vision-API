@@ -10,32 +10,35 @@ namespace EVISION.Camera.plugin
     public class MasoutisClient : MonoBehaviour
     {
         #region properties
- 
+        
+        // INTERFACES
         public IDeviceCamera cam;
         public IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
         private IModelPrediction featureExtractor;
         private IModelPrediction svmClassifier;
-        private SVMClassification svm_model;
 
-        //[SerializeField] private DeviceCamera.Cameras cameraDevice;
+        // INSPECTOR PROPERTIES
         [SerializeField] private TextAsset DLModel;
         [SerializeField] private TextAsset LabelsFile;
         [SerializeField] private string image_name;
 
+        // PRIVATE PROPERTIES
         private Texture2D camTexture;
         public DeviceCamera.Cameras cameraDevice;
         private MasoutisItem masoutis_obj;
         private string annotationText;
-        public string AnnotationText { get; }
-        public bool annotationProccessBusy { get; set; }
-        public bool DB_LoadProccessBusy { get; set; }
         private float OCRtime;
         private float Majoritytime;
         private float classificationTime;
+        private SVMClassification svm_model;
 
-        public static int category; 
-
+        // PUBLIC PROPERTIES
+        public static int category;
+        public string AnnotationText { get; }
+        public bool annotationProccessBusy { get; set; }
+        public bool DB_LoadProccessBusy { get; set; }
+        public string process_result;
 
         #endregion
 
@@ -93,6 +96,31 @@ namespace EVISION.Camera.plugin
 
             StartCoroutine(ClassifyScreenshotAsync());
 
+        }
+
+        public IEnumerator MockTesting(string screenshot, int category)
+        {
+            if(!annotationProccessBusy)
+            {
+                annotationProccessBusy = true;
+
+                camTexture = Resources.Load<Texture2D>(screenshot);
+
+                // product case
+                if (category == (int)Enums.MasoutisCategories.product)
+                {
+                    yield return StartCoroutine(GetProductDescription());
+                }
+                else
+                {
+                    yield return StartCoroutine(GetTrailShelfDescription(category));
+                }
+
+                SetTimeText();
+
+                annotationProccessBusy = false;
+            }
+            
         }
 
         public IEnumerator ClassifyScreenshotAsync()
@@ -174,13 +202,24 @@ namespace EVISION.Camera.plugin
                 float startMajt = Time.realtimeSinceStartup;
 
                 var wordsOCR = GenericUtils.SplitStringToList(annotationText);
-                var product = MajorityVoting.GetProductDesciption(wordsOCR);
+
+                var product_desc = MajorityVoting.GetProductDesciption(wordsOCR);
+
+                var product_formatted = FormatDescription(product_desc);
 
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
 
-                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(product));
+                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(product_formatted.ToLower()));
             }
+        }
+
+        private string FormatDescription(string product)
+        {
+            var edit = GenericUtils.SplitStringToList(product);
+            edit = MajorityVoting.KeepElementsWithLen(edit, 4);
+            var description = GenericUtils.ListToString(edit);
+            return description;
         }
 
         public IEnumerator GetTrailShelfDescription(int category)
@@ -213,10 +252,12 @@ namespace EVISION.Camera.plugin
                 switch (category)
                 {
                     case (int)Enums.MasoutisCategories.trail:
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + majVoting.masoutis_item.category_2));
+                        process_result = majVoting.masoutis_item.category_2;
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + process_result));
                         break;
                     case (int)Enums.MasoutisCategories.shelf:
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + majVoting.masoutis_item.category_4));
+                        process_result = majVoting.masoutis_item.category_4;
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + process_result));
                         break;
                     case (int)Enums.MasoutisCategories.other:
                         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο"));

@@ -3,7 +3,7 @@
 /// <summary>
 /// This tells us the number of edits needed to turn one string into another. 
 /// With Levenshtein distance, we measure similarity and match approximate strings with fuzzy logic.
-///     Returns the number of character edits(removals, inserts, replacements) that must occur to get from string A to string B.
+/// Returns the number of character edits(removals, inserts, replacements) that must occur to get from string A to string B.
 /// </summary>
 public static class LevenshteinDistance
 {

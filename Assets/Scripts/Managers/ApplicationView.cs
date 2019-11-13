@@ -21,6 +21,7 @@ namespace EVISION.Camera.plugin
         public static Text MajorityFinalText;
         public static Text classText;
         public static Text TimeText;
+        public static string distanceString; 
         public Text resolutionText;
         public Text devicesText;
         public static int capture_count = 0;
@@ -79,12 +80,12 @@ namespace EVISION.Camera.plugin
             string imagePath = "";
 
             #if UNITY_EDITOR_WIN
-            path = Application.dataPath + "/e-vision-Results.txt";
+            path = Application.dataPath + "/evision_product_desc.txt";
             imagePath = Application.persistentDataPath + "/captured_images";
             #endif
 
             #if UNITY_ANDROID
-            path = Application.persistentDataPath + "/e-vision-Results.txt";
+            path = Application.persistentDataPath + "/e-vision-Results-sorted.txt";
             imagePath = Application.persistentDataPath + "/captured_images";
             #endif
 
@@ -94,6 +95,7 @@ namespace EVISION.Camera.plugin
             }
 
             File.AppendAllText(path, text);
+            Debug.Log("saved as :" + path);
         }
 
         public static void SaveImageFile(Texture2D tex)

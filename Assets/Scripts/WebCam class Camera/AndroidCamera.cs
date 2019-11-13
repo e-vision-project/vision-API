@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using EVISION.Camera.plugin;
+#if PLATFORM_ANDROID
+using UnityEngine.Android;
+#endif
 
 public class AndroidCamera : DeviceCamera
 {
@@ -10,7 +13,14 @@ public class AndroidCamera : DeviceCamera
 
     public override void SetCamera(Cameras camTex)
     {
-        if(activeCameraTexture != null)
+        #if PLATFORM_ANDROID
+        if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
+        {
+            Permission.RequestUserPermission(Permission.Camera);
+        }
+        #endif
+
+        if (activeCameraTexture != null)
         {
             activeCameraTexture.Stop();
         }

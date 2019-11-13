@@ -6,33 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/Mobile camera.unity
-    guid: 6be7f5701296936498e910e1b6186d6b
-  - enabled: 0
-    path: Assets/FrostweepGames/GCVision/Examples/OCRExample/GC_Vision_OCRExample.unity
-    guid: 3aa979d3ba1fd5f4a8d267fc7f25aeb0
-  - enabled: 0
-    path: Assets/Scenes/Mobile camera WebCamTexture.unity
-    guid: 6ed476c6e5bd7804faf2ddd1870fc9e2
-  - enabled: 0
-    path: Assets/Scenes/MajorityVoting.unity
-    guid: 798aad215921cc941856cab2ca7860e0
-  - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Scenes/Tensorflow.unity
-    guid: 92d4e898d1b218e43b93d3872a030b3e
-  - enabled: 0
-    path: Assets/Scenes/Mobile camera WebTexture.unity
-    guid: 4c60198c9768fee4f8afaf29bc273192
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/Masoutis Client Final.unity
     guid: a35de50a72e3cfc4d87e6c081dc347d4
   - enabled: 0
-    path: Assets/Scenes/Mobile camera ARFoundation.unity
-    guid: 6f8eafae88b31eb4aa8cc7821dea72a3
-  - enabled: 0
-    path: Assets/Scenes/Mobile camera WebTexture Researchers Night UI.unity
-    guid: 094d6f73b6ba23e4bbf3b377c1480f75
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

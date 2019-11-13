@@ -35,6 +35,7 @@ public class MajorityVoting : AsyncBehaviour
     public MasoutisItem masoutis_item;
     //string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
     public static string[] masoutisFiles = { "masoutis_cat2_cleaned", "masoutis_cat3_cleaned", "masoutis_cat4_cleaned", "masoutis_desc_cleaned" };
+    //public static string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
 
     public static bool database_ready = false;
 
@@ -131,25 +132,47 @@ public class MajorityVoting : AsyncBehaviour
             }
         }
 
-        if (ApplicationView.MajorityValidText != null)
-        {
-            ApplicationView.MajorityValidText.text = string.Join(", ", _validWords.Distinct().ToList().ToArray());
-        }
+
+        
 
         try
         {
-            var maxVals = counter.OrderByDescending(k => k.Value).Take(10).ToList();
+            // keep max (thresshold) indexes based on their count.
+            var maxVals = counter.OrderByDescending(k => k.Value).Take(20).ToList();
+            
+            // sort valid words alphabetically.
+            _validWords = SortAlphabetically(_validWords);
+            // create string for product description based on SORTED valid words.
             string _OCRDesc = GenericUtils.ListToString(_validWords);
-            Debug.Log(_OCRDesc);
+
+            if (ApplicationView.MajorityValidText != null)
+            {
+                ApplicationView.MajorityValidText.text = string.Join(", ", _validWords.Distinct().ToList().ToArray());
+            }
 
             int score = 0;
             // key : index, value : score
             Dictionary<int, int> dictOfDescriptions = new Dictionary<int, int>();
             for (int i = 0; i < maxVals.Count; i++)
             {
-                score = LevenshteinDistance.Compute(desc[maxVals[i].Key], _OCRDesc);
+                //sort string alphabetically.
+                var db_desc = SortStringAlphabetically(desc[maxVals[i].Key]);
+
+                score = LevenshteinDistance.Compute(db_desc, _OCRDesc);
                 dictOfDescriptions.Add(maxVals[i].Key, score);
             }
+
+            // FOR TESTING ONLY
+            ApplicationView.distanceString = "";
+            var ordered = dictOfDescriptions.OrderBy(x => x.Value).ToList();
+            var ordered_distinct = ordered.Distinct().ToList();
+            int b = 0;
+            foreach (var item in ordered_distinct)
+            {
+                ApplicationView.distanceString += desc[item.Key] + ", " + "(MJ count): " + maxVals[b].Value.ToString() + ", " + "(DIST count): " + item.Value.ToString() + "\n";
+                b++;
+            }
+            // END TESTING SECTION
 
             var min = dictOfDescriptions.Values.Min();
             var keyMin = dictOfDescriptions.FirstOrDefault(kvp => kvp.Value == min).Key;
@@ -204,7 +227,6 @@ public class MajorityVoting : AsyncBehaviour
         }
 
         var x = validWords.Distinct().ToList();
-        //x.ForEach(Debug.Log);
 
         if (ApplicationView.MajorityValidText != null)
         {
@@ -376,7 +398,7 @@ public class MajorityVoting : AsyncBehaviour
 
 
     
-    private static List<string> KeepElementsWithLen(List<string> words, int len)
+    public static List<string> KeepElementsWithLen(List<string> words, int len)
     {
         // keep elements with length >= len
         var croppedList = (from word in words
@@ -446,6 +468,26 @@ public class MajorityVoting : AsyncBehaviour
         }
 
         return wordsSanitized;
+    }
+
+    private static List<string> SortAlphabetically(List<string> sentence) 
+    {
+        var sorted = (from word in sentence
+                     orderby word
+                     select word).ToList();
+
+        return sorted;
+    }
+
+    private static string SortStringAlphabetically(string desc)
+    {
+        var listOfDesc = GenericUtils.SplitStringToList(desc);
+
+        var sorted = (from word in listOfDesc
+                      orderby word
+                      select word).ToList();
+
+        return GenericUtils.ListToString(sorted);
     }
 
 }
