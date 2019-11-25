@@ -11,10 +11,13 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Masoutis Client Final.unity
     guid: a35de50a72e3cfc4d87e6c081dc347d4
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/Masoutis Client WifiCamera.unity
+    guid: 509bcd901ec37444ba81bc059e9c72c1
   m_configObjects: {}

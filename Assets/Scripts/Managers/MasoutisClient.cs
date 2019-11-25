@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
+using static EVISION.Camera.plugin.ApplicationView;
+using System.IO;
 
 namespace EVISION.Camera.plugin
 {
@@ -12,25 +14,25 @@ namespace EVISION.Camera.plugin
         #region properties
         
         // INTERFACES
-        public IDeviceCamera cam;
+        public IDeviceCamera nativeCam;
         public IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
         private IModelPrediction featureExtractor;
         private IModelPrediction svmClassifier;
+        private IExternalCamera wifiCam;
 
         // INSPECTOR PROPERTIES
         [SerializeField] private TextAsset DLModel;
         [SerializeField] private TextAsset LabelsFile;
         [SerializeField] private string image_name;
+        [SerializeField] private bool externalCamera;
+        [SerializeField] private bool logging;
 
         // PRIVATE PROPERTIES
         private Texture2D camTexture;
         public DeviceCamera.Cameras cameraDevice;
         private MasoutisItem masoutis_obj;
         private string annotationText;
-        private float OCRtime;
-        private float Majoritytime;
-        private float classificationTime;
         private SVMClassification svm_model;
 
         // PUBLIC PROPERTIES
@@ -40,22 +42,24 @@ namespace EVISION.Camera.plugin
         public bool DB_LoadProccessBusy { get; set; }
         public string process_result;
 
+        //Testing / Logging
+        private string itemName;
+        private float OCRtime;
+        private float Majoritytime;
+        private float classificationTime;
+
         #endregion
 
+        #region MonoBehaviour Callbacks
 
         private void Awake()
         {
-            cam = GetComponent<IDeviceCamera>();
+            nativeCam = GetComponent<IDeviceCamera>();
+            wifiCam = GetComponent<IExternalCamera>();
             OCRAnnotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
-            
-            //Get feautures from model
-            featureExtractor = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.01f);
-            
-            // set and load svm model
-            svm_model = new SVMClassification();
-            svm_model.SetModelParameters("SVM_Weights", "mu", "sigma");
-            svmClassifier = svm_model;
+
+            SetSVM();
         }
 
         // Start is called before the first frame update
@@ -64,7 +68,33 @@ namespace EVISION.Camera.plugin
             annotationProccessBusy = false;
             StartCoroutine(LoadDatabase());
             DB_LoadProccessBusy = true;
-            cam.SetCamera(cameraDevice);
+            if (externalCamera) { wifiCam.SetCamera("url to UMP player"); }
+            else { nativeCam.SetCamera(cameraDevice); }
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if(nativeCam != null && !externalCamera)
+            {
+                nativeCam.Tick();
+            }
+            if (MajorityVoting.database_ready && DB_LoadProccessBusy == true) { DB_LoadProccessBusy = false; }
+        }
+
+        #endregion
+
+
+        #region Initializers
+
+        private void SetSVM()
+        {
+            //Get feautures from model
+            featureExtractor = new TFFeatureExtraction("input_1", "block_15_project/convolution", 224, 224, 127.5f, 127.5f, DLModel, LabelsFile, 180, 0.01f);
+            // set and load svm model
+            svm_model = new SVMClassification();
+            svm_model.SetModelParameters("SVM_Weights", "mu", "sigma");
+            svmClassifier = svm_model;
         }
 
         //Load database
@@ -72,19 +102,14 @@ namespace EVISION.Camera.plugin
         {
             annotationProccessBusy = true;
             MajorityVoting.LoadDatabaseFiles(MajorityVoting.masoutisFiles);
-            while(MajorityVoting.database_ready != true)
+            while (MajorityVoting.database_ready != true)
             {
                 yield return null;
             }
             annotationProccessBusy = false;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            cam.Tick();
-            if (MajorityVoting.database_ready && DB_LoadProccessBusy == true) { DB_LoadProccessBusy = false; }
-        }
+        #endregion
 
 
         public void ScreenshotButtonListener()
@@ -95,32 +120,15 @@ namespace EVISION.Camera.plugin
             }
 
             StartCoroutine(ClassifyScreenshotAsync());
-
         }
 
-        public IEnumerator MockTesting(string screenshot, int category)
+        public void SetResultLogs()
         {
-            if(!annotationProccessBusy)
+            if (logging)
             {
-                annotationProccessBusy = true;
-
-                camTexture = Resources.Load<Texture2D>(screenshot);
-
-                // product case
-                if (category == (int)Enums.MasoutisCategories.product)
-                {
-                    yield return StartCoroutine(GetProductDescription());
-                }
-                else
-                {
-                    yield return StartCoroutine(GetTrailShelfDescription(category));
-                }
-
-                SetTimeText();
-
-                annotationProccessBusy = false;
+                var results = image_name + "| " + MajorityFinalText.text + "| " + MajorityValidText.text + "|" + "\n" + distanceString + "\n";
+                SaveTXT(results);
             }
-            
         }
 
         public IEnumerator ClassifyScreenshotAsync()
@@ -129,14 +137,7 @@ namespace EVISION.Camera.plugin
             annotationProccessBusy = true;
 
             // Get camera texture.
-            if (Application.isEditor)
-            {
-                camTexture = Resources.Load<Texture2D>("Textures/Masoutis/" + image_name);
-            }
-            else
-            {
-                camTexture = cam.TakeScreenShot();
-            }
+            GetScreenshot();
 
             // get class based on SVM inference.
             category = ClassifyCategory(camTexture);
@@ -157,7 +158,36 @@ namespace EVISION.Camera.plugin
 
         }
 
-        
+        private void GetScreenshot()
+        {
+            if (Application.isEditor)
+            {
+                if (externalCamera)
+                {
+                    camTexture = wifiCam.GetScreenShot();
+                    image_name = "wifi_screenshot";
+                    File.WriteAllBytes(Application.persistentDataPath + "/pazanotis.jpg", camTexture.EncodeToPNG());
+                }
+                else
+                {
+                    camTexture = Resources.Load<Texture2D>("Products_UnitTests/" + image_name);
+                }
+            }
+            else
+            {
+                if (!externalCamera)
+                {
+                    camTexture = nativeCam.TakeScreenShot();
+                    image_name = "mobile_screenshot";
+                }
+                else
+                {
+                    camTexture = wifiCam.GetScreenShot();
+                    image_name = "wifi_screenshot";
+                }
+            }
+        }
+
         private int ClassifyCategory(Texture2D input_tex)
         {
             float startclass = Time.realtimeSinceStartup;
@@ -209,7 +239,7 @@ namespace EVISION.Camera.plugin
 
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
-
+                SetResultLogs();
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(product_formatted.ToLower()));
             }
         }
@@ -283,8 +313,8 @@ namespace EVISION.Camera.plugin
 
         public void SaveScreenShot()
         {
-            Texture2D tex = cam.TakeScreenShot();
-            cam.SaveScreenShot(tex);
+            Texture2D tex = nativeCam.TakeScreenShot();
+            nativeCam.SaveScreenShot(tex);
         }
 
         public IEnumerator CLassify()
@@ -299,7 +329,7 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                camTexture = cam.TakeScreenShot();
+                camTexture = nativeCam.TakeScreenShot();
                 category = ClassifyCategory(camTexture);
             }
 

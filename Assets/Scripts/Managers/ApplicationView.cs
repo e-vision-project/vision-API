@@ -80,12 +80,12 @@ namespace EVISION.Camera.plugin
             string imagePath = "";
 
             #if UNITY_EDITOR_WIN
-            path = Application.dataPath + "/evision_product_desc.txt";
+            path = Application.dataPath + "/evision_Results_unsorted.txt";
             imagePath = Application.persistentDataPath + "/captured_images";
             #endif
 
             #if UNITY_ANDROID
-            path = Application.persistentDataPath + "/e-vision-Results-sorted.txt";
+            path = Application.persistentDataPath + "/evision_Results_unsorted.txt";
             imagePath = Application.persistentDataPath + "/captured_images";
             #endif
 

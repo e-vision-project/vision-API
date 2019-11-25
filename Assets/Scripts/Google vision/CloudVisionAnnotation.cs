@@ -29,6 +29,8 @@ namespace EVISION.Camera.plugin
         [Tooltip("The resolution to be scaled")]
         public Vector2 scaleResolution;
 
+        public bool displayBoundingBox;
+
         private Texture2D temp_image;
 
         #region IAnnotate callbacks
@@ -164,10 +166,8 @@ namespace EVISION.Camera.plugin
                     var biggestBoxCoords = GetMaxBoxCoords(arg1);
 
                     //Display Bounding box
-                    //InternalTools.ProcessImage(biggestBoxCoords.ToArray(), ref temp_image, UnityEngine.Color.green);
-                    //var display_img = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
-                    //display_img.texture = temp_image;
-
+                    if(displayBoundingBox) { RenderAnnotationResults(biggestBoxCoords); }
+                    
                     // OCR words that are contained inside the bounding box.
                     textAnnotation = GetTextAnnotation(arg1, biggestBoxCoords);
                 }
@@ -184,6 +184,13 @@ namespace EVISION.Camera.plugin
                 textAnnotation = string.Empty;
                 annotationCompleted = true;
             }
+        }
+
+        private void RenderAnnotationResults(List<Vertex> Coords)
+        {
+            InternalTools.ProcessImage(Coords.ToArray(), ref temp_image, UnityEngine.Color.green);
+            var display_img = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
+            display_img.texture = temp_image;
         }
 
         #endregion
@@ -270,9 +277,12 @@ namespace EVISION.Camera.plugin
                         entities.Add(entity);
 
                         //Display Bounding box
-                        //InternalTools.ProcessImage(entity.boundingPoly.vertices, ref temp_image, UnityEngine.Color.red);
-                        //var display_img = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
-                        //display_img.texture = temp_image;
+                        if (displayBoundingBox)
+                        {
+                            InternalTools.ProcessImage(entity.boundingPoly.vertices, ref temp_image, UnityEngine.Color.red);
+                            var display_img = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
+                            display_img.texture = temp_image;
+                        }
                     }
                 }
             }

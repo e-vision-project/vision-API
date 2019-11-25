@@ -132,13 +132,10 @@ public class MajorityVoting : AsyncBehaviour
             }
         }
 
-
-        
-
         try
         {
             // keep max (thresshold) indexes based on their count.
-            var maxVals = counter.OrderByDescending(k => k.Value).Take(20).ToList();
+            var maxVals = counter.OrderByDescending(k => k.Value).Take(100).ToList();
             
             // sort valid words alphabetically.
             _validWords = SortAlphabetically(_validWords);
