@@ -4,10 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-
 public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
 {
-    # region properties 
+    #region properties 
 
     // Canvas UI components
     [SerializeField] protected RawImage displayImage;
@@ -35,12 +34,16 @@ public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
     protected Vector3 defaultScale = new Vector3(1f, 1f, 1f);
     protected Vector3 fixedScale = new Vector3(-1f, 1f, 1f);
 
-    public enum Cameras{ Front, Back, Extra};
+    public enum Cameras { Front, Back, Extra };
 
     #endregion
 
     public void SetCameraProperties()
     {
+        displayImage = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
+        imageParent = displayImage.GetComponentInParent<RectTransform>();
+        imageFitter = displayImage.GetComponent<AspectRatioFitter>();
+
         // Get the device's cameras and create WebCamTextures with them
         frontCameraDevice = WebCamTexture.devices.Last();
         backCameraDevice = WebCamTexture.devices.First();
@@ -52,6 +55,9 @@ public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
         // Set camera filter modes for a smoother looking image
         frontCameraTexture.filterMode = FilterMode.Trilinear;
         backCameraTexture.filterMode = FilterMode.Trilinear;
+
+        // subscribe to camera events
+        //EventCamManager.current.onNatCamConnect += SetCamera(Cameras.Back);
     }
 
     public abstract void SaveScreenShot(Texture2D snap);
@@ -59,6 +65,7 @@ public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
     public abstract void Tick();
     public abstract void SwitchCamera();
     public abstract Texture2D TakeScreenShot();
+    public abstract void ConnectCamera();
 
     public virtual Vector2 GetCamTextureWidthHeight()
     {

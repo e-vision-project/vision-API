@@ -14,29 +14,29 @@ namespace EVISION.Camera.plugin
         #region properties
         
         // INTERFACES
-        public IDeviceCamera nativeCam;
         public IAnnotate OCRAnnotator;
         private ITextToVoice voiceSynthesizer;
         private IModelPrediction featureExtractor;
         private IModelPrediction svmClassifier;
-        private IExternalCamera wifiCam;
+        private IDeviceCamera[] cams;
+        private IDeviceCamera currentCam;
 
         // INSPECTOR PROPERTIES
         [SerializeField] private TextAsset DLModel;
         [SerializeField] private TextAsset LabelsFile;
         [SerializeField] private string image_name;
-        [SerializeField] private bool externalCamera;
+        [SerializeField] private bool isExternalCamera;
         [SerializeField] private bool logging;
 
         // PRIVATE PROPERTIES
         private Texture2D camTexture;
-        public DeviceCamera.Cameras cameraDevice;
         private MasoutisItem masoutis_obj;
         private string annotationText;
         private SVMClassification svm_model;
 
         // PUBLIC PROPERTIES
         public static int category;
+        public bool cameraConnected = false;
         public string AnnotationText { get; }
         public bool annotationProccessBusy { get; set; }
         public bool DB_LoadProccessBusy { get; set; }
@@ -54,12 +54,13 @@ namespace EVISION.Camera.plugin
 
         private void Awake()
         {
-            nativeCam = GetComponent<IDeviceCamera>();
-            wifiCam = GetComponent<IExternalCamera>();
+            // first external camera, then android cam, then IOS cam.
+            cams = GetComponents<IDeviceCamera>();
             OCRAnnotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
 
             SetSVM();
+            
         }
 
         // Start is called before the first frame update
@@ -68,17 +69,16 @@ namespace EVISION.Camera.plugin
             annotationProccessBusy = false;
             StartCoroutine(LoadDatabase());
             DB_LoadProccessBusy = true;
-            if (externalCamera) { wifiCam.SetCamera("url to UMP player"); }
-            else { nativeCam.SetCamera(cameraDevice); }
+
+            //set the external camera
+            currentCam = cams[0];
+            currentCam.ConnectCamera();
         }
 
         // Update is called once per frame
         void Update()
         {
-            if(nativeCam != null && !externalCamera)
-            {
-                nativeCam.Tick();
-            }
+            if(currentCam != null && !isExternalCamera) { currentCam.Tick();  } 
             if (MajorityVoting.database_ready && DB_LoadProccessBusy == true) { DB_LoadProccessBusy = false; }
         }
 
@@ -87,6 +87,7 @@ namespace EVISION.Camera.plugin
 
         #region Initializers
 
+        // TODO : remove dependencies with feautre extraction and svm classification.
         private void SetSVM()
         {
             //Get feautures from model
@@ -111,10 +112,39 @@ namespace EVISION.Camera.plugin
 
         #endregion
 
+        #region Event Listeners
+
+        public void ConnectExternalCam()
+        {
+            Debug.Log("external cam connected");
+            isExternalCamera = true;
+            SetCameraConnectionStatus(true);
+        }
+
+        public void ConnectNativeCamera()
+        {
+            Debug.Log("native cam connected");
+            currentCam = cams[1];
+            currentCam.ConnectCamera();
+            isExternalCamera = false;
+            SetCameraConnectionStatus(true);
+            
+        }
+
+        public void SetCameraConnectionStatus(bool value)
+        {
+            cameraConnected = value;
+        }
+
+        #endregion
 
         public void ScreenshotButtonListener()
         {
             if (annotationProccessBusy)
+            {
+                return;
+            }
+            if (!cameraConnected)
             {
                 return;
             }
@@ -133,40 +163,40 @@ namespace EVISION.Camera.plugin
 
         public IEnumerator ClassifyScreenshotAsync()
         {
-            // lock the process so the user cannot access it.
-            annotationProccessBusy = true;
-
-            // Get camera texture.
-            GetScreenshot();
-
-            // get class based on SVM inference.
-            category = ClassifyCategory(camTexture);
-
-            // product case
-            if (category == (int)Enums.MasoutisCategories.product)
+            if (currentCam != null)
             {
-                yield return StartCoroutine(GetProductDescription());
+                // lock the process so the user cannot access it.
+                annotationProccessBusy = true;
+
+                // Get camera texture.
+                GetScreenshot();
+
+                // get class based on SVM inference.
+                category = ClassifyCategory(camTexture);
+
+                // product case
+                if (category == (int)Enums.MasoutisCategories.product)
+                {
+                    yield return StartCoroutine(GetProductDescription());
+                }
+                else
+                {
+                    yield return StartCoroutine(GetTrailShelfDescription(category));
+                }
+
+                SetTimeText();
+
+                annotationProccessBusy = false;
             }
-            else
-            {
-                yield return StartCoroutine(GetTrailShelfDescription(category));
-            }
-
-            SetTimeText();
-
-            annotationProccessBusy = false;
-
         }
 
         private void GetScreenshot()
         {
             if (Application.isEditor)
             {
-                if (externalCamera)
+                if (isExternalCamera)
                 {
-                    camTexture = wifiCam.GetScreenShot();
-                    image_name = "wifi_screenshot";
-                    File.WriteAllBytes(Application.persistentDataPath + "/pazanotis.jpg", camTexture.EncodeToPNG());
+                    camTexture = currentCam.TakeScreenShot();
                 }
                 else
                 {
@@ -175,16 +205,8 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                if (!externalCamera)
-                {
-                    camTexture = nativeCam.TakeScreenShot();
-                    image_name = "mobile_screenshot";
-                }
-                else
-                {
-                    camTexture = wifiCam.GetScreenShot();
-                    image_name = "wifi_screenshot";
-                }
+                camTexture = currentCam.TakeScreenShot();
+                //SaveImageFile(camTexture);
             }
         }
 
@@ -313,8 +335,8 @@ namespace EVISION.Camera.plugin
 
         public void SaveScreenShot()
         {
-            Texture2D tex = nativeCam.TakeScreenShot();
-            nativeCam.SaveScreenShot(tex);
+            Texture2D tex = currentCam.TakeScreenShot();
+            currentCam.SaveScreenShot(tex);
         }
 
         public IEnumerator CLassify()
@@ -329,7 +351,7 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                camTexture = nativeCam.TakeScreenShot();
+                camTexture = currentCam.TakeScreenShot();
                 category = ClassifyCategory(camTexture);
             }
 

@@ -5,42 +5,46 @@ using UnityEngine.UI;
 
 namespace EVISION.Camera.plugin
 {
-    public class WifiCamera : MonoBehaviour, IExternalCamera
+    public class WifiCamera : MonoBehaviour, IDeviceCamera
     {
         public UniversalMediaPlayer UMP;
         public RawImage displayImg;
         private Texture2D screenshotTex;
 
-        #region IExternalCamera callbacks
 
-        public Texture2D GetScreenShot()
+        #region IDeviceCamera callbacks
+
+        public void ConnectCamera()
+        {
+            UMP.Play();
+        }
+
+        public Texture2D TakeScreenShot()
         {
             Texture2D screenshotTex = GenericUtils.RenderTexToTex2D(displayImg.texture);
             return screenshotTex;
         }
 
-        public void SaveScreenshot()
+        public void SaveScreenShot(Texture2D snap)
         {
             throw new System.NotImplementedException();
         }
 
-        public void SetCamera(string url)
+        public void SwitchCamera()
         {
-            UMP.Play();
+            throw new System.NotImplementedException();
+        }
+
+        public void Tick()
+        {
+            Debug.Log("update in wifi camera");
         }
 
         #endregion
 
-        // Start is called before the first frame update
-        void Start()
+        public void DisableCameraView()
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            displayImg.enabled = false;
         }
     }
 }

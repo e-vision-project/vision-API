@@ -40,10 +40,8 @@ namespace EVISION.Camera.plugin
 
             //copy image
             temp_image = snap;
-
             // Convert to base64 encoding.
             string _selectedImageData = ImageConvert.Convert(snap);
-
             if (MasoutisClient.category == (int)Enums.MasoutisCategories.product)
             {
                 // set features types

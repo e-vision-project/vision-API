@@ -11,6 +11,7 @@ namespace EVISION.Camera.plugin
     {
         public GameObject image;
         public GameObject imageDB;
+        public GameObject imageCam;
         public static RawImage helperImage;
         public GameObject button;
         //public Text text;
@@ -71,6 +72,14 @@ namespace EVISION.Camera.plugin
             if (devicesText != null && resolutionText != null)
             {
                 devicesText.text = WebCamTexture.devices.Length.ToString();
+            }
+            if (clientApp.cameraConnected || clientApp.DB_LoadProccessBusy)
+            {
+                imageCam.SetActive(false);
+            }
+            else if(!clientApp.cameraConnected && !clientApp.DB_LoadProccessBusy)
+            {
+                imageCam.SetActive(true);
             }
         }
 

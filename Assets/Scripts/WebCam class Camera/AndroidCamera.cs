@@ -84,6 +84,11 @@ public class AndroidCamera : DeviceCamera
         Debug.Log("Permission result: " + NativeGallery.SaveImageToGallery(snap, "e-vision", name));
     }
 
+    public override void ConnectCamera()
+    {
+        SetCameraProperties();
+        SetCamera(Cameras.Back);
+    }
     #endregion
 
     #region MonoBehaviour Callbacks
@@ -151,7 +156,6 @@ public class AndroidCamera : DeviceCamera
             displayImage.uvRect = new Rect(1, 0, -1, 1);  // means flip on vertical axis
         else
             displayImage.uvRect = new Rect(0, 0, 1, 1);  // means no flip
-
     }
 
     #endregion
