@@ -458,7 +458,7 @@ public class MajorityVoting : AsyncBehaviour
         var wordsSanitized = new List<string>();
         foreach (var word in wordsOCR)
         {
-            if (word != "GRAND" && word != "ΔΩΡΟ" && word != "SUPER" && word != "ΠΑΙΧΝΙΔΙ" && word != "KIDS" && word != "HELLAS" && word != " ")
+            if (word != "GRAND" && word != "ΔΩΡΟ" && word != "SUPER" && word != "ΠΑΙΧΝΙΔΙ" && word != "KIDS" && word != "HELLAS" && word != " " && word != "ΠΡΟΣΦΟΡΑ")
             {
                 wordsSanitized.Add(word);
             }

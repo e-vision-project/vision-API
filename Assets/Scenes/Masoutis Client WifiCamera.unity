@@ -465,7 +465,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DLModel: {fileID: 4900000, guid: f5950a9b6af743d4dbe99a2eec7cb495, type: 3}
   LabelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
-  image_name: p (23)
+  image_name: p (17)
   isExternalCamera: 1
   logging: 0
   cameraConnected: 0
@@ -507,7 +507,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275421733}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c32b5d6b9aea8843a122256599dbbcd, type: 3}
   m_Name: 
@@ -645,6 +645,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UMP: {fileID: 1033661365}
   displayImg: {fileID: 818287298}
+  logging: 1
+  emptyStream: 0
+  prev_connected: 0
 --- !u!1 &286393577
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,7 +1355,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 472386, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 472386, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1372,15 +1375,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _playingEvent.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _endReachedEvent.m_PersistentCalls.m_Calls.Array.size
@@ -1392,11 +1395,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _openingEvent.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _renderingObjects.Array.data[0]
@@ -1408,7 +1415,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -1440,7 +1447,7 @@ PrefabInstance:
       objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DisableCameraView
+      value: LogMessage
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1448,7 +1455,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -1457,10 +1464,10 @@ PrefabInstance:
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 275421735}
+      objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: SetCameraConnectionStatus
+      value: OnCameraError
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1468,7 +1475,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -1480,7 +1487,7 @@ PrefabInstance:
       objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DisableCameraView
+      value: LogMessage
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1488,7 +1495,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -1497,10 +1504,10 @@ PrefabInstance:
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 275421735}
+      objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: SetCameraConnectionStatus
+      value: Reconnect
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1508,7 +1515,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _playingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _playingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -1517,10 +1524,10 @@ PrefabInstance:
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _playingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 275421735}
+      objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _playingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetCameraConnectionStatus
+      value: LogMessage
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _playingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1565,10 +1572,10 @@ PrefabInstance:
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 275421735}
+      objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
-      value: ConnectNativeCamera
+      value: OnCameraError
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1576,7 +1583,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
@@ -1588,7 +1595,7 @@ PrefabInstance:
       objectReference: {fileID: 275421735}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
-      value: ConnectNativeCamera
+      value: SetCameraConnectionStatus
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1704,7 +1711,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _openingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _openingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -1713,10 +1720,10 @@ PrefabInstance:
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _openingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 275421735}
+      objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _openingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Open
+      value: LogMessage
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _openingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1724,7 +1731,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -1733,10 +1740,10 @@ PrefabInstance:
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 275421735}
+      objectReference: {fileID: 275421741}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: Prepared
+      value: LogMessage
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1744,7 +1751,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
@@ -1768,6 +1775,174 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Target
+      value: 
+      objectReference: {fileID: 275421741}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
+      value: OnCameraError
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Target
+      value: 
+      objectReference: {fileID: 275421735}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
+      value: ConnectNativeCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _logDetail
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _androidRtspOverTcp
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_StringArgument
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: UMP player stopped
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_StringArgument
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: UMP player Error
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _stoppedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
+      value: rtsp://192.168.1.254:554/test.mp4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _openingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: Opening
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 275421741}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LogMessage
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: Image ready
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _preparedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
+      value: Prepared
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _playingEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: playing
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 275421741}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetEmptyStream
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _autoPlay
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 275421741}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: SetConnection
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2905,7 +3080,7 @@ PrefabInstance:
     - target: {fileID: 6052184611050661088, guid: e82a825c932df424eaf27e727cea761a,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6052184611050661088, guid: e82a825c932df424eaf27e727cea761a,
         type: 3}
@@ -3008,7 +3183,7 @@ PrefabInstance:
     - target: {fileID: 7049530519535146643, guid: 851c97eed5301954bb4ac07ad65df6f4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7049530519535146643, guid: 851c97eed5301954bb4ac07ad65df6f4,
         type: 3}

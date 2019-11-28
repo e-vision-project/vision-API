@@ -73,12 +73,14 @@ namespace EVISION.Camera.plugin
             //set the external camera
             currentCam = cams[0];
             currentCam.ConnectCamera();
+
+            EventCamManager.onNatCamConnect += ConnectNativeCamera;
         }
 
         // Update is called once per frame
         void Update()
         {
-            if(currentCam != null && !isExternalCamera) { currentCam.Tick();  } 
+            if(currentCam != null && !isExternalCamera) { currentCam.Tick(); } 
             if (MajorityVoting.database_ready && DB_LoadProccessBusy == true) { DB_LoadProccessBusy = false; }
         }
 
@@ -123,12 +125,12 @@ namespace EVISION.Camera.plugin
 
         public void ConnectNativeCamera()
         {
-            Debug.Log("native cam connected");
+            voiceSynthesizer.PerformSpeechFromText("Εξωτερική κάμερα απενεργοποιήθηκε... κάμερα κινητού ενεργοποιημένη");
             currentCam = cams[1];
             currentCam.ConnectCamera();
             isExternalCamera = false;
             SetCameraConnectionStatus(true);
-            
+            Debug.Log("native cam connected");
         }
 
         public void SetCameraConnectionStatus(bool value)
@@ -206,7 +208,6 @@ namespace EVISION.Camera.plugin
             else
             {
                 camTexture = currentCam.TakeScreenShot();
-                //SaveImageFile(camTexture);
             }
         }
 
