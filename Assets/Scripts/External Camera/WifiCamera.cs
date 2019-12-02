@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace EVISION.Camera.plugin
@@ -28,7 +29,7 @@ namespace EVISION.Camera.plugin
 
         public Texture2D TakeScreenShot()
         {
-            Texture2D screenshotTex = GenericUtils.RenderTexToTex2D(displayImg.texture);
+            StartCoroutine(GetURLTexture());
             return screenshotTex;
         }
 
@@ -112,6 +113,21 @@ namespace EVISION.Camera.plugin
         public void SetConnection(bool value)
         {
             prev_connected = value;
+        }
+
+        public IEnumerator GetURLTexture()
+        {
+            UnityWebRequest www = UnityWebRequestTexture.GetTexture("http://www.my-server.com/image.png");
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                screenshotTex = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            }
         }
     }
 }
