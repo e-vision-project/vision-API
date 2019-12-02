@@ -34,54 +34,8 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-Assets/Assemblies/Plugins/Android/libs/armeabi-v7a/libtensorflow.so.meta
-Assets/Assemblies/Plugins/Android/libs/armeabi-v7a/libtensorflow.so.meta
-Assets/Assemblies/Plugins/iOS/libprotobuf.a
+Assets/Assemblies/Tensorflow Plugins
 Assets/Assemblies/Tensorflow Plugins.meta
-Assets/Assemblies/Tensorflow Plugins/Android.meta
-Assets/Assemblies/Tensorflow Plugins/Android/Java.Interop.dll
-Assets/Assemblies/Tensorflow Plugins/Android/Java.Interop.dll.meta
-Assets/Assemblies/Tensorflow Plugins/Android/libs.meta
-Assets/Assemblies/Tensorflow Plugins/Android/libs/armeabi-v7a.meta
-Assets/Assemblies/Tensorflow Plugins/Android/libs/armeabi-v7a/libtensorflow.so
-Assets/Assemblies/Tensorflow Plugins/Android/libs/armeabi-v7a/libtensorflow.so.meta
-Assets/Assemblies/Tensorflow Plugins/Android/libs/x86.meta
-Assets/Assemblies/Tensorflow Plugins/Android/libs/x86/libtensorflow.so
-Assets/Assemblies/Tensorflow Plugins/Android/libs/x86/libtensorflow.so.meta
-Assets/Assemblies/Tensorflow Plugins/Android/Mono.Android.dll
-Assets/Assemblies/Tensorflow Plugins/Android/Mono.Android.dll.meta
-Assets/Assemblies/Tensorflow Plugins/Android/TensorFlowSharp.Android.dll
-Assets/Assemblies/Tensorflow Plugins/Android/TensorFlowSharp.Android.dll.meta
-Assets/Assemblies/Tensorflow Plugins/Android/TensorFlowSharp.dll
-Assets/Assemblies/Tensorflow Plugins/Android/TensorFlowSharp.dll.meta
-Assets/Assemblies/Tensorflow Plugins/Computer.meta
-Assets/Assemblies/Tensorflow Plugins/Computer/liblibtensorflow.so
-Assets/Assemblies/Tensorflow Plugins/Computer/liblibtensorflow.so.meta
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow.bundle
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow.bundle.meta
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow.dll
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow.dll.meta
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow_framework.bundle
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow_framework.bundle.meta
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow_framework.so
-Assets/Assemblies/Tensorflow Plugins/Computer/libtensorflow_framework.so.meta
-Assets/Assemblies/Tensorflow Plugins/Computer/TensorFlowSharp.dll
-Assets/Assemblies/Tensorflow Plugins/Computer/TensorFlowSharp.dll.meta
-Assets/Assemblies/Tensorflow Plugins/iOS.meta
-Assets/Assemblies/Tensorflow Plugins/iOS/libprotobuf-lite.a
-Assets/Assemblies/Tensorflow Plugins/iOS/libprotobuf-lite.a.meta
-Assets/Assemblies/Tensorflow Plugins/iOS/libprotobuf.a
-Assets/Assemblies/Tensorflow Plugins/iOS/libprotobuf.a.meta
-Assets/Assemblies/Tensorflow Plugins/iOS/libtensorflow-core.a
-Assets/Assemblies/Tensorflow Plugins/iOS/libtensorflow-core.a.meta
-Assets/Assemblies/Tensorflow Plugins/iOS/nsync.a
-Assets/Assemblies/Tensorflow Plugins/iOS/nsync.a.meta
-Assets/Assemblies/Tensorflow Plugins/iOS/TensorFlowSharp.dll
-Assets/Assemblies/Tensorflow Plugins/iOS/TensorFlowSharp.dll.meta
-Assets/Assemblies/Tensorflow Plugins/System.Numerics.dll
-Assets/Assemblies/Tensorflow Plugins/System.Numerics.dll.meta
-Assets/Assemblies/Tensorflow Plugins/System.ValueTuple.dll
-Assets/Assemblies/Tensorflow Plugins/System.ValueTuple.dll.meta
 Assets/UniversalMediaPlayer
 Assets/UniversalMediaPlayer.meta
 Assets/Textures
