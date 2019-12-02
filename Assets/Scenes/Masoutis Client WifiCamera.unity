@@ -1126,8 +1126,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.0500016, y: -81.73}
-  m_SizeDelta: {x: 968.1, y: 768}
+  m_AnchoredPosition: {x: -39.548, y: -81.727}
+  m_SizeDelta: {x: 897.1, y: 724.14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &818287298
 MonoBehaviour:
@@ -1141,7 +1141,7 @@ MonoBehaviour:
   m_Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 6aaa3e3670ef5fc4ebd428d556dd5b14, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -1411,7 +1411,7 @@ PrefabInstance:
       objectReference: {fileID: 818287295}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _path
-      value: rtsp://192.168.1.254:554/test.mp4
+      value: rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -1427,11 +1427,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _fixedVideoWidth
-      value: 1024
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _fixedVideoHeight
-      value: 768
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _chosenPlatform
@@ -1439,7 +1439,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _useFixedSize
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1827,11 +1827,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _logDetail
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _androidRtspOverTcp
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_StringArgument
@@ -1944,6 +1944,26 @@ PrefabInstance:
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _imageReadyEvent.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _androidPlayerType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _androidHardwareAcceleration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _androidOpenGLDecoding
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _androidVideoChroma
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _androidNetworkCaching
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c404114afaafa3b4494665d1634c383c, type: 3}

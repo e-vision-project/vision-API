@@ -44,7 +44,12 @@ namespace EVISION.Camera.plugin
 
         public void Tick()
         {
-            if (UMP.IsPlaying && emptyStream == true) { emptyStream = false; }
+            if (UMP.IsPlaying && emptyStream == true)
+            {
+                emptyStream = false;
+                Debug.Log(displayImg.texture.width + "," + displayImg.texture.height);
+                Debug.Log(UMP.VideoWidth + "," + UMP.VideoHeight);
+            }
         }
 
         #endregion
