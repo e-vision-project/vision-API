@@ -208,7 +208,6 @@ namespace EVISION.Camera.plugin
             else
             {
                 camTexture = currentCam.TakeScreenShot();
-                SaveImageFile(camTexture);
             }
         }
 

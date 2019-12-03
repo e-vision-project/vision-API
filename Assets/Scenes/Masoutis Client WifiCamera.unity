@@ -498,7 +498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RescaleInput: 0
-  scaleResolution: {x: 1920, y: 1080}
+  scaleResolution: {x: 1024, y: 768}
   displayBoundingBox: 0
 --- !u!114 &275421738
 MonoBehaviour:
@@ -648,6 +648,7 @@ MonoBehaviour:
   logging: 1
   emptyStream: 0
   prev_connected: 0
+  imageUrl: http://160.40.51.48/evision/p28.jpg
 --- !u!1 &286393577
 GameObject:
   m_ObjectHideFlags: 0
@@ -1827,7 +1828,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _logDetail
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _androidRtspOverTcp
