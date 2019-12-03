@@ -198,6 +198,7 @@ namespace EVISION.Camera.plugin
             {
                 if (isExternalCamera)
                 {
+                    Debug.Log("right place");
                     camTexture = currentCam.TakeScreenShot();
                 }
                 else

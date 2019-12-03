@@ -32,6 +32,7 @@ namespace EVISION.Camera.plugin
         public Texture2D TakeScreenShot()
         {
             screenshotTex = GetUrlTextureObsolete();
+            Debug.Log(screenshotTex.width + ", " + screenshotTex.height);
             return screenshotTex;
         }
 
@@ -50,8 +51,8 @@ namespace EVISION.Camera.plugin
             if (UMP.IsPlaying && emptyStream == true)
             {
                 emptyStream = false;
-                Debug.Log(displayImg.texture.width + "," + displayImg.texture.height);
-                Debug.Log(UMP.VideoWidth + "," + UMP.VideoHeight);
+                //Debug.Log(displayImg.texture.width + "," + displayImg.texture.height);
+                //Debug.Log(UMP.VideoWidth + "," + UMP.VideoHeight);
             }
         }
 
@@ -143,9 +144,8 @@ namespace EVISION.Camera.plugin
             {
                 continue;
             }
-            var texture = new Texture2D(www.texture.width, www.texture.height);
+            var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             www.LoadImageIntoTexture(texture);
-            texture.Compress(true);
             return texture;
         }
     }
