@@ -1126,8 +1126,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -39.548, y: -81.727}
-  m_SizeDelta: {x: 897.1, y: 724.14}
+  m_AnchoredPosition: {x: 1.6013, y: -81.727}
+  m_SizeDelta: {x: 956.8, y: 724.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &818287298
 MonoBehaviour:
@@ -1411,7 +1411,7 @@ PrefabInstance:
       objectReference: {fileID: 818287295}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _path
-      value: rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov
+      value: rtsp://192.168.1.254:554/test.mp4
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
