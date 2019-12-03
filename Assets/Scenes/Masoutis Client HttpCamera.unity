@@ -432,6 +432,7 @@ GameObject:
   - component: {fileID: 275421735}
   - component: {fileID: 275421737}
   - component: {fileID: 275421738}
+  - component: {fileID: 275421742}
   - component: {fileID: 275421741}
   - component: {fileID: 275421736}
   - component: {fileID: 275421739}
@@ -468,6 +469,7 @@ MonoBehaviour:
   image_name: p (17)
   isExternalCamera: 1
   logging: 0
+  httpLoading: 1
   cameraConnected: 0
   process_result: 
 --- !u!114 &275421736
@@ -648,7 +650,21 @@ MonoBehaviour:
   logging: 1
   emptyStream: 0
   prev_connected: 0
-  imageUrl: http://160.40.51.48/evision/p28.jpg
+  imageUrl: https://160.40.51.48/evision/p28.jpg
+--- !u!114 &275421742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275421733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e8c34b0b11c277499858c71dd740b7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  screenshotTex: {fileID: 0}
+  imageUrl: http://192.168.1.254/DCIM/PHOTO/2019_1203_113514_001.JPG
 --- !u!1 &286393577
 GameObject:
   m_ObjectHideFlags: 0

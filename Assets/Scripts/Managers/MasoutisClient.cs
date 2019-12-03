@@ -20,6 +20,7 @@ namespace EVISION.Camera.plugin
         private IModelPrediction svmClassifier;
         private IDeviceCamera[] cams;
         private IDeviceCamera currentCam;
+        private HttpImageLoading httpLoader;
 
         // INSPECTOR PROPERTIES
         [SerializeField] private TextAsset DLModel;
@@ -27,6 +28,7 @@ namespace EVISION.Camera.plugin
         [SerializeField] private string image_name;
         [SerializeField] private bool isExternalCamera;
         [SerializeField] private bool logging;
+        [SerializeField] private bool httpLoading;
 
         // PRIVATE PROPERTIES
         private Texture2D camTexture;
@@ -73,6 +75,8 @@ namespace EVISION.Camera.plugin
             //set the external camera
             currentCam = cams[0];
             currentCam.ConnectCamera();
+
+            httpLoader = GetComponent<HttpImageLoading>();
 
             EventCamManager.onNatCamConnect += ConnectNativeCamera;
         }
@@ -171,9 +175,8 @@ namespace EVISION.Camera.plugin
                 annotationProccessBusy = true;
 
                 // Get camera texture.
-                GetScreenshot();
-
-                // get class based on SVM inference.
+                yield return StartCoroutine(GetScreenshot());
+                Debug.Log("3");
                 category = ClassifyCategory(camTexture);
 
                 // product case
@@ -192,13 +195,18 @@ namespace EVISION.Camera.plugin
             }
         }
 
-        private void GetScreenshot()
+        private IEnumerator GetScreenshot()
         {
             if (Application.isEditor)
             {
-                if (isExternalCamera)
+                if (httpLoading)
                 {
-                    Debug.Log("right place");
+                    yield return StartCoroutine(httpLoader.LoadTextureFromImage());
+                    camTexture = httpLoader.screenshotTex;
+                    Debug.Log("3");
+                }
+                else if (isExternalCamera && !httpLoading)
+                {
                     camTexture = currentCam.TakeScreenShot();
                 }
                 else
@@ -208,7 +216,16 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                camTexture = currentCam.TakeScreenShot();
+                if (httpLoading)
+                {
+                    yield return StartCoroutine(httpLoader.LoadTextureFromImage());
+                    camTexture = httpLoader.screenshotTex;
+                    Debug.Log("3");
+                }
+                else
+                {
+                    camTexture = currentCam.TakeScreenShot();
+                }
             }
         }
 

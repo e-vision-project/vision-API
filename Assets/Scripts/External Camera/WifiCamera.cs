@@ -10,7 +10,7 @@ namespace EVISION.Camera.plugin
     {
         public UniversalMediaPlayer UMP;
         public RawImage displayImg;
-        public UnityWebRequest www;
+        public UnityWebRequest x;
 
         private Texture2D screenshotTex;
         [SerializeField] private bool logging;
@@ -30,9 +30,8 @@ namespace EVISION.Camera.plugin
         }
 
         public Texture2D TakeScreenShot()
-        {
-            screenshotTex = GetUrlTextureObsolete();
-            Debug.Log(screenshotTex.width + ", " + screenshotTex.height);
+        {   
+            Debug.Log("return 2");
             return screenshotTex;
         }
 
@@ -118,22 +117,18 @@ namespace EVISION.Camera.plugin
             prev_connected = value;
         }
 
-        public void GetURLTexture()
+        public IEnumerator GetURLTexture()
         {
-            www = UnityWebRequestTexture.GetTexture(imageUrl);
-            www.SendWebRequest();
-
-            if (www.isNetworkError || www.isHttpError)
+            x = UnityWebRequestTexture.GetTexture(imageUrl);
+            x.SendWebRequest();
+            while (x.isDone == false)
             {
-                Debug.Log(www.error);
+                Debug.Log("return 1");
+                yield return null;
             }
-            else
-            {
-                while(!www.isDone)
-                {
-                }
-                screenshotTex = ((DownloadHandlerTexture)www.downloadHandler).texture;
-            }
+            
+            screenshotTex = DownloadHandlerTexture.GetContent(x);
+            Debug.Log("DONE");
         }
 
         public Texture2D GetUrlTextureObsolete()
@@ -147,6 +142,11 @@ namespace EVISION.Camera.plugin
             var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             www.LoadImageIntoTexture(texture);
             return texture;
+        }
+
+        public IEnumerator LoadFromWeb()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

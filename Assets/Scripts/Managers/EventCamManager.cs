@@ -11,4 +11,7 @@ public class EventCamManager : MonoBehaviour
 
     public delegate void OnNativeCameraConnect();
     public static OnNativeCameraConnect onNatCamConnect;
+
+    public delegate void OnHTTPDownload();
+    public static OnHTTPDownload onHTTPDownload;
 }
