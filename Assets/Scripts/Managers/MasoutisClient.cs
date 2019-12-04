@@ -199,6 +199,7 @@ namespace EVISION.Camera.plugin
                 if (isExternalCamera)
                 {
                     camTexture = currentCam.TakeScreenShot();
+                    //SaveImageFile(camTexture);
                 }
                 else
                 {

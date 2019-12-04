@@ -29,6 +29,8 @@ namespace EVISION.Camera.plugin
         public Texture2D TakeScreenShot()
         {
             Texture2D screenshotTex = GenericUtils.RenderTexToTex2D(displayImg.texture);
+            //screenshotTex.LoadRawTextureData(UMP.FramePixels);
+            //screenshotTex.Apply();
             return screenshotTex;
         }
 

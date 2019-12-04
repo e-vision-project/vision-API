@@ -185,7 +185,7 @@ public class MajorityVoting : AsyncBehaviour
         catch (Exception)
         {
             Debug.LogError("Problem in locating max category");
-            return "Δεν αναγνωρίστηκε προϊόν";
+            return " προϊόν δεν αναγνωρίστηκε";
         }
     }
 
