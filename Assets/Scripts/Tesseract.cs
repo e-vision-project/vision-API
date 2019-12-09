@@ -14,7 +14,7 @@ public class Tesseract : MonoBehaviour, IAnnotate
         return result as T;
     }
 
-    public IEnumerator PerformAnnotation(Texture2D snap)
+    void Start()
     {
         // Files are not accessible in the .jar, so copy them to persistentDataPath
         CopyFile("tessdata/", "eng.cube.bigrams");
@@ -26,13 +26,17 @@ public class Tesseract : MonoBehaviour, IAnnotate
         CopyFile("tessdata/", "eng.cube.word-freq");
         CopyFile("tessdata/", "eng.tesseract_cube.nn");
         CopyFile("tessdata/", "eng.traineddata");
+        CopyFile("tessdata/", "ell.traineddata");
         CopyFile("tessdata/", "eng.user-patterns");
         CopyFile("tessdata/", "eng.user-words");
         CopyFile("tessdata/", "osd.traineddata");
         CopyFile("tessdata/", "pdf.ttf");
         CopyFile("tessdata/tessconfigs/", "debugConfigs.txt");
         CopyFile("tessdata/tessconfigs/", "recognitionConfigs.txt");
+    }
 
+    public IEnumerator PerformAnnotation(Texture2D snap)
+    {
         TesseractWrapper_And tesseract = new TesseractWrapper_And();
         string datapath = System.IO.Path.Combine(Application.persistentDataPath, "tessdata");
         tesseract.Init("eng", datapath);
