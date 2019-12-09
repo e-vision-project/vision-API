@@ -125,8 +125,8 @@ namespace EVISION.Camera.plugin
                 Directory.CreateDirectory(imagePath);
             }
 
-            var bytes = tex.EncodeToPNG();
-            Destroy(tex);
+            var bytes = tex.EncodeToJPG();
+            //Destroy(tex);
             capture_name = string.Format("/{0}_Capture{1}.png", Application.productName, capture_count.ToString());
             System.IO.File.WriteAllBytes(imagePath + capture_name, bytes);
             capture_count++;

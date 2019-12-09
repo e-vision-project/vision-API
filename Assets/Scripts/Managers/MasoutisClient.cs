@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static EVISION.Camera.plugin.ApplicationView;
 using System.IO;
+using UnityEngine.UI;
 
 namespace EVISION.Camera.plugin
 {
@@ -176,7 +177,7 @@ namespace EVISION.Camera.plugin
 
                 // Get camera texture.
                 yield return StartCoroutine(GetScreenshot());
-                Debug.Log("3");
+                
                 category = ClassifyCategory(camTexture);
 
                 // product case
@@ -202,8 +203,14 @@ namespace EVISION.Camera.plugin
                 if (httpLoading)
                 {
                     yield return StartCoroutine(httpLoader.LoadTextureFromImage());
+                    while (!httpLoader.textureLoaded)
+                    {
+                        yield return null;
+                    }
                     camTexture = httpLoader.screenshotTex;
-                    Debug.Log("3");
+                    yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
+                    SaveImageFile(camTexture);
+                    
                 }
                 else if (isExternalCamera && !httpLoading)
                 {
@@ -219,8 +226,13 @@ namespace EVISION.Camera.plugin
                 if (httpLoading)
                 {
                     yield return StartCoroutine(httpLoader.LoadTextureFromImage());
+                    while (!httpLoader.textureLoaded)
+                    {
+                        yield return null;
+                    }
                     camTexture = httpLoader.screenshotTex;
-                    Debug.Log("3");
+                    yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
+                    // SaveImageFile(camTexture);
                 }
                 else
                 {

@@ -664,7 +664,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   screenshotTex: {fileID: 0}
-  imageUrl: http://192.168.1.254/DCIM/PHOTO/2019_1203_113514_001.JPG
+  loadedTex: {fileID: 0}
+  imageUrl: 
+  snapTaken: 0
+  textureLoaded: 0
 --- !u!1 &286393577
 GameObject:
   m_ObjectHideFlags: 0
@@ -1428,7 +1431,7 @@ PrefabInstance:
       objectReference: {fileID: 818287295}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _path
-      value: rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov
+      value: rtsp:192.168.1.4:554/test.mp4
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _encounteredErrorEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -1452,7 +1455,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _chosenPlatform
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _useFixedSize
@@ -1968,11 +1971,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _androidHardwareAcceleration
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _androidOpenGLDecoding
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _androidVideoChroma
@@ -1980,6 +1983,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
       propertyPath: _androidNetworkCaching
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11420564, guid: c404114afaafa3b4494665d1634c383c, type: 3}
+      propertyPath: _desktopHardwareDecoding
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

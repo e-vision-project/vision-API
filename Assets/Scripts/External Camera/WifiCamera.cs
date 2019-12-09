@@ -31,7 +31,6 @@ namespace EVISION.Camera.plugin
 
         public Texture2D TakeScreenShot()
         {   
-            Debug.Log("return 2");
             return screenshotTex;
         }
 
@@ -123,12 +122,10 @@ namespace EVISION.Camera.plugin
             x.SendWebRequest();
             while (x.isDone == false)
             {
-                Debug.Log("return 1");
                 yield return null;
             }
             
             screenshotTex = DownloadHandlerTexture.GetContent(x);
-            Debug.Log("DONE");
         }
 
         public Texture2D GetUrlTextureObsolete()
