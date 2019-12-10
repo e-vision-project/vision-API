@@ -8,6 +8,7 @@ using EVISION.Camera.plugin;
 public class Tesseract : MonoBehaviour, IAnnotate  
 {
     public string result;
+    TesseractWrapper_And tesseract;
 
     public T GetAnnotationResults<T>() where T : class
     {
@@ -33,16 +34,18 @@ public class Tesseract : MonoBehaviour, IAnnotate
         CopyFile("tessdata/", "pdf.ttf");
         CopyFile("tessdata/tessconfigs/", "debugConfigs.txt");
         CopyFile("tessdata/tessconfigs/", "recognitionConfigs.txt");
+
+        tesseract = new TesseractWrapper_And();
+        string datapath = System.IO.Path.Combine(Application.persistentDataPath, "tessdata");
+        tesseract.Init("ell", datapath);
+        tesseract.Init("eng", datapath);
     }
 
     public IEnumerator PerformAnnotation(Texture2D snap)
     {
-        TesseractWrapper_And tesseract = new TesseractWrapper_And();
-        string datapath = System.IO.Path.Combine(Application.persistentDataPath, "tessdata");
-        tesseract.Init("eng", datapath);
-
+        Debug.Log(tesseract.Version());
         result = tesseract.RecognizeFromTexture(snap, false);
-        ApplicationView.MajorityFinalText.text = result ?? "Error: " + tesseract.errorMsg;
+        ApplicationView.MajorityFinalText.text = result;
 
         yield return null;
     }
