@@ -11,16 +11,17 @@ using UnityEngine.UI;
 public class HttpImageLoading : MonoBehaviour
 {
     public Texture2D screenshotTex;
-    public Texture2D loadedTex;
     public string imageUrl;
     private string photosFolder = "http://192.168.1.254/DCIM/PHOTO/";
     public bool snapTaken = false;
     public bool textureLoaded = false;
+    public GameObject displayImage;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        screenshotTex = new Texture2D(1336, 768);
+        displayImage.SetActive(false);
     }
 
     // Update is called once per frame
@@ -31,12 +32,11 @@ public class HttpImageLoading : MonoBehaviour
 
     public IEnumerator LoadTextureFromImage()
     {
-        yield return StartCoroutine(SendTakePhotoRequest());
+        //StartCoroutine(SetCameraModeRequest(1));
+        yield return StartCoroutine(TakePhotoRequest());
         var photoName = GetPhotos(photosFolder);
         imageUrl = photosFolder + photoName;
         yield return StartCoroutine(GetURLTexture(imageUrl));
-        //yield return StartCoroutine(LoadURLTexture(imageUrl));
-        //yield return StartCoroutine(SendRemovePhotoRequest(imageUrl));
     }
 
     public IEnumerator GetURLTexture(string url)
@@ -51,10 +51,11 @@ public class HttpImageLoading : MonoBehaviour
         {
             // Get downloaded asset bundle
             screenshotTex = DownloadHandlerTexture.GetContent(x);
-            screenshotTex = TextureTools.RotateTexture(screenshotTex, 90);
-            var y = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").GetComponent<RawImage>();
+            //screenshotTex = TextureTools.RotateTexture(screenshotTex, 180);
+            displayImage.SetActive(true);
+            var y = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP").GetComponent<RawImage>();
             y.texture = screenshotTex;
-            Debug.Log("texture loaded");
+            Debug.Log("starting resolution: " + screenshotTex.width + "," + screenshotTex.height);
             textureLoaded = true;
         }
     }
@@ -77,7 +78,7 @@ public class HttpImageLoading : MonoBehaviour
             foreach (Match match in matches)
             {
                 if (!match.Success) { continue; }
-                Debug.Log("folder Match: " + match.Groups["name"]);
+                //Debug.Log("folder Match: " + match.Groups["name"]);
                 var  name = match.Groups["name"].Value;
                 Names.Add(name);
             }
@@ -92,11 +93,9 @@ public class HttpImageLoading : MonoBehaviour
         var x = UnityWebRequest.Delete(url);
         x.certificateHandler = new BypassCertificate();
         yield return x.SendWebRequest();
-        Debug.Log("remove");
-
     }
 
-    public IEnumerator SendTakePhotoRequest()
+    public IEnumerator TakePhotoRequest()
     {
         var x = UnityWebRequest.Get("http://192.168.1.254/?custom=1&cmd=1001");
         yield return x.SendWebRequest();
@@ -108,7 +107,32 @@ public class HttpImageLoading : MonoBehaviour
         {
             // Get downloaded asset bundle
             snapTaken = true;
-            Debug.Log("photo taken");
+        }
+    }
+
+    public IEnumerator SetCameraModeRequest(int mode)
+    {
+        if(mode > 1 && mode < 0) { Debug.Log("valid mode input is 0 or 1."); yield return null; }
+        var x = UnityWebRequest.Get(String.Format("http://192.168.1.254/?custom=1&cmd=3001&par={0}",mode));
+        yield return x.SendWebRequest();
+        if (x.isNetworkError || x.isHttpError)
+        {
+            Debug.Log(x.error);
+        }
+        else
+        {
+            // Get downloaded asset bundle
+        }
+    }
+
+    public IEnumerator SetRecordingRequest(int mode)
+    {
+        if (mode > 1 && mode < 0) { Debug.Log("valid mode input is 0 or 1."); yield return null; }
+        var x = UnityWebRequest.Get(String.Format("http://192.168.1.254/?custom=1&cmd=2001&par={0}", mode));
+        yield return x.SendWebRequest();
+        if (x.isNetworkError || x.isHttpError)
+        {
+            Debug.Log(x.error);
         }
     }
 

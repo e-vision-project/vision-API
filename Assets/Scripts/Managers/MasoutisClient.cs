@@ -208,7 +208,6 @@ namespace EVISION.Camera.plugin
                         yield return null;
                     }
                     camTexture = httpLoader.screenshotTex;
-                    camTexture = TextureTools.RotateTexture(camTexture, -90);
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
                     //SaveImageFile(camTexture);
                     
@@ -232,6 +231,7 @@ namespace EVISION.Camera.plugin
                         yield return null;
                     }
                     camTexture = httpLoader.screenshotTex;
+                    Debug.Log("final resolution: " + camTexture.width + "," + camTexture.height);
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
                 }
                 else

@@ -40,6 +40,7 @@ namespace EVISION.Camera.plugin
             if (RescaleInput)
             {
                 GenericUtils.ScaleTexture(snap, (int)scaleResolution.x, (int)scaleResolution.y);
+                Debug.Log("rescaled final: " + snap.width + "," + snap.height);
             }
             //copy image
             temp_image = snap;

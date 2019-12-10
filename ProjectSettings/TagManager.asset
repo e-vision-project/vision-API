@@ -12,6 +12,7 @@ TagManager:
   - TIME
   - DISPLAY_IMAGE
   - DISPLAY_IMAGE_EXTERNAL
+  - DISPLAY_IMAGE_HTTP
   layers:
   - Default
   - TransparentFX
