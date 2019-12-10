@@ -11,6 +11,7 @@ TagManager:
   - HELPER_IMAGE
   - TIME
   - DISPLAY_IMAGE
+  - DISPLAY_IMAGE_EXTERNAL
   layers:
   - Default
   - TransparentFX

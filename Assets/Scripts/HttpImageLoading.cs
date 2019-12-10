@@ -51,7 +51,8 @@ public class HttpImageLoading : MonoBehaviour
         {
             // Get downloaded asset bundle
             screenshotTex = DownloadHandlerTexture.GetContent(x);
-            var y = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
+            screenshotTex = TextureTools.RotateTexture(screenshotTex, 90);
+            var y = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").GetComponent<RawImage>();
             y.texture = screenshotTex;
             Debug.Log("texture loaded");
             textureLoaded = true;

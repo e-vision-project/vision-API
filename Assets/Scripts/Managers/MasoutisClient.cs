@@ -208,8 +208,9 @@ namespace EVISION.Camera.plugin
                         yield return null;
                     }
                     camTexture = httpLoader.screenshotTex;
+                    camTexture = TextureTools.RotateTexture(camTexture, -90);
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
-                    SaveImageFile(camTexture);
+                    //SaveImageFile(camTexture);
                     
                 }
                 else if (isExternalCamera && !httpLoading)
@@ -232,7 +233,6 @@ namespace EVISION.Camera.plugin
                     }
                     camTexture = httpLoader.screenshotTex;
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
-                    // SaveImageFile(camTexture);
                 }
                 else
                 {
