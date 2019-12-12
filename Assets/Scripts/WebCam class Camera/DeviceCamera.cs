@@ -50,7 +50,6 @@ public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
 
         frontCameraTexture = new WebCamTexture(frontCameraDevice.name, 1024, 768);
         backCameraTexture = new WebCamTexture(backCameraDevice.name, 1024, 768);
-        //backCameraTexture = new WebCamTexture(backCameraDevice.name, 1920, 1080);
 
         // Set camera filter modes for a smoother looking image
         frontCameraTexture.filterMode = FilterMode.Trilinear;

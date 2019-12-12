@@ -209,12 +209,6 @@ namespace EVISION.Camera.plugin
                     }
                     camTexture = httpLoader.screenshotTex;
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
-                    //SaveImageFile(camTexture);
-                    
-                }
-                else if (isExternalCamera && !httpLoading)
-                {
-                    camTexture = currentCam.TakeScreenShot();
                 }
                 else
                 {
@@ -289,6 +283,11 @@ namespace EVISION.Camera.plugin
                 var product_desc = MajorityVoting.GetProductDesciption(wordsOCR);
 
                 var product_formatted = FormatDescription(product_desc);
+
+                if (product_formatted.Contains("ELITE"))
+                {
+                    product_formatted = "ΦΡΥΓΑΝΙΕΣ ELITE ΣΤΑΡΙΟΎ";
+                }
 
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);

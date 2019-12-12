@@ -73,14 +73,14 @@ namespace EVISION.Camera.plugin
             {
                 devicesText.text = WebCamTexture.devices.Length.ToString();
             }
-            if (clientApp.cameraConnected || clientApp.DB_LoadProccessBusy)
-            {
-                imageCam.SetActive(false);
-            }
-            else if(!clientApp.cameraConnected && !clientApp.DB_LoadProccessBusy)
-            {
-                imageCam.SetActive(true);
-            }
+            //if (clientApp.cameraConnected || clientApp.DB_LoadProccessBusy)
+            //{
+            //    imageCam.SetActive(false);
+            //}
+            //else if(!clientApp.cameraConnected && !clientApp.DB_LoadProccessBusy)
+            //{
+            //    imageCam.SetActive(true);
+            //}
         }
 
         public static void SaveTXT(string text)
