@@ -15,13 +15,16 @@ public class HttpImageLoading : MonoBehaviour
     private string photosFolder = "http://192.168.1.254/DCIM/PHOTO/";
     public bool snapTaken = false;
     public bool textureLoaded = false;
+    public bool cameraConnected = false;
     public GameObject displayImage;
 
     // Start is called before the first frame update
     void Start()
     {
-        screenshotTex = new Texture2D(1336, 768);
+        screenshotTex = new Texture2D(1920, 1080);
         displayImage.SetActive(false);
+        GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").SetActive(true);
+        StartCoroutine(GetConnectionStatus());
     }
 
     // Update is called once per frame
@@ -105,7 +108,6 @@ public class HttpImageLoading : MonoBehaviour
         }
         else
         {
-            // Get downloaded asset bundle
             snapTaken = true;
         }
     }
@@ -136,6 +138,23 @@ public class HttpImageLoading : MonoBehaviour
         }
     }
 
+    public IEnumerator GetConnectionStatus()
+    {
+        var x = UnityWebRequest.Get("http://192.168.1.254/?custom=1&cmd=3027");
+        yield return x.SendWebRequest();
+        if (x.isHttpError || x.isNetworkError)
+        {
+            Debug.Log("camera connection error :" + x.error);
+            cameraConnected = false;
+            EventCamManager.onExternalCamError?.Invoke();
+        }
+        else if (x.isDone)
+        {
+            Debug.Log("camera connected");
+            cameraConnected = true;
+        }
+    }
+
     public IEnumerator LoadURLTexture(string url)
     {
         UnityWebRequest x = UnityWebRequestTexture.GetTexture(url);
@@ -144,7 +163,6 @@ public class HttpImageLoading : MonoBehaviour
         {
             Texture2D texture = DownloadHandlerTexture.GetContent(x);
             screenshotTex.LoadImage(x.downloadHandler.data);
-            Debug.Log("texture loaded");
         }
     }
     public Texture2D GetUrlTextureObsolete(string url)

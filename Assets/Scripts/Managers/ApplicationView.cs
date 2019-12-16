@@ -12,6 +12,8 @@ namespace EVISION.Camera.plugin
         public GameObject image;
         public GameObject imageDB;
         public GameObject imageCam;
+        public GameObject cancelButton;
+        public GameObject tapImage;
         public static RawImage helperImage;
         public GameObject button;
         //public Text text;
@@ -53,21 +55,28 @@ namespace EVISION.Camera.plugin
             {
                 imageDB.SetActive(true);
                 button.SetActive(false);
+                cancelButton.SetActive(false);
+                tapImage.SetActive(false);
             }
             else if (!clientApp.DB_LoadProccessBusy)
             {
                 imageDB.SetActive(false);
                 button.SetActive(true);
+                tapImage.SetActive(true);
             }
             if (clientApp.annotationProccessBusy)
             {
                 image.SetActive(true);
                 button.SetActive(false);
+                cancelButton.SetActive(true);
+                tapImage.SetActive(false);
             }
             else if (!clientApp.annotationProccessBusy)
             {
                 image.SetActive(false);
                 button.SetActive(true);
+                cancelButton.SetActive(false);
+                tapImage.SetActive(true);
             }
             if (devicesText != null && resolutionText != null)
             {

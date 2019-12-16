@@ -156,6 +156,9 @@ namespace EVISION.Camera.plugin
             Debug.Log("Error: " + arg1 + " - " + arg2);
             Debug.Log("e-vision platform logs: " + "Annotation failed. Check internet connection");
             annotationCompleted = true;
+            textAnnotation = "GCFAILED";
+            //Invoke onAnnotationFailed
+            EventCamManager.onAnnotationFailed?.Invoke();
         }
 
         private void _gcVision_AnnotateSuccessEvent(VisionResponse arg1, long arg2)

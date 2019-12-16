@@ -29,7 +29,6 @@ namespace EVISION.Camera.plugin
         [SerializeField] private string image_name;
         [SerializeField] private bool isExternalCamera;
         [SerializeField] private bool logging;
-        [SerializeField] private bool httpLoading;
 
         // PRIVATE PROPERTIES
         private Texture2D camTexture;
@@ -76,10 +75,12 @@ namespace EVISION.Camera.plugin
             //set the external camera
             currentCam = cams[0];
             currentCam.ConnectCamera();
-
+            
             httpLoader = GetComponent<HttpImageLoading>();
 
-            EventCamManager.onNatCamConnect += ConnectNativeCamera;
+            //EventCamManager.onNatCamConnect += ConnectNativeCamera;
+            EventCamManager.onAnnotationFailed += AnnotationFailedHandler;
+            EventCamManager.onExternalCamError += ConnectNativeCamera;
         }
 
         // Update is called once per frame
@@ -131,10 +132,10 @@ namespace EVISION.Camera.plugin
         public void ConnectNativeCamera()
         {
             voiceSynthesizer.PerformSpeechFromText("Εξωτερική κάμερα απενεργοποιήθηκε... κάμερα κινητού ενεργοποιημένη");
-            currentCam = cams[1];
             currentCam.ConnectCamera();
             isExternalCamera = false;
             SetCameraConnectionStatus(true);
+            GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").SetActive(false);
             Debug.Log("native cam connected");
         }
 
@@ -143,6 +144,12 @@ namespace EVISION.Camera.plugin
             cameraConnected = value;
         }
 
+        public void AnnotationFailedHandler()
+        {
+            StopAllCoroutines();
+            StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Η σύνδεση στο δίκτυο είναι απενεργοποιημένη. Παρακαλώ, ενεργοποιήστε την σύνδεση στο διαδύκτιο."));
+            annotationProccessBusy = false;
+        }
         #endregion
 
         public void ScreenshotButtonListener()
@@ -157,6 +164,17 @@ namespace EVISION.Camera.plugin
             }
 
             StartCoroutine(ClassifyScreenshotAsync());
+        }
+
+        public void CancelButton()
+        {
+            if (!annotationProccessBusy && !DB_LoadProccessBusy)
+            {
+                return;
+            }
+
+            StopAllCoroutines();
+            annotationProccessBusy = false;
         }
 
         public void SetResultLogs()
@@ -200,7 +218,7 @@ namespace EVISION.Camera.plugin
         {
             if (Application.isEditor)
             {
-                if (httpLoading)
+                if (httpLoader.cameraConnected)
                 {
                     yield return StartCoroutine(httpLoader.LoadTextureFromImage());
                     while (!httpLoader.textureLoaded)
@@ -217,7 +235,7 @@ namespace EVISION.Camera.plugin
             }
             else
             {
-                if (httpLoading)
+                if (httpLoader.cameraConnected)
                 {
                     yield return StartCoroutine(httpLoader.LoadTextureFromImage());
                     while (!httpLoader.textureLoaded)
@@ -276,19 +294,11 @@ namespace EVISION.Camera.plugin
 
             if (!string.IsNullOrEmpty(annotationText))
             {
+                string product_formatted;
                 float startMajt = Time.realtimeSinceStartup;
-
                 var wordsOCR = GenericUtils.SplitStringToList(annotationText);
-
                 var product_desc = MajorityVoting.GetProductDesciption(wordsOCR);
-
-                var product_formatted = FormatDescription(product_desc);
-
-                if (product_formatted.Contains("ELITE"))
-                {
-                    product_formatted = "ΦΡΥΓΑΝΙΕΣ ELITE ΣΤΑΡΙΟΎ";
-                }
-
+                product_formatted = FormatDescription(product_desc);
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
                 SetResultLogs();
@@ -320,14 +330,14 @@ namespace EVISION.Camera.plugin
             OCRtime = CalculateTimeDifference(startOCRt, endOCRt);
 
             // Perform majority voting
+            MajorityVoting majVoting = new MajorityVoting();
+
             if (!string.IsNullOrEmpty(annotationText))
             {
                 float startMajt = Time.realtimeSinceStartup;
 
                 List<string> OCR_List = GenericUtils.SplitStringToList(annotationText);
-                MajorityVoting majVoting = new MajorityVoting();
                 yield return StartCoroutine(majVoting.PerformMajorityVoting(OCR_List));
-
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
 
@@ -350,6 +360,22 @@ namespace EVISION.Camera.plugin
             }
             else
             {
+                switch (category)
+                {
+                    case (int)Enums.MasoutisCategories.trail:
+                        process_result = "Δεν αναγνωρίστηκαν διαθέσιμες λέξεις";
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + process_result));
+                        break;
+                    case (int)Enums.MasoutisCategories.shelf:
+                        process_result = "Δεν αναγνωρίστηκαν διαθέσιμες λέξεις";
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + process_result));
+                        break;
+                    case (int)Enums.MasoutisCategories.other:
+                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο"));
+                        break;
+                    default:
+                        break;
+                }
                 if (ApplicationView.MajorityFinalText != null)
                 {
                     ApplicationView.MajorityFinalText.text = "Δεν αναγνωρίστηκαν διαθέσιμες λέξεις";

@@ -14,4 +14,7 @@ public class EventCamManager : MonoBehaviour
 
     public delegate void OnHTTPDownload();
     public static OnHTTPDownload onHTTPDownload;
+
+    public delegate void OnAnnotationFailed();
+    public static OnAnnotationFailed onAnnotationFailed;
 }
