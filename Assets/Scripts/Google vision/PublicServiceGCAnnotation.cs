@@ -17,7 +17,7 @@ namespace EVISION.Camera.plugin
     /// </summary>
 
 
-    public class CloudVisionAnnotation : MonoBehaviour, IAnnotate
+    public class PublicServiceGCAnnotation : MonoBehaviour, IAnnotate
     {
         private GCVision _gcVision;
         private string textAnnotation = null;
@@ -46,13 +46,12 @@ namespace EVISION.Camera.plugin
             temp_image = snap;
             // Convert to base64 encoding.
             string _selectedImageData = ImageConvert.Convert(snap);
-            if (MasoutisClient.category == (int)Enums.MasoutisCategories.product)
+            if (PublicServiceManager.category == (int)Enums.PServiceCategories.face)
             {
                 // set features types
                 var featureTypes = new List<Enumerators.FeatureType>()
                 {
-                    Enumerators.FeatureType.DOCUMENT_TEXT_DETECTION,
-                    Enumerators.FeatureType.OBJECT_LOCALIZATION
+                    Enumerators.FeatureType.FACE_DETECTION
                 };
                 AnnotateImage(_selectedImageData, featureTypes);
             }
@@ -91,7 +90,7 @@ namespace EVISION.Camera.plugin
 
             foreach (var feat in featureTypes)
             {
-                features.Add(new Feature() { maxResults = 50, type = feat.ToString() });
+                features.Add(new Feature() { maxResults = 100, type = feat.ToString() });
             }
 
             var img = new FrostweepGames.Plugins.GoogleCloud.Vision.Image();
@@ -165,22 +164,19 @@ namespace EVISION.Camera.plugin
         {
             try
             {
-                if (MasoutisClient.category == (int)Enums.MasoutisCategories.product)
+                switch (PublicServiceManager.category)
                 {
-                    // vertices from object localization max poly box.
-                    var biggestBoxCoords = GetMaxBoxCoords(arg1);
-
-                    //Display Bounding box
-                    if(displayBoundingBox) { RenderAnnotationResults(biggestBoxCoords); }
-                    
-                    // OCR words that are contained inside the bounding box.
-                    textAnnotation = GetTextAnnotation(arg1, biggestBoxCoords);
+                    case (int)Enums.PServiceCategories.document:
+                        break;
+                    case (int)Enums.PServiceCategories.sign:
+                        GetTextAnnotation(arg1);
+                        break;
+                    case (int)Enums.PServiceCategories.face:
+                        GetFaceAnnotation(arg1);
+                        break;
+                    default:
+                        break;
                 }
-                else
-                {
-                    textAnnotation = GetTextAnnotation(arg1);
-                }
-
                 annotationCompleted = true;
             }
             catch (System.Exception)
@@ -221,6 +217,12 @@ namespace EVISION.Camera.plugin
         private string GetTextAnnotation(VisionResponse arg1)
         {
             textAnnotation = arg1.responses[0].fullTextAnnotation.text;
+            return textAnnotation;
+        }
+
+        private string GetFaceAnnotation(VisionResponse arg1)
+        {
+            textAnnotation = arg1.responses[0].faceAnnotations[0].sorrowLikelihood.ToString();
             return textAnnotation;
         }
 

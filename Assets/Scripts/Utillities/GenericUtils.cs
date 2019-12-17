@@ -92,5 +92,14 @@ namespace EVISION.Camera.plugin
             RenderTexture.ReleaseTemporary(renderTexture);
             return texture2D;
         }
+
+        public static float CalculateTimeDifference(float start, float end)
+        {
+            float timeToCompleteSec = 0;
+
+            timeToCompleteSec = (float)System.Math.Round(end - start, 2);
+
+            return timeToCompleteSec;
+        }
     }
 }

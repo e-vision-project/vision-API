@@ -13,6 +13,7 @@ TagManager:
   - DISPLAY_IMAGE
   - DISPLAY_IMAGE_EXTERNAL
   - DISPLAY_IMAGE_HTTP
+  - PS_TEXT
   layers:
   - Default
   - TransparentFX

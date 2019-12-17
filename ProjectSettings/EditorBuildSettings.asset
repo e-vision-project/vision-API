@@ -5,19 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: Assets/Scenes/Masoutis Client Final.unity
-    guid: a35de50a72e3cfc4d87e6c081dc347d4
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/Masoutis Client Native.unity
-    guid: 509bcd901ec37444ba81bc059e9c72c1
+    path: Assets/Scenes/Masoutis Client Http.unity
+    guid: 9fd13929f80faea4e9607002b004c6ac
   m_configObjects: {}

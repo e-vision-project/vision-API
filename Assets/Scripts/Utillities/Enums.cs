@@ -13,5 +13,13 @@ namespace EVISION.Camera.plugin
             product = 2,
             other = 3
         }
+
+        public enum PServiceCategories
+        {
+            document = 0,
+            sign = 1,
+            face = 2,
+            other = 3
+        }
     }
 }

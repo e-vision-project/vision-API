@@ -7,26 +7,16 @@ using System.IO;
 namespace EVISION.Camera.plugin
 {
 
-    public class ApplicationView : MonoBehaviour
+    public class MasoutisView : CameraClientView
     {
-        public GameObject image;
+        [Header("Images/Panels")]
         public GameObject imageDB;
-        public GameObject imageCam;
-        public GameObject cancelButton;
-        public GameObject tapImage;
-        public static RawImage helperImage;
-        public GameObject button;
-        //public Text text;
-        public MasoutisClient clientApp;
-        public DeviceCamera cam;
+        [Header("Text")]
         public static Text wordsText;
         public static Text MajorityValidText;
         public static Text MajorityFinalText;
-        public static Text classText;
         public static Text TimeText;
-        public static string distanceString; 
-        public Text resolutionText;
-        public Text devicesText;
+        public MasoutisManager clientApp;
         public static int capture_count = 0;
         public static string capture_name = "";
 
@@ -34,13 +24,11 @@ namespace EVISION.Camera.plugin
         // Start is called before the first frame update
         void Start()
         {
-            Debug.Log("Devices: " + WebCamTexture.devices.Length.ToString());
-
-            MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
-            //classText = GameObject.FindGameObjectWithTag("CLASS").GetComponent<Text>();
             MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
+            MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
             TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
-            image.SetActive(false);
+            clientApp = gameObject.GetComponent<MasoutisManager>();
+            annotatingImage.SetActive(false);
         }
 
         public void OnButtonPressed()
@@ -54,42 +42,30 @@ namespace EVISION.Camera.plugin
             if (clientApp.DB_LoadProccessBusy)
             {
                 imageDB.SetActive(true);
-                button.SetActive(false);
+                ScreenshotButton.SetActive(false);
                 cancelButton.SetActive(false);
                 tapImage.SetActive(false);
             }
             else if (!clientApp.DB_LoadProccessBusy)
             {
                 imageDB.SetActive(false);
-                button.SetActive(true);
+                ScreenshotButton.SetActive(true);
                 tapImage.SetActive(true);
             }
             if (clientApp.annotationProccessBusy)
             {
-                image.SetActive(true);
-                button.SetActive(false);
+                annotatingImage.SetActive(true);
+                ScreenshotButton.SetActive(false);
                 cancelButton.SetActive(true);
                 tapImage.SetActive(false);
             }
             else if (!clientApp.annotationProccessBusy)
             {
-                image.SetActive(false);
-                button.SetActive(true);
+                annotatingImage.SetActive(false);
+                ScreenshotButton.SetActive(true);
                 cancelButton.SetActive(false);
                 tapImage.SetActive(true);
             }
-            if (devicesText != null && resolutionText != null)
-            {
-                devicesText.text = WebCamTexture.devices.Length.ToString();
-            }
-            //if (clientApp.cameraConnected || clientApp.DB_LoadProccessBusy)
-            //{
-            //    imageCam.SetActive(false);
-            //}
-            //else if(!clientApp.cameraConnected && !clientApp.DB_LoadProccessBusy)
-            //{
-            //    imageCam.SetActive(true);
-            //}
         }
 
         public static void SaveTXT(string text)

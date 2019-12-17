@@ -74,9 +74,9 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_4 = cat4[maxDescIndex];
             masoutis_item.product_description = desc[maxDescIndex];
 
-            if (ApplicationView.MajorityFinalText != null)
+            if (MasoutisView.MajorityFinalText != null)
             {
-                ApplicationView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 + 
+                MasoutisView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 + 
                     "\n  Ράφι: " + masoutis_item.category_3 + "\n  Κατηγορία Ραφιού: " + masoutis_item.category_4;
             }
         }
@@ -101,9 +101,9 @@ public class MajorityVoting : AsyncBehaviour
         masoutis_item.category_2 = "μη αναγνωρίσιμο";
         masoutis_item.category_3 = "μη αναγνωρίσιμο";
         masoutis_item.category_4 = "μη αναγνωρίσιμο";
-        if (ApplicationView.MajorityFinalText != null)
+        if (MasoutisView.MajorityFinalText != null)
         {
-            ApplicationView.MajorityFinalText.text = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Προϊόν: " + masoutis_item.category_4;
+            MasoutisView.MajorityFinalText.text = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Προϊόν: " + masoutis_item.category_4;
         }
     }
 
@@ -142,9 +142,9 @@ public class MajorityVoting : AsyncBehaviour
             // create string for product description based on SORTED valid words.
             string _OCRDesc = GenericUtils.ListToString(_validWords);
 
-            if (ApplicationView.MajorityValidText != null)
+            if (MasoutisView.MajorityValidText != null)
             {
-                ApplicationView.MajorityValidText.text = string.Join(", ", _validWords.Distinct().ToList().ToArray());
+                MasoutisView.MajorityValidText.text = string.Join(", ", _validWords.Distinct().ToList().ToArray());
             }
 
             int score = 0;
@@ -160,23 +160,24 @@ public class MajorityVoting : AsyncBehaviour
             }
 
             // FOR TESTING ONLY
-            ApplicationView.distanceString = "";
-            var ordered = dictOfDescriptions.OrderBy(x => x.Value).ToList();
-            var ordered_distinct = ordered.Distinct().ToList();
-            int b = 0;
-            foreach (var item in ordered_distinct)
-            {
-                ApplicationView.distanceString += desc[item.Key] + ", " + "(MJ count): " + maxVals[b].Value.ToString() + ", " + "(DIST count): " + item.Value.ToString() + "\n";
-                b++;
-            }
+            //MasoutisView.distanceString = "";
+            //var ordered = dictOfDescriptions.OrderBy(x => x.Value).ToList();
+            //var ordered_distinct = ordered.Distinct().ToList();
+            //int b = 0;
+            //foreach (var item in ordered_distinct)
+            //{
+            //    MasoutisView.distanceString += desc[item.Key] + ", " + "(MJ count): " + maxVals[b].Value.ToString() + ", " + "(DIST count): " + item.Value.ToString() + "\n";
+            //    b++;
+            //}
             // END TESTING SECTION
 
             var min = dictOfDescriptions.Values.Min();
             var keyMin = dictOfDescriptions.FirstOrDefault(kvp => kvp.Value == min).Key;
 
-            if (ApplicationView.MajorityFinalText != null)
+            if (MasoutisView.MajorityFinalText != null)
             {
-                ApplicationView.MajorityFinalText.text = "Προϊόν: " + desc[keyMin];
+
+                MasoutisView.MajorityFinalText.text = "Προϊόν: " + desc[keyMin];
             }
 
             return desc[keyMin];
@@ -185,9 +186,9 @@ public class MajorityVoting : AsyncBehaviour
         catch (Exception)
         {
             Debug.LogError("Problem in locating max category");
-            if (ApplicationView.MajorityFinalText != null)
+            if (MasoutisView.MajorityFinalText != null)
             {
-                ApplicationView.MajorityFinalText.text = "Προϊόν δεν αναγνωρίστηκε";
+                MasoutisView.MajorityFinalText.text = "Προϊόν δεν αναγνωρίστηκε";
             }
             return " Προϊόν δεν αναγνωρίστηκε";
         }
@@ -229,9 +230,9 @@ public class MajorityVoting : AsyncBehaviour
 
         var x = validWords.Distinct().ToList();
 
-        if (ApplicationView.MajorityValidText != null)
+        if (MasoutisView.MajorityValidText != null)
         {
-            ApplicationView.MajorityValidText.text = string.Join(", ", validWords.Distinct().ToList().ToArray());
+            MasoutisView.MajorityValidText.text = string.Join(", ", validWords.Distinct().ToList().ToArray());
         }
 
         try
