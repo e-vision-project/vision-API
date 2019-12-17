@@ -49,7 +49,7 @@ public class PublicServiceManager : CameraClient
             yield return StartCoroutine(GetScreenshot());
 
             category = ClassifyCategory(camTexture);
-            category = 2;
+            category = 0;
 
             switch (category)
             {
@@ -122,6 +122,8 @@ public class PublicServiceManager : CameraClient
         float endOCRt = Time.realtimeSinceStartup;
 
         OCRtime = CalculateTimeDifference(startOCRt, endOCRt);
+
+        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(annotationText));
     }
 
     public override void SaveScreenshot(Texture2D camTexture)

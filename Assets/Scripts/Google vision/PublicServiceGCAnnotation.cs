@@ -167,6 +167,7 @@ namespace EVISION.Camera.plugin
                 switch (PublicServiceManager.category)
                 {
                     case (int)Enums.PServiceCategories.document:
+                        GetDocumentAnnotation(arg1);
                         break;
                     case (int)Enums.PServiceCategories.sign:
                         GetTextAnnotation(arg1);
@@ -220,49 +221,48 @@ namespace EVISION.Camera.plugin
             return textAnnotation;
         }
 
+        private string GetDocumentAnnotation(VisionResponse arg1)
+        {
+            var entities = FindNBiggestBoundingBoxes(arg1);
+            foreach (var entity in entities)
+            {
+                textAnnotation += entity.description + ' ';
+            }
+            return textAnnotation;
+        }
+
         private string GetFaceAnnotation(VisionResponse arg1)
         {
             textAnnotation = arg1.responses[0].faceAnnotations[0].sorrowLikelihood.ToString();
             return textAnnotation;
         }
 
-        // Returns the coordinates(4) of the biggest bounding box from object localization.
-        private List<Vertex> GetMaxBoxCoords(VisionResponse arg1)
-        {
-            List<Vertex> biggestBoxCoord = new List<Vertex>();
-            foreach (var vert in FindBiggestBoundingBox(arg1).normalizedVertices)
-            {
-                Vertex _v = new Vertex
-                {
-                    x = vert.x * temp_image.width,
-                    y = vert.y * temp_image.height
-                };
-                biggestBoxCoord.Add(_v);
-            }
-
-            return biggestBoxCoord;
-        }
-
         // Returns the biggest bounding box by comparing areas.
-        public BoundingPoly FindBiggestBoundingBox(VisionResponse arg1)
+        public List<EntityAnnotation> FindNBiggestBoundingBoxes(VisionResponse arg1)
         {
             List<double> areas = new List<double>();
-            List<LocalizedObjectAnnotation> entities = new List<LocalizedObjectAnnotation>();
+            List<EntityAnnotation> entities = new List<EntityAnnotation>();
             foreach (var response in arg1.responses)
             {
-                foreach (var entity in response.localizedObjectAnnotations)
+                foreach (var entity in response.textAnnotations)
                 {
-                    var b = entity.boundingPoly.normalizedVertices[2].x - entity.boundingPoly.normalizedVertices[0].x;
-                    var h = entity.boundingPoly.normalizedVertices[2].y - entity.boundingPoly.normalizedVertices[0].y;
+                    var b = entity.boundingPoly.vertices[2].x - entity.boundingPoly.vertices[0].x;
+                    var h = entity.boundingPoly.vertices[2].y - entity.boundingPoly.vertices[0].y;
                     var area = b * h;
                     areas.Add(area);
                     entities.Add(entity);
                 }
             }
 
-            var max_Area = areas.Max();
-            var maxEntity = entities[areas.IndexOf(max_Area)];
-            return maxEntity.boundingPoly;
+            var textEntities = new List<EntityAnnotation>();
+            var max_Areas = areas.OrderByDescending(x => x).Take(10).ToList();
+            for (int i = 0; i < max_Areas.Count; i++)
+            {
+                var entity = entities[areas.IndexOf(max_Areas[i])];
+                i++;
+                textEntities.Add(entity);
+            }
+            return textEntities;
         }
 
 
