@@ -235,9 +235,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddcc9ed18edf32c4bb8b1b987c5c586f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 4900000, guid: a85afc0352c2bc34c9941b4cbfee7246, type: 3}
-  labelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
-  image_file: AMITA
+  model: {fileID: 4900000, guid: 8b08529e84bf98a42aabff7f6325a209, type: 3}
+  labelsFile: {fileID: 4900000, guid: 6656f898d19fac5478042e85e5a750ce, type: 3}
+  image_file: shelf
   angle: 180
 --- !u!1 &1143204414
 GameObject:
