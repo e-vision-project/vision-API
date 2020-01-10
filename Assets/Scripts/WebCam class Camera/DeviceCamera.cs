@@ -59,7 +59,7 @@ public abstract class DeviceCamera : MonoBehaviour, IDeviceCamera
         //EventCamManager.current.onNatCamConnect += SetCamera(Cameras.Back);
     }
 
-    public abstract void SaveScreenShot(Texture2D snap);
+    public abstract void SaveScreenShot(Texture2D snap, string name);
     public abstract void SetCamera(Cameras camTexture);
     public abstract void Tick();
     public abstract void SwitchCamera();

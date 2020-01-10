@@ -4,6 +4,7 @@ using static EVISION.Camera.plugin.MasoutisView;
 using System.Collections.Generic;
 using System.Linq;
 using static EVISION.Camera.plugin.GenericUtils;
+using System;
 
 namespace EVISION.Camera.plugin
 {
@@ -27,7 +28,7 @@ namespace EVISION.Camera.plugin
 
         // PUBLIC PROPERTIES
         public static int category;
-        public bool DB_LoadProccessBusy { get; set; }
+        public bool DB_LoadProccessBusy;
 
         // LOGGING
         private string itemName;
@@ -70,7 +71,7 @@ namespace EVISION.Camera.plugin
                 }
 
                 SetTimeText();
-
+                SetResultLogs();
                 annotationProccessBusy = false;
             }
         }
@@ -145,12 +146,28 @@ namespace EVISION.Camera.plugin
 
         #endregion
 
-        public void SetResultLogs()
+        public override void SetResultLogs()
         {
+            
             if (logging)
             {
-                var results = "capture" + "| " + MajorityFinalText.text + "| " + MajorityValidText.text + "|" + "\n";
-                SaveTXT(results);
+                var sum = captureTime + OCRtime + classificationTime + Majoritytime;
+                string fileName = string.Format("capture_{0}", System.DateTime.Now.ToString());
+                fileName = fileName.Replace(" ", "_");
+                fileName = fileName.Replace(":", "_");
+                fileName = fileName.Replace("/", "_");
+                Debug.Log(fileName);
+                string imageName = LogManager.GetResultLogs("Image Name", fileName);
+                string response =  LogManager.GetResponseTime(captureTime.ToString(), OCRtime.ToString(), classificationTime.ToString(), 
+                    Majoritytime.ToString(), sum.ToString());
+                string ocrResults = LogManager.GetResultLogs("OCR Results", OCRWordsText);
+                string classificationResults = LogManager.GetResultLogs("Classification", category.ToString());
+                string validWordsResults = LogManager.GetResultLogs("Valid Words", MajorityValidText.text);
+                string finalResult = LogManager.GetResultLogs("ReturnedResult", majorityFinal);
+                string logText = imageName + "\n" + response + "\n" + ocrResults + "\n" + classificationResults + "\n" + validWordsResults + "\n" + 
+                    finalResult + "\n\n";
+                LogManager.SaveResultLogs(logText);
+                currentCam.SaveScreenShot(camTexture, fileName +".png");
             }
         }
 
@@ -202,8 +219,12 @@ namespace EVISION.Camera.plugin
                 product_formatted = FormatDescription(product_desc);
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
-                SetResultLogs();
+                //SetResultLogs();
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(product_formatted.ToLower()));
+            }
+            else
+            {
+                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Δεν αναγνωρίστηκαν λέξεις"));
             }
         }
 

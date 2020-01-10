@@ -12,9 +12,10 @@ namespace EVISION.Camera.plugin
         [Header("Images/Panels")]
         public GameObject imageDB;
         [Header("Text")]
-        public static Text wordsText;
+        public static string OCRWordsText;
         public static Text MajorityValidText;
         public static Text MajorityFinalText;
+        public static string majorityFinal;
         public static Text TimeText;
         public MasoutisManager clientApp;
         public static int capture_count = 0;
@@ -39,6 +40,10 @@ namespace EVISION.Camera.plugin
         // Update is called once per frame
         void Update()
         {
+            if (clientApp == null)
+            {
+                return;
+            }
             if (clientApp.DB_LoadProccessBusy)
             {
                 imageDB.SetActive(true);
@@ -74,18 +79,16 @@ namespace EVISION.Camera.plugin
             string imagePath = "";
 
             #if UNITY_EDITOR_WIN
-            path = Application.dataPath + "/evision_Results_unsorted.txt";
-            imagePath = Application.persistentDataPath + "/captured_images";
+            path = Application.dataPath + "/evision_result_logs.txt";
             #endif
 
             #if UNITY_ANDROID
-            path = Application.persistentDataPath + "/evision_Results_unsorted.txt";
-            imagePath = Application.persistentDataPath + "/captured_images";
+            path = Application.persistentDataPath + "/evision_result_logs.txt";
             #endif
 
             if (!File.Exists(path))
             {
-                File.WriteAllText(path,"Debbuging app \n");
+                File.WriteAllText(path,"Result logs \n");
             }
 
             File.AppendAllText(path, text);

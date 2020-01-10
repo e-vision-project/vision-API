@@ -25,7 +25,6 @@ public class PublicServiceManager : CameraClient
 
     // LOGGING
     private float OCRtime;
-    private float Majoritytime;
     private float classificationTime;
 
     public void ScreenshotButtonListener()
@@ -206,10 +205,15 @@ public class PublicServiceManager : CameraClient
 
     private void SetTimeText()
     {
-        if (MasoutisView.TimeText != null)
+        if (PublicServiceView.TimeText != null)
         {
-            MasoutisView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
-                + "\nMajorityTime: " + Majoritytime.ToString() + "\nClassificationTime: " + classificationTime.ToString();
+            PublicServiceView.TimeText.text = "Full process costed : " + (OCRtime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
+                +  "\nClassificationTime: " + classificationTime.ToString();
         }
+    }
+
+    public override void SetResultLogs()
+    {
+        throw new NotImplementedException();
     }
 }

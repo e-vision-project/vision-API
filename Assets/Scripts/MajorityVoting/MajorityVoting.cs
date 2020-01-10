@@ -76,8 +76,9 @@ public class MajorityVoting : AsyncBehaviour
 
             if (MasoutisView.MajorityFinalText != null)
             {
-                MasoutisView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 + 
+                MasoutisView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 +
                     "\n  Ράφι: " + masoutis_item.category_3 + "\n  Κατηγορία Ραφιού: " + masoutis_item.category_4;
+                MasoutisView.majorityFinal = masoutis_item.category_2 + ", " + masoutis_item.category_3 + ", " + masoutis_item.category_4;
             }
         }
         catch (System.Exception)
@@ -104,6 +105,8 @@ public class MajorityVoting : AsyncBehaviour
         if (MasoutisView.MajorityFinalText != null)
         {
             MasoutisView.MajorityFinalText.text = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Προϊόν: " + masoutis_item.category_4;
+            MasoutisView.majorityFinal = masoutis_item.category_2 + ", " + masoutis_item.category_3 + ", " + masoutis_item.category_4;
+
         }
     }
 
@@ -113,6 +116,8 @@ public class MajorityVoting : AsyncBehaviour
         var _sanitizedWords = OCRWordsSanitization(wordsOCR, 4);
 
         _validWords = GetDistinctValidWords(_validWords, _sanitizedWords);
+
+        MasoutisView.OCRWordsText = string.Join(", ", wordsOCR.Distinct().ToList().ToArray());
 
         //description index to count of index
         var counter = new Dictionary<int, int>();
@@ -159,25 +164,13 @@ public class MajorityVoting : AsyncBehaviour
                 dictOfDescriptions.Add(maxVals[i].Key, score);
             }
 
-            // FOR TESTING ONLY
-            //MasoutisView.distanceString = "";
-            //var ordered = dictOfDescriptions.OrderBy(x => x.Value).ToList();
-            //var ordered_distinct = ordered.Distinct().ToList();
-            //int b = 0;
-            //foreach (var item in ordered_distinct)
-            //{
-            //    MasoutisView.distanceString += desc[item.Key] + ", " + "(MJ count): " + maxVals[b].Value.ToString() + ", " + "(DIST count): " + item.Value.ToString() + "\n";
-            //    b++;
-            //}
-            // END TESTING SECTION
-
             var min = dictOfDescriptions.Values.Min();
             var keyMin = dictOfDescriptions.FirstOrDefault(kvp => kvp.Value == min).Key;
 
             if (MasoutisView.MajorityFinalText != null)
             {
-
                 MasoutisView.MajorityFinalText.text = "Προϊόν: " + desc[keyMin];
+                MasoutisView.majorityFinal = desc[keyMin];
             }
 
             return desc[keyMin];
@@ -188,9 +181,10 @@ public class MajorityVoting : AsyncBehaviour
             Debug.LogError("Problem in locating max category");
             if (MasoutisView.MajorityFinalText != null)
             {
-                MasoutisView.MajorityFinalText.text = "Προϊόν δεν αναγνωρίστηκε";
+                MasoutisView.MajorityFinalText.text = "Η αναγνώρηση απέτυχε";
+                MasoutisView.majorityFinal = "Η αναγνώρηση απέτυχε";
             }
-            return " Προϊόν δεν αναγνωρίστηκε";
+            return "Η αναγνώρηση απέτυχε";
         }
     }
 
@@ -211,6 +205,8 @@ public class MajorityVoting : AsyncBehaviour
         //description index to count of index
         var counter = new Dictionary<int, int>();
         var validWords = new List<string>(3);
+
+        MasoutisView.OCRWordsText = string.Join(", ", wordsOCR.Distinct().ToList().ToArray());
 
         foreach (var foundTerm in wordsOCR.Where(s => dictOfIdx.ContainsKey(s)))
         {

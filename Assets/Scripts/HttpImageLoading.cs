@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVISION.Camera.plugin;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,7 @@ public class HttpImageLoading : MonoBehaviour
     private string photosFolder = "http://192.168.1.254/DCIM/PHOTO/";
     public bool snapTaken = false;
     public bool textureLoaded = false;
-    public bool cameraConnected = false;
+    public bool cameraConnected = true;
     public GameObject displayImage;
 
     // Start is called before the first frame update
@@ -24,7 +25,7 @@ public class HttpImageLoading : MonoBehaviour
         screenshotTex = new Texture2D(1920, 1080);
         displayImage.SetActive(false);
         GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").SetActive(true);
-        StartCoroutine(GetConnectionStatus());
+        cameraConnected = true;
     }
 
     // Update is called once per frame
@@ -35,7 +36,6 @@ public class HttpImageLoading : MonoBehaviour
 
     public IEnumerator LoadTextureFromImage()
     {
-        //StartCoroutine(SetCameraModeRequest(1));
         yield return StartCoroutine(TakePhotoRequest());
         var photoName = GetPhotos(photosFolder);
         imageUrl = photosFolder + photoName;
@@ -85,6 +85,9 @@ public class HttpImageLoading : MonoBehaviour
                 var  name = match.Groups["name"].Value;
                 Names.Add(name);
             }
+            int index = Names.Count - 1;
+            Debug.Log("index:" + index);
+            Debug.Log("count:" + Names.Count);
             var x = Names[0].Replace("<b>", string.Empty);
             x = x.Replace("</b>", string.Empty);
             return x;
@@ -104,11 +107,14 @@ public class HttpImageLoading : MonoBehaviour
         yield return x.SendWebRequest();
         if (x.isNetworkError || x.isHttpError)
         {
-            Debug.Log(x.error);
+            cameraConnected = false;
+            EventCamManager.onExternalCamError?.Invoke();
         }
         else
         {
             snapTaken = true;
+            cameraConnected = true;
+            Handheld.Vibrate();
         }
     }
 

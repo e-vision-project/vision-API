@@ -34,7 +34,7 @@ namespace EVISION.Camera.plugin
             return screenshotTex;
         }
 
-        public void SaveScreenShot(Texture2D snap)
+        public void SaveScreenShot(Texture2D snap, string fileName)
         {
             throw new System.NotImplementedException();
         }

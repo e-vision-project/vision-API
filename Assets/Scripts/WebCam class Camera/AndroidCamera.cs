@@ -78,10 +78,9 @@ public class AndroidCamera : DeviceCamera
         return snap;
     }
 
-    public override void SaveScreenShot(Texture2D snap)
+    public override void SaveScreenShot(Texture2D snap, string name)
     {
-        string name = string.Format("{0}_Capture{1}.png", Application.productName, "{0}");
-        Debug.Log("Permission result: " + NativeGallery.SaveImageToGallery(snap, "e-vision", name));
+        Debug.Log("Permission result: " + NativeGallery.SaveImageToGallery(snap, "evision", name));
     }
 
     public override void ConnectCamera()
