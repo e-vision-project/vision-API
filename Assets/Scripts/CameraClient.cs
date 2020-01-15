@@ -46,8 +46,10 @@ namespace EVISION.Camera.plugin
 
         public void ConnectNativeCamera()
         {
+            Debug.Log("connecting native cam");
             voiceSynthesizer.PerformSpeechFromText("Εξωτερική κάμερα απενεργοποιήθηκε... κάμερα κινητού ενεργοποιημένη");
             currentCam.ConnectCamera();
+            GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP").SetActive(false);
             GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").SetActive(false);
             annotationProccessBusy = false;
         }
