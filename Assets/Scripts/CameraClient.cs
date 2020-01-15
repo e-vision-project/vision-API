@@ -122,7 +122,6 @@ namespace EVISION.Camera.plugin
         /// υλοποιημένης μεθόδου της κλάσης που χρησιμοποιεί την διεπαφή IDeviceCamera.
         /// </summary>  
         /// <param name="camTexture">Αντικείμενο τύπου Texture2D</param>  
-        /// <returns>Αντικείμενο τύπου IEnumerator</returns>
         public abstract void SaveScreenshot(Texture2D camTexture);
 
         public abstract void SetResultLogs();

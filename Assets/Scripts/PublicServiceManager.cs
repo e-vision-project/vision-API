@@ -37,6 +37,7 @@ public class PublicServiceManager : CameraClient
         StartCoroutine(ProcessScreenshotAsync());
     }
 
+
     public override IEnumerator ProcessScreenshotAsync()
     {
         if (currentCam != null)
@@ -71,6 +72,10 @@ public class PublicServiceManager : CameraClient
         SetTimeText();
     }
 
+    /// <summary>  
+    /// This methods aims to perform OCR annotation in the text contained in a sign and returns that text to the user.  
+    /// </summary>
+    /// <returns>IEnumeratorr object</returns>
     public IEnumerator ReadSign()
     {
         // output message to user.
@@ -89,6 +94,10 @@ public class PublicServiceManager : CameraClient
         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(annotationText));
     }
 
+    /// <summary>  
+    /// This methods aims to perform face detection  in an image and return the emotions of the depicted individuals.  
+    /// </summary>
+    /// <returns>IEnumeratorr object</returns>
     public IEnumerator ReadFace()
     {
         // output message to user.
@@ -107,6 +116,10 @@ public class PublicServiceManager : CameraClient
         yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(annotationText));
     }
 
+    /// <summary>  
+    /// This methods aims to perform OCR annotation in the text contained in a document and returns that text to the user.  
+    /// </summary>
+    /// <returns>IEnumeratorr object</returns>
     public IEnumerator ReadDocument()
     {
         // output message to user.
@@ -130,6 +143,12 @@ public class PublicServiceManager : CameraClient
         throw new System.NotImplementedException();
     }
 
+    /// <summary>  
+    /// This methods aims to classify a 2D texture based on the svm model that has been initialized 
+    /// in the start method of this class.  
+    /// </summary>
+    /// <param name="input_Tex"> Texture2D obj</param>  
+    /// <returns>Integer type</returns>
     private int ClassifyCategory(Texture2D input_tex)
     {
         float startclass = Time.realtimeSinceStartup;

@@ -121,7 +121,7 @@ namespace EVISION.Camera.plugin
         #endregion
 
         #region Initializers
-
+  
         private void SetSVM()
         {
             //Get feautures from model
@@ -171,6 +171,12 @@ namespace EVISION.Camera.plugin
             }
         }
 
+        /// <summary>  
+        /// This methods aims to classify a 2D texture based on the svm model that has been initialized 
+        /// in the start method of this class.  
+        /// </summary>
+        /// <param name="input_Tex"> Texture2D obj</param>  
+        /// <returns>Integer type</returns>
         private int ClassifyCategory(Texture2D input_tex)
         {
             float startclass = Time.realtimeSinceStartup;
@@ -196,6 +202,11 @@ namespace EVISION.Camera.plugin
             return category_index;
         }
 
+        /// <summary>  
+        /// This methods finds the product description from the products database based on the Majority Voting algorithm of the 
+        /// homonymous class.
+        /// </summary>
+        /// <returns>IEnumarator object</returns>
         public IEnumerator GetProductDescription()
         {
             // output message to user.
@@ -236,6 +247,12 @@ namespace EVISION.Camera.plugin
             return description;
         }
 
+        /// <summary>  
+        /// This methods based on the category given as input, finds the description of the trail, shelf, inner shelf  
+        /// database based on the Majority Voting algorithm of the homonymous class.
+        /// </summary>
+        /// <param name="category"> int </param>  
+        /// <returns>IEnumarator object</returns>
         public IEnumerator GetTrailShelfDescription(int category)
         {
             // output message to user.
