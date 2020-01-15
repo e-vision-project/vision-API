@@ -13,10 +13,11 @@ public class HttpImageLoading : MonoBehaviour
 {
     public Texture2D screenshotTex;
     public string imageUrl;
-    private string photosFolder = "http://192.168.1.254/DCIM/PHOTO/";
+    private readonly string photosFolder = "http://192.168.1.254/DCIM/PHOTO/";
     public bool snapTaken = false;
     public bool textureLoaded = false;
     public bool cameraConnected = true;
+    private bool firstConnection = true;
     public GameObject displayImage;
 
     // Start is called before the first frame update
@@ -36,10 +37,27 @@ public class HttpImageLoading : MonoBehaviour
 
     public IEnumerator LoadTextureFromImage()
     {
+        if(firstConnection){
+            RemoveAllPhotos();
+        }
         yield return StartCoroutine(TakePhotoRequest());
-        var photoName = GetPhotos(photosFolder);
+        var photoNames = GetPhotoNames(photosFolder); // get all photos contained in the server.
+        var photoName = GetCapturedPhotoName(photoNames); // get the newest one.
         imageUrl = photosFolder + photoName;
         yield return StartCoroutine(GetURLTexture(imageUrl));
+    }
+
+    private void RemoveAllPhotos()
+    {
+        var savedPhotos = GetPhotoNames(photosFolder);
+        savedPhotos.RemoveAll(s => s.Contains("Remove"));
+        for (int i = 0; i < savedPhotos.Count; i++)
+        {
+            var x = savedPhotos[i].Replace("<b>", string.Empty);
+            x = x.Replace("</b>", string.Empty);
+            StartCoroutine(SendRemovePhotoRequest(photosFolder + x)); 
+        }
+        firstConnection = false;
     }
 
     public IEnumerator GetURLTexture(string url)
@@ -63,7 +81,17 @@ public class HttpImageLoading : MonoBehaviour
         }
     }
 
-    public string GetPhotos(string url)
+    public string GetCapturedPhotoName(List<string> names)
+    {
+            // every photo has also a remove text on the client, therefore the last list item is a remove text.
+            names.RemoveAll(s => s.Contains("Remove"));
+            int index = names.Count - 1;
+            var x = names[0].Replace("<b>", string.Empty);
+            x = x.Replace("</b>", string.Empty);
+            return x;
+    }
+
+    private List<string> GetPhotoNames(string url)
     {
         WebRequest request = WebRequest.Create(url);
         WebResponse response = request.GetResponse();
@@ -75,22 +103,17 @@ public class HttpImageLoading : MonoBehaviour
             if (matches.Count == 0)
             {
                 Debug.Log("No files inside the folder found");
-                return "empty folder";
             }
-            List<string> Names = new List<string>();
+            List<string> names = new List<string>();
             foreach (Match match in matches)
             {
                 if (!match.Success) { continue; }
                 //Debug.Log("folder Match: " + match.Groups["name"]);
-                var  name = match.Groups["name"].Value;
-                Names.Add(name);
+                var name = match.Groups["name"].Value;
+                names.Add(name);
             }
-            int index = Names.Count - 1;
-            Debug.Log("index:" + index);
-            Debug.Log("count:" + Names.Count);
-            var x = Names[0].Replace("<b>", string.Empty);
-            x = x.Replace("</b>", string.Empty);
-            return x;
+
+            return names;
         }
     }
 
