@@ -4,7 +4,6 @@ using static EVISION.Camera.plugin.MasoutisView;
 using System.Collections.Generic;
 using System.Linq;
 using static EVISION.Camera.plugin.GenericUtils;
-using System;
 
 namespace EVISION.Camera.plugin
 {

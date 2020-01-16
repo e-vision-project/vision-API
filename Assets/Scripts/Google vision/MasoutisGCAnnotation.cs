@@ -209,7 +209,13 @@ namespace EVISION.Camera.plugin
             _gcVision.AnnotateFailedEvent += _gcVision_AnnotateFailedEvent;
         }
 
-        // Returns the OCR text located inside the biggest bounding box from Object localization.
+        /// <summary>
+        /// This method returns the OCR text located inside the biggest bounding box 
+        /// received from the object_localization FeatureType.
+        /// </summary>
+        /// <param name="arg1">The response from google cloud vision</param>
+        /// <param name="biggestBoxCoords"></param>
+        /// <returns>string type</returns>
         private string GetTextAnnotation(VisionResponse arg1, List<Vertex> biggestBoxCoords)
         {
             var _desc = GetEntityInMaxBox(arg1, biggestBoxCoords);
@@ -217,14 +223,22 @@ namespace EVISION.Camera.plugin
             return textAnnotation;
         }
 
-        // Returns the full OCR text.
+        /// <summary>
+        /// This method returns the full OCR text from the text_detection FeautureType.
+        /// </summary>
+        /// <param name="arg1">The response from google cloud vision</param>
+        /// <returns>string type</returns>
         private string GetTextAnnotation(VisionResponse arg1)
         {
             textAnnotation = arg1.responses[0].fullTextAnnotation.text;
             return textAnnotation;
         }
 
-        // Returns the coordinates(4) of the biggest bounding box from object localization.
+        /// <summary>
+        /// Returns the coordinates(4) of the biggest bounding box from object_localization FeatureType.
+        /// </summary>
+        /// <param name="arg1">The google cloud vision response</param>
+        /// <returns>List of Vertex objects</returns>
         private List<Vertex> GetMaxBoxCoords(VisionResponse arg1)
         {
             List<Vertex> biggestBoxCoord = new List<Vertex>();
@@ -241,7 +255,12 @@ namespace EVISION.Camera.plugin
             return biggestBoxCoord;
         }
 
-        // Returns the biggest bounding box by comparing areas.
+        /// <summary>
+        /// This method return the biggest bounding box coordinates by calculating and returning the
+        /// bounding box with the biggest area.
+        /// </summary>
+        /// <param name="arg1">The google cloud vision response</param>
+        /// <returns>BoundingPoly object</returns>
         public BoundingPoly FindBiggestBoundingBox(VisionResponse arg1)
         {
             List<double> areas = new List<double>();
@@ -263,10 +282,12 @@ namespace EVISION.Camera.plugin
             return maxEntity.boundingPoly;
         }
 
-
-        /*
-        Returns the text of every OCR entity separated with space, inside the area of the box. 
-        */
+        /// <summary>
+        /// This method returns the text of every OCR entity inside the area of the given vertices. 
+        /// </summary>
+        /// <param name="arg1">The google cloud vision response</param>
+        /// <param name="verticesObj">List of vertices</param>
+        /// <returns>type string</returns>
         public string GetEntityInMaxBox(VisionResponse arg1, List<Vertex> verticesObj)
         {
             List<EntityAnnotation> entities = new List<EntityAnnotation>();

@@ -35,6 +35,11 @@ public class HttpImageLoading : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// This method aims to communicate with an http server and load the newest added image in the server
+    /// to a texture 2D.
+    /// </summary>
+    /// <returns>IEnumarator gameobject</returns>
     public IEnumerator LoadTextureFromImage()
     {
         if(firstConnection){
@@ -47,6 +52,10 @@ public class HttpImageLoading : MonoBehaviour
         yield return StartCoroutine(GetURLTexture(imageUrl));
     }
 
+    /// <summary>
+    /// This method finds the addresses of the files contained in the specified http server and 
+    /// removes them.
+    /// </summary>
     private void RemoveAllPhotos()
     {
         var savedPhotos = GetPhotoNames(photosFolder);
@@ -60,6 +69,12 @@ public class HttpImageLoading : MonoBehaviour
         firstConnection = false;
     }
 
+    /// <summary>
+    /// This method load an image file from a specified address of an http server
+    /// to a texture 2D object.
+    /// </summary>
+    /// <param name="url">The url address of the file in the server</param>
+    /// <returns>Ienumarator gameobject</returns>
     public IEnumerator GetURLTexture(string url)
     {
         var x = UnityWebRequestTexture.GetTexture(url);
@@ -91,6 +106,11 @@ public class HttpImageLoading : MonoBehaviour
             return x;
     }
 
+    /// <summary>
+    /// This methods find and returns a list with all the file names contained in the specified url address.
+    /// </summary>
+    /// <param name="url">The url address to the http server</param>
+    /// <returns>List of strings</returns>
     private List<string> GetPhotoNames(string url)
     {
         WebRequest request = WebRequest.Create(url);
@@ -117,6 +137,11 @@ public class HttpImageLoading : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sends a Delete request to the specified address of the http server.
+    /// </summary>
+    /// <param name="url">The url address to the http server</param>
+    /// <returns>IEnumarator gameobject</returns>
     public IEnumerator SendRemovePhotoRequest(string url)
     {
         var x = UnityWebRequest.Delete(url);
@@ -124,6 +149,11 @@ public class HttpImageLoading : MonoBehaviour
         yield return x.SendWebRequest();
     }
 
+    /// <summary>
+    /// This method sends a predifined Get request to the http server. The address sent address
+    /// can work only with the Gogloo E7-E9 wifi glasses.
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator TakePhotoRequest()
     {
         var x = UnityWebRequest.Get("http://192.168.1.254/?custom=1&cmd=1001");

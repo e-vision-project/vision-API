@@ -95,7 +95,7 @@ public class PublicServiceManager : CameraClient
     }
 
     /// <summary>  
-    /// This methods aims to perform face detection  in an image and return the emotions of the depicted individuals.  
+    /// This methods aims to perform face detection in an image and return the emotions of the depicted individuals.  
     /// </summary>
     /// <returns>IEnumeratorr object</returns>
     public IEnumerator ReadFace()

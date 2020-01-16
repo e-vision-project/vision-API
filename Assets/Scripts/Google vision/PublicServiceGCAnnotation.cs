@@ -206,7 +206,13 @@ namespace EVISION.Camera.plugin
             _gcVision.AnnotateFailedEvent += _gcVision_AnnotateFailedEvent;
         }
 
-        // Returns the OCR text located inside the biggest bounding box from Object localization.
+        /// <summary>
+        /// This method returns the OCR text located inside the biggest bounding box 
+        /// received from the object_localization FeatureType.
+        /// </summary>
+        /// <param name="arg1">The response from google cloud vision</param>
+        /// <param name="biggestBoxCoords"></param>
+        /// <returns>string type</returns>
         private string GetTextAnnotation(VisionResponse arg1, List<Vertex> biggestBoxCoords)
         {
             var _desc = GetEntityInMaxBox(arg1, biggestBoxCoords);
@@ -214,13 +220,23 @@ namespace EVISION.Camera.plugin
             return textAnnotation;
         }
 
-        // Returns the full OCR text.
+        /// <summary>
+        /// This method returns the full OCR text from the text_detection FeautureType.
+        /// </summary>
+        /// <param name="arg1">The response from google cloud vision</param>
+        /// <returns>string type</returns>
         private string GetTextAnnotation(VisionResponse arg1)
         {
             textAnnotation = arg1.responses[0].fullTextAnnotation.text;
             return textAnnotation;
         }
 
+        /// <summary>
+        /// This method returns the full OCR text from the text_detection FeautureType
+        /// of every ocr entity separetly.
+        /// </summary>
+        /// <param name="arg1">The response from google cloud vision</param>
+        /// <returns>string type</returns>
         private string GetDocumentAnnotation(VisionResponse arg1)
         {
             var entities = FindNBiggestBoundingBoxes(arg1);
@@ -237,7 +253,13 @@ namespace EVISION.Camera.plugin
             return textAnnotation;
         }
 
-        // Returns the biggest bounding box by comparing areas.
+        /// <summary>
+        /// Επιστρέφει τις λέξεις / προτάσεις με τα μεγαλύτερα N bounding boxes στην εικόνα. 
+        /// Σε αντίθεση με το FindBiggestBoundingBox όπου βρίσκουμε το μεγαλύτερο bounding box του αντικειμένου, 
+        /// εδώ εντοπίζουμε τα μεγαλύτερα bounding boxes των αναγνωρισμένων λέξεων στην εικόνα.
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <returns></returns>
         public List<EntityAnnotation> FindNBiggestBoundingBoxes(VisionResponse arg1)
         {
             List<double> areas = new List<double>();
