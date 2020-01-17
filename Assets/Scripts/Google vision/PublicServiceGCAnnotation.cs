@@ -247,6 +247,12 @@ namespace EVISION.Camera.plugin
             return textAnnotation;
         }
 
+        /// <summary>
+        /// This method returns the face emotions from the face_detection FeautureType
+        /// of every facial detected entity separetly.
+        /// </summary>
+        /// <param name="arg1">The response from google cloud vision</param>
+        /// <returns>string type</returns>
         private string GetFaceAnnotation(VisionResponse arg1)
         {
             textAnnotation = arg1.responses[0].faceAnnotations[0].sorrowLikelihood.ToString();
