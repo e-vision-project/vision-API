@@ -34,9 +34,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-Assets/Assemblies/Tensorflow Plugins
-Assets/Assemblies/Tensorflow Plugins.meta
-Assets/UniversalMediaPlayer
-Assets/UniversalMediaPlayer.meta
+Assets/Camera Backend/Assemblies/Tensorflow Plugins
+Assets/Camera Backend/Assemblies/Tensorflow Plugins.meta
 Assets/Textures
 Assets/Textures.meta

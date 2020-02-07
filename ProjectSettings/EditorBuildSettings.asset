@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Masoutis Client Http.unity
+    path: Assets/Camera Backend/Masoutis Client Http.unity
     guid: 9fd13929f80faea4e9607002b004c6ac
   m_configObjects: {}

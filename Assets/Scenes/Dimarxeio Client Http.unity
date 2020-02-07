@@ -494,8 +494,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d8c54381a21e7b47ad10b245bfa84a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraConnected: 0
-  imageName: id
+  externalCamera: 0
+  imageName: faces 1
   DLModel: {fileID: 4900000, guid: f5950a9b6af743d4dbe99a2eec7cb495, type: 3}
   LabelsFile: {fileID: 4900000, guid: 5b9e735f899ef52478f13a750d65c26b, type: 3}
   logging: 0
@@ -1122,8 +1122,8 @@ GameObject:
   - component: {fileID: 803808589}
   - component: {fileID: 803808588}
   m_Layer: 5
-  m_Name: Majority Final Text
-  m_TagString: MAJORITY_FINAL
+  m_Name: Result Text
+  m_TagString: PS_TEXT
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1173,12 +1173,12 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 42
+    m_MaxSize: 30
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: 
 --- !u!222 &803808589
@@ -1371,7 +1371,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 5.6484375, y: -330.64844}
+  m_AnchoredPosition: {x: 5.6516113, y: -117.96997}
   m_SizeDelta: {x: 4.9001465, y: 189.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &999184322
@@ -2111,7 +2111,7 @@ GameObject:
   - component: {fileID: 1562019957}
   m_Layer: 5
   m_Name: PS Text
-  m_TagString: PS_TEXT
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
