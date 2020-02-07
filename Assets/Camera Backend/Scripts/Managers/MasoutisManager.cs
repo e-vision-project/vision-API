@@ -205,16 +205,7 @@ namespace EVISION.Camera.plugin
             return category_index;
         }
 
-<<<<<<< HEAD:Assets/Camera Backend/Scripts/Managers/MasoutisManager.cs
         public IEnumerator GetProductDescriptionFromDb()
-=======
-        /// <summary>  
-        /// This methods finds the product description from the products database based on the Majority Voting algorithm of the 
-        /// homonymous class.
-        /// </summary>
-        /// <returns>IEnumarator object</returns>
-        public IEnumerator GetProductDescription()
->>>>>>> b0833ee7f77064e6d6fe704353cb63709199e7e1:Assets/Camera Backend/Scripts/Managers/Clients/MasoutisManager.cs
         {
             // output message to user.
             yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Αναγνώριση προϊόντος"));
