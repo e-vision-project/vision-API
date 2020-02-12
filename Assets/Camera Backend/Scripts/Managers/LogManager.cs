@@ -5,17 +5,23 @@ using System.IO;
 
 public static class LogManager
 {
+    public static string OCRWordsText;
+    public static string MajorityValidText;
+    public static string MajorityFinalText;
+    public static string majorityFinal;
+    public static string TimeText;
+
 
     public static void SaveResultLogs(string text)
     {
         string path;
-#if UNITY_EDITOR_WIN
+        #if UNITY_EDITOR_WIN
         path = Application.dataPath + "/evision_result_logs.txt";
-#endif
+        #endif
 
-#if UNITY_ANDROID
+        #if UNITY_ANDROID
         path = Application.persistentDataPath + "/evision_result_logs.txt";
-#endif
+        #endif
 
         if (!File.Exists(path))
         {

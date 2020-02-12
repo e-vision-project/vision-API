@@ -51,13 +51,20 @@ namespace EVISION.Camera.plugin
         public void ConnectNativeCamera()
         {
             Debug.Log("connecting native cam");
-            var y = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP");
-            y.SetActive(false);
             currentCam.ConnectCamera();
             annotationProccessBusy = false;
         }
 
         #endregion
+
+        public void Start()
+        {
+            //native camera
+            if (!externalCamera && currentCam != null && !Application.isEditor)
+            {
+                ConnectNativeCamera();
+            }
+        }
 
         protected IEnumerator GetScreenshot()
         {
@@ -91,11 +98,13 @@ namespace EVISION.Camera.plugin
                         yield return null;
                     }
                     camTexture = httpLoader.screenshotTex;
+                    SetDisplayImage();
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
                 }
                 else
                 {
                     camTexture = currentCam.TakeScreenShot();
+                    SetDisplayImage();
                     Handheld.Vibrate();
                 }
             }
@@ -105,7 +114,6 @@ namespace EVISION.Camera.plugin
 
         private void SetDisplayImage()
         {
-            displayImage.enabled = true;
             displayImage.texture = camTexture;
         }
 

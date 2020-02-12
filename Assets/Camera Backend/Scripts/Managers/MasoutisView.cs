@@ -12,28 +12,28 @@ namespace EVISION.Camera.plugin
         [Header("Images/Panels")]
         public GameObject imageDB;
         [Header("Text")]
-        public static Text OCRWordsText;
-        public static Text MajorityValidText;
-        public static Text MajorityFinalText;
-        public static string majorityFinal;
-        public static Text TimeText;
+        //public static Text OCRWordsText;
+        //public static Text MajorityValidText;
+        //public static Text MajorityFinalText;
+        //public static string majorityFinal;
+        //public static Text TimeText;
         public MasoutisManager clientApp;
 
 
         // Start is called before the first frame update
         void Start()
         {
-            MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
-            MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
-            TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
-            OCRWordsText = GameObject.FindGameObjectWithTag("OCR_TEXT").GetComponent<Text>();
+            //MajorityValidText = GameObject.FindGameObjectWithTag("MAJORITY_TEXT").GetComponent<Text>();
+            //MajorityFinalText = GameObject.FindGameObjectWithTag("MAJORITY_FINAL").GetComponent<Text>();
+            //TimeText = GameObject.FindGameObjectWithTag("TIME").GetComponent<Text>();
+            //OCRWordsText = GameObject.FindGameObjectWithTag("OCR_TEXT").GetComponent<Text>();
             clientApp = gameObject.GetComponent<MasoutisManager>();
             annotatingImage.SetActive(false);
         }
 
         public void OnButtonPressed()
         {
-            MajorityFinalText.text = "";
+            //MajorityFinalText.text = "";
         }
 
         // Update is called once per frame

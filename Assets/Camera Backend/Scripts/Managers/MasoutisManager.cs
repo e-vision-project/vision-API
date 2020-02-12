@@ -4,6 +4,7 @@ using static EVISION.Camera.plugin.MasoutisView;
 using System.Collections.Generic;
 using System.Linq;
 using static EVISION.Camera.plugin.GenericUtils;
+using static LogManager;
 
 namespace EVISION.Camera.plugin
 {
@@ -90,12 +91,6 @@ namespace EVISION.Camera.plugin
             voiceSynthesizer = GetComponent<ITextToVoice>();
             httpLoader = GetComponent<HttpImageLoading>();
 
-            //native camera
-            if (!externalCamera && currentCam != null)
-            {
-                ConnectNativeCamera();
-            }
-
             SetSVM();
         }
 
@@ -159,25 +154,28 @@ namespace EVISION.Camera.plugin
                 fileName = fileName.Replace(":", "_");
                 fileName = fileName.Replace("/", "_");
                 Debug.Log(fileName);
-                string imageName = LogManager.GetResultLogs("Image Name", fileName);
-                string response =  LogManager.GetResponseTime(captureTime.ToString(), OCRtime.ToString(), classificationTime.ToString(), 
+                string imageName = GetResultLogs("Image Name", fileName);
+                string response =  GetResponseTime(captureTime.ToString(), OCRtime.ToString(), classificationTime.ToString(), 
                     Majoritytime.ToString(), sum.ToString());
-                string ocrResults = LogManager.GetResultLogs("OCR Results", OCRWordsText.text);
-                string classificationResults = LogManager.GetResultLogs("Classification", category.ToString());
-                string validWordsResults = LogManager.GetResultLogs("Valid Words", MajorityValidText.text);
-                string finalResult = LogManager.GetResultLogs("ReturnedResult", majorityFinal);
+                string ocrResults = GetResultLogs("OCR Results", OCRWordsText);
+                string classificationResults = GetResultLogs("Classification", category.ToString());
+                string validWordsResults = GetResultLogs("Valid Words", MajorityValidText);
+                string finalResult = GetResultLogs("ReturnedResult", majorityFinal);
                 string logText = imageName + "\n" + response + "\n" + ocrResults + "\n" + classificationResults + "\n" + validWordsResults + "\n" + 
                     finalResult + "\n\n";
-                LogManager.SaveResultLogs(logText);
-                currentCam.SaveScreenShot(camTexture, fileName +".png");
+                SaveResultLogs(logText);
+                if (currentCam != null)
+                {
+                    currentCam.SaveScreenShot(camTexture, fileName + ".png");
+                }
             }
         }
 
         private void SetTimeText()
         {
-            if (MasoutisView.TimeText != null)
+            if (TimeText != null)
             {
-                MasoutisView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
+                TimeText = "Full process costed : " + (OCRtime + Majoritytime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
                     + "\nMajorityTime: " + Majoritytime.ToString() + "\nClassificationTime: " + classificationTime.ToString();
             }
         }
@@ -270,8 +268,8 @@ namespace EVISION.Camera.plugin
                 product_formatted = FormatDescription(ListToString(valid_words));
                 if (MajorityValidText != null && MajorityFinalText != null)
                 {
-                    MajorityValidText.text = product_formatted;
-                    MajorityFinalText.text = product_formatted;
+                    MajorityValidText = product_formatted;
+                    MajorityFinalText = product_formatted;
                 }
                 majorityFinal = product_formatted;
                 float endMajt = Time.realtimeSinceStartup;
@@ -373,11 +371,11 @@ namespace EVISION.Camera.plugin
                 }
                 if (MajorityFinalText != null)
                 {
-                    MajorityFinalText.text = "Δεν αναγνωρίστηκαν διαθέσιμες λέξεις";
+                    MajorityFinalText = "Δεν αναγνωρίστηκαν διαθέσιμες λέξεις";
                 }
                 if (MajorityValidText != null)
                 {
-                    MajorityValidText.text = "κενό";
+                    MajorityValidText = "κενό";
                 }
 
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));

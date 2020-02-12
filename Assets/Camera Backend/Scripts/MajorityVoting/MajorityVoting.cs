@@ -10,6 +10,7 @@ using CsvHelper;
 using System.Text;
 using UnityAsync;
 using EVISION.Camera.plugin;
+using static LogManager;
 
 [Serializable]
 public struct MasoutisItem
@@ -74,11 +75,11 @@ public class MajorityVoting : AsyncBehaviour
             masoutis_item.category_4 = cat4[maxDescIndex];
             masoutis_item.product_description = desc[maxDescIndex];
 
-            if (MasoutisView.MajorityFinalText != null)
+            if (MajorityFinalText != null)
             {
-                MasoutisView.MajorityFinalText.text = "  Διάδρομος: " + masoutis_item.category_2 +
+                MajorityFinalText = "  Διάδρομος: " + masoutis_item.category_2 +
                     "\n  Ράφι: " + masoutis_item.category_3 + "\n  Κατηγορία Ραφιού: " + masoutis_item.category_4;
-                MasoutisView.majorityFinal = masoutis_item.category_2 + ", " + masoutis_item.category_3 + ", " + masoutis_item.category_4;
+                majorityFinal = masoutis_item.category_2 + ", " + masoutis_item.category_3 + ", " + masoutis_item.category_4;
             }
         }
         catch (System.Exception)
@@ -98,9 +99,9 @@ public class MajorityVoting : AsyncBehaviour
 
     public static List<string> GetValidWords(List<string> wordsOCR)
     {
-        if (MasoutisView.OCRWordsText != null)
+        if (OCRWordsText != null)
         {
-            MasoutisView.OCRWordsText.text = string.Join(", ", wordsOCR.Distinct().ToList().ToArray());
+            OCRWordsText = string.Join(", ", wordsOCR.Distinct().ToList().ToArray());
         }
         List<string> validWords = new List<string>();
         wordsOCR = OCRWordsSanitization(wordsOCR, 3);
@@ -117,10 +118,10 @@ public class MajorityVoting : AsyncBehaviour
         masoutis_item.category_2 = "μη αναγνωρίσιμο";
         masoutis_item.category_3 = "μη αναγνωρίσιμο";
         masoutis_item.category_4 = "μη αναγνωρίσιμο";
-        if (MasoutisView.MajorityFinalText != null)
+        if (MajorityFinalText != null)
         {
-            MasoutisView.MajorityFinalText.text = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Προϊόν: " + masoutis_item.category_4;
-            MasoutisView.majorityFinal = masoutis_item.category_2 + ", " + masoutis_item.category_3 + ", " + masoutis_item.category_4;
+            MajorityFinalText = "ΠΛΗΡΟΦΟΡΙΕΣ: Διάδρομος: " + masoutis_item.category_2 + "| Ράφι: " + masoutis_item.category_3 + " |Προϊόν: " + masoutis_item.category_4;
+            majorityFinal = masoutis_item.category_2 + ", " + masoutis_item.category_3 + ", " + masoutis_item.category_4;
 
         }
     }
@@ -160,9 +161,9 @@ public class MajorityVoting : AsyncBehaviour
             // create string for product description based on SORTED valid words.
             string _OCRDesc = GenericUtils.ListToString(_validWords);
 
-            if (MasoutisView.MajorityValidText != null)
+            if (MajorityValidText != null)
             {
-                MasoutisView.MajorityValidText.text = string.Join(", ", _validWords.Distinct().ToList().ToArray());
+                MajorityValidText = string.Join(", ", _validWords.Distinct().ToList().ToArray());
             }
 
             int score = 0;
@@ -180,10 +181,10 @@ public class MajorityVoting : AsyncBehaviour
             var min = dictOfDescriptions.Values.Min();
             var keyMin = dictOfDescriptions.FirstOrDefault(kvp => kvp.Value == min).Key;
 
-            if (MasoutisView.MajorityFinalText != null)
+            if (MajorityFinalText != null)
             {
-                MasoutisView.MajorityFinalText.text = "Προϊόν: " + desc[keyMin];
-                MasoutisView.majorityFinal = desc[keyMin];
+                MajorityFinalText = "Προϊόν: " + desc[keyMin];
+                majorityFinal = desc[keyMin];
             }
 
             return desc[keyMin];
@@ -192,10 +193,10 @@ public class MajorityVoting : AsyncBehaviour
         catch (Exception)
         {
             Debug.LogError("Problem in locating max category");
-            if (MasoutisView.MajorityFinalText != null)
+            if (MajorityFinalText != null)
             {
-                MasoutisView.MajorityFinalText.text = "Η αναγνώρηση απέτυχε";
-                MasoutisView.majorityFinal = "Η αναγνώρηση απέτυχε";
+                MajorityFinalText = "Η αναγνώρηση απέτυχε";
+                majorityFinal = "Η αναγνώρηση απέτυχε";
             }
             return "Η αναγνώρηση απέτυχε";
         }
@@ -219,9 +220,9 @@ public class MajorityVoting : AsyncBehaviour
         var counter = new Dictionary<int, int>();
         var validWords = new List<string>(3);
 
-        if (MasoutisView.OCRWordsText != null)
+        if (OCRWordsText != null)
         {
-            MasoutisView.OCRWordsText.text = string.Join(", ", wordsOCR.Distinct().ToList().ToArray());
+            OCRWordsText = string.Join(", ", wordsOCR.Distinct().ToList().ToArray());
         }
 
         //var listo = new List<KeyValuePair<string, List<string>>>();
@@ -261,9 +262,9 @@ public class MajorityVoting : AsyncBehaviour
 
         var x = validWords.Distinct().ToList();
 
-        if (MasoutisView.MajorityValidText != null)
+        if (MajorityValidText != null)
         {
-            MasoutisView.MajorityValidText.text = string.Join(", ", validWords.Distinct().ToList().ToArray());
+            MajorityValidText = string.Join(", ", validWords.Distinct().ToList().ToArray());
         }
 
         #region Debugging
