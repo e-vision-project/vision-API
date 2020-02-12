@@ -18,8 +18,6 @@ namespace EVISION.Camera.plugin
         public static string majorityFinal;
         public static Text TimeText;
         public MasoutisManager clientApp;
-        public static int capture_count = 0;
-        public static string capture_name = "";
 
 
         // Start is called before the first frame update
@@ -72,54 +70,6 @@ namespace EVISION.Camera.plugin
                 cancelButton.SetActive(false);
                 tapImage.SetActive(true);
             }
-        }
-
-        public static void SaveTXT(string text)
-        {
-            string path = "";
-            string imagePath = "";
-
-            #if UNITY_EDITOR_WIN
-            path = Application.dataPath + "/evision_result_logs.txt";
-            #endif
-
-            #if UNITY_ANDROID
-            path = Application.persistentDataPath + "/evision_result_logs.txt";
-            #endif
-
-            if (!File.Exists(path))
-            {
-                File.WriteAllText(path,"Result logs \n");
-            }
-
-            File.AppendAllText(path, text);
-            Debug.Log("saved as :" + path);
-        }
-
-        public static void SaveImageFile(Texture2D tex)
-        {
-            string imagePath = "";
-
-            if (Application.isEditor)
-            {
-                imagePath = Application.dataPath + "/captured_images";
-            }
-            else
-            {
-                imagePath = Application.persistentDataPath + "/captured_images";
-            }
-
-            if (!Directory.Exists(imagePath))
-            {
-                Directory.CreateDirectory(imagePath);
-            }
-
-            var bytes = tex.EncodeToJPG();
-            //Destroy(tex);
-            capture_name = string.Format("/{0}_Capture{1}.png", Application.productName, capture_count.ToString());
-            System.IO.File.WriteAllBytes(imagePath + capture_name, bytes);
-            Debug.Log(imagePath + capture_name);
-            capture_count++;
         }
     }
 }

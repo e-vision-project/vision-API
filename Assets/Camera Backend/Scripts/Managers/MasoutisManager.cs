@@ -49,30 +49,29 @@ namespace EVISION.Camera.plugin
 
         public override IEnumerator ProcessScreenshotAsync()
         {
-            if (currentCam != null)
+            // lock the process so the user cannot access it.
+            annotationProccessBusy = true;
+
+            // Get camera texture.
+            yield return StartCoroutine(GetScreenshot());
+
+            category = ClassifyCategory(camTexture);
+
+            // product case
+            if (category == (int)Enums.MasoutisCategories.product)
             {
-                // lock the process so the user cannot access it.
-                annotationProccessBusy = true;
-
-                // Get camera texture.
-                yield return StartCoroutine(GetScreenshot());
-
-                category = ClassifyCategory(camTexture);
-                // product case
-                if (category == (int)Enums.MasoutisCategories.product)
-                {
-                    yield return StartCoroutine(GetProductDescription());
-                }
-                else
-                {
-                    yield return StartCoroutine(GetTrailShelfDescription(category));
-                }
-
-                SetTimeText();
-                SetResultLogs();
-                annotationProccessBusy = false;
+                yield return StartCoroutine(GetProductDescription());
             }
-            Debug.Log("current cam is null");
+            else
+            {
+                yield return StartCoroutine(GetTrailShelfDescription(category));
+            }
+
+            SetTimeText();
+            SetResultLogs();
+            //Used to set the main UI
+            EventCamManager.onProcessEnded?.Invoke();
+            annotationProccessBusy = false;
         }
 
         public override void SaveScreenshot(Texture2D camTexture)
@@ -86,12 +85,10 @@ namespace EVISION.Camera.plugin
 
         private void Awake()
         {
-            cams = GetComponents<IDeviceCamera>();
+            currentCam = GetComponent<IDeviceCamera>();
             annotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
             httpLoader = GetComponent<HttpImageLoading>();
-
-            currentCam = cams[0];
 
             //native camera
             if (!externalCamera)
@@ -109,7 +106,7 @@ namespace EVISION.Camera.plugin
             DB_LoadProccessBusy = true;
             annotationProccessBusy = false;
 
-            EventCamManager.onExternalCamError += ConnectNativeCamera;
+            //EventCamManager.onExternalCamError += ConnectNativeCamera;
             EventCamManager.onAnnotationFailed += AnnotationFailedHandler;
 
         }
@@ -149,6 +146,8 @@ namespace EVISION.Camera.plugin
 
         #endregion
 
+        #region Logging
+
         public override void SetResultLogs()
         {
             
@@ -173,6 +172,17 @@ namespace EVISION.Camera.plugin
                 currentCam.SaveScreenShot(camTexture, fileName +".png");
             }
         }
+
+        private void SetTimeText()
+        {
+            if (MasoutisView.TimeText != null)
+            {
+                MasoutisView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
+                    + "\nMajorityTime: " + Majoritytime.ToString() + "\nClassificationTime: " + classificationTime.ToString();
+            }
+        }
+
+        #endregion
 
         /// <summary>  
         /// This methods aims to classify a 2D texture based on the svm model that has been initialized 
@@ -229,7 +239,6 @@ namespace EVISION.Camera.plugin
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
                 text_result = product_formatted.ToLower();
-                //SetResultLogs();
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(text_result));
             }
             else
@@ -259,8 +268,11 @@ namespace EVISION.Camera.plugin
                 var wordsOCR = SplitStringToList(annotationText);
                 var valid_words = MajorityVoting.GetValidWords(wordsOCR);
                 product_formatted = FormatDescription(ListToString(valid_words));
-                MajorityValidText.text = product_formatted;
-                MajorityFinalText.text = product_formatted;
+                if (MajorityValidText != null && MajorityFinalText != null)
+                {
+                    MajorityValidText.text = product_formatted;
+                    MajorityFinalText.text = product_formatted;
+                }
                 majorityFinal = product_formatted;
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
@@ -314,21 +326,31 @@ namespace EVISION.Camera.plugin
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
 
-                switch (category)
+                if (!verboseMode)
                 {
-                    case (int)Enums.MasoutisCategories.trail:
-                        text_result = majVoting.masoutis_item.category_2;
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + text_result));
-                        break;
-                    case (int)Enums.MasoutisCategories.shelf:
-                        text_result = majVoting.masoutis_item.category_4;
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + text_result));
-                        break;
-                    case (int)Enums.MasoutisCategories.other:
-                        yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο"));
-                        break;
-                    default:
-                        break;
+                    switch (category)
+                    {
+                        case (int)Enums.MasoutisCategories.trail:
+                            text_result = majVoting.masoutis_item.category_2;
+                            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + text_result));
+                            break;
+                        case (int)Enums.MasoutisCategories.shelf:
+                            text_result = majVoting.masoutis_item.category_4;
+                            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + text_result));
+                            break;
+                        case (int)Enums.MasoutisCategories.other:
+                            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο"));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    text_result = "διάδρομος " + majVoting.masoutis_item.category_2 + ", " +
+                                   "ράφι " + majVoting.masoutis_item.category_3 + ", " +
+                                   "υποκατηγορία ραφιού " + majVoting.masoutis_item.category_4;
+                    yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(text_result));
                 }
             }
             else
@@ -359,15 +381,6 @@ namespace EVISION.Camera.plugin
                 }
 
                 yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Δεν αναγνωρίστηκαν διαθέσιμες λέξεις"));
-            }
-        }
-
-        private void SetTimeText()
-        {
-            if (MasoutisView.TimeText != null)
-            {
-                MasoutisView.TimeText.text = "Full process costed : " + (OCRtime + Majoritytime + classificationTime).ToString() + "\nOCRtime: " + OCRtime.ToString()
-                    + "\nMajorityTime: " + Majoritytime.ToString() + "\nClassificationTime: " + classificationTime.ToString();
             }
         }
 

@@ -33,8 +33,9 @@ public class MajorityVoting : AsyncBehaviour
     static List<HashSet<string>> descSplitted = new List<HashSet<string>>();
 
     public MasoutisItem masoutis_item;
-    //public static string[] masoutisFiles = { "masoutis_cat2_cleaned", "masoutis_cat3_cleaned", "masoutis_cat4_cleaned", "masoutis_desc_cleaned" };
-    public static string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
+    //public static string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
+    //public static string[] masoutisFiles = { "cat2_2020", "cat3_2020", "cat4_2020", "desc_2020" };
+    public static string[] masoutisFiles = { "cat2_ScanShop", "cat3_ScanShop", "cat4_ScanShop", "desc_ScanShop"};
 
     public static bool database_ready = false;
 
@@ -266,17 +267,17 @@ public class MajorityVoting : AsyncBehaviour
         }
 
         #region Debugging
-        //var counterDecented = counter.OrderByDescending(k => k.Value).Take(50).Distinct().ToList();
-        //var listWithShelves = new List<KeyValuePair<string, int>>();
-        //var listWithDescs = new List<KeyValuePair<string, int>>();
-        //foreach (var item in counterDecented)
-        //{
-        //    if (cat4[item.Key] != null && item.Key < cat4.Count && item.Key >= 0)
-        //    {
-        //        listWithShelves.Add(new KeyValuePair<string, int>(cat4[item.Key], item.Value));
-        //        listWithDescs.Add(new KeyValuePair<string, int>(desc[item.Key], item.Value));
-        //    }
-        //}
+        var counterOrdered = counter.OrderByDescending(k => k.Value).Take(50).Distinct().ToList();
+        var listShelves = new List<KeyValuePair<string, int>>();
+        var listDescs = new List<KeyValuePair<string, int>>();
+        foreach (var item in counterOrdered)
+        {
+            if (cat4[item.Key] != null && item.Key < cat4.Count && item.Key >= 0)
+            {
+                listShelves.Add(new KeyValuePair<string, int>(cat4[item.Key], item.Value));
+                listDescs.Add(new KeyValuePair<string, int>(desc[item.Key], item.Value));
+            }
+        }
         #endregion
 
         try
@@ -344,16 +345,16 @@ public class MajorityVoting : AsyncBehaviour
                         string inp_ln = streamReader.ReadLine();
                         switch (datafile_name)
                         {
-                            case "masoutis_cat2":
+                            case "cat2_ScanShop":
                                 cat2.Add(inp_ln);
                                 break;
-                            case "masoutis_cat3":
+                            case "cat3_ScanShop":
                                 cat3.Add(inp_ln);
                                 break;
-                            case "masoutis_cat4":
+                            case "cat4_ScanShop":
                                 cat4.Add(inp_ln);
                                 break;
-                            case "masoutis_desc":
+                            case "desc_ScanShop":
                                 desc.Add(inp_ln);
                                 break;
                         }
@@ -402,11 +403,11 @@ public class MajorityVoting : AsyncBehaviour
                     csv.ReadHeader();
                     while (csv.Read())
                     {
-                        string descField = csv.GetField<string>("Description");
-                        string cat1Field = csv.GetField<string>("Unnamed: 1");
-                        string cat2Field = csv.GetField<string>("Unnamed: 3");
-                        string cat3Field = csv.GetField<string>("Unnamed: 5");
-                        string cat4Field = csv.GetField<string>("Unnamed: 7");
+                        string descField = csv.GetField<string>("mi1mlb");
+                        string cat1Field = csv.GetField<string>("name1");
+                        string cat2Field = csv.GetField<string>("name2");
+                        string cat3Field = csv.GetField<string>("name3");
+                        string cat4Field = csv.GetField<string>("name4");
                         desc.Add(descField);
                         //cat1.Add(cat1Field);
                         cat2.Add(cat2Field);

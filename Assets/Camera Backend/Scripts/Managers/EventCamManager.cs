@@ -17,4 +17,7 @@ public class EventCamManager : MonoBehaviour
 
     public delegate void OnAnnotationFailed();
     public static OnAnnotationFailed onAnnotationFailed;
+
+    public delegate void OnProcessScreenshotEnded();
+    public static OnProcessScreenshotEnded onProcessEnded;
 }

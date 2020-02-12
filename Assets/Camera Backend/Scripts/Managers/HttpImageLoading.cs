@@ -18,24 +18,24 @@ public class HttpImageLoading : MonoBehaviour
     public bool textureLoaded = false;
     public bool cameraConnected = true;
     private bool firstConnection = true;
-    public GameObject displayImage;
+    [SerializeField] private GameObject displayImage;
+    [SerializeField] private CameraClient client;
+
 
     // Start is called before the first frame update
     IEnumerator Start()
     {
-        screenshotTex = new Texture2D(1024, 768);
-        displayImage.SetActive(false);
-        GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").SetActive(true);
-        //set to photo mode
-        yield return StartCoroutine(SetRecordingRequest(1));
-        StartCoroutine(TakePhotoRequest());
-        RemoveAllPhotos();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        client = gameObject.GetComponent<CameraClient>();
+        if (client.externalCamera)
+        {
+            Debug.Log("init external cam");
+            screenshotTex = new Texture2D(1024, 768);
+            displayImage.SetActive(false);
+            //set to photo mode
+            yield return StartCoroutine(SetRecordingRequest(1));
+            StartCoroutine(TakePhotoRequest());
+            RemoveAllPhotos();
+        }
     }
 
     /// <summary>
@@ -45,9 +45,6 @@ public class HttpImageLoading : MonoBehaviour
     /// <returns>IEnumarator gameobject</returns>
     public IEnumerator LoadTextureFromImage()
     {
-        //if(firstConnection){
-        //    RemoveAllPhotos();
-        //}
         yield return StartCoroutine(TakePhotoRequest());
         firstConnection = true;
         var photoNames = GetPhotoNames(photosFolder); // get all photos contained in the server.
@@ -172,16 +169,7 @@ public class HttpImageLoading : MonoBehaviour
         {
             if (!firstConnection)
             {
-                EventCamManager.onExternalCamError?.Invoke();
-                cameraConnected = false;
-                if (GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP") != null)
-                {
-                    GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP").SetActive(false);
-                }
-                if (GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL") != null)
-                {
-                    GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").SetActive(false);
-                }
+                Debug.Log("Connection failed");
             }
         }
         else
@@ -189,6 +177,21 @@ public class HttpImageLoading : MonoBehaviour
             snapTaken = true;
             cameraConnected = true;
             Handheld.Vibrate();
+        }
+    }
+
+    private void DisableHttpCamera()
+    {
+        EventCamManager.onExternalCamError?.Invoke();
+
+        cameraConnected = false;
+        if (GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP") != null)
+        {
+            GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP").SetActive(false);
+        }
+        if (GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL") != null)
+        {
+            GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_EXTERNAL").SetActive(false);
         }
     }
 

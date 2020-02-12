@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Linq;
+using System.IO;
 
 namespace EVISION.Camera.plugin
 {
@@ -120,6 +121,54 @@ namespace EVISION.Camera.plugin
             timeToCompleteSec = (float)System.Math.Round(end - start, 2);
 
             return timeToCompleteSec;
+        }
+
+        public static void SaveTXT(string text)
+        {
+            string path = "";
+            string imagePath = "";
+
+#if UNITY_EDITOR_WIN
+            path = Application.dataPath + "/evision_result_logs.txt";
+#endif
+
+#if UNITY_ANDROID
+            path = Application.persistentDataPath + "/evision_result_logs.txt";
+#endif
+
+            if (!File.Exists(path))
+            {
+                File.WriteAllText(path, "Result logs \n");
+            }
+
+            File.AppendAllText(path, text);
+            Debug.Log("saved as :" + path);
+        }
+
+        public static void SaveImageFile(Texture2D tex)
+        {
+            string imagePath = "";
+
+
+            if (Application.isEditor)
+            {
+                imagePath = Application.dataPath + "/captured_images";
+            }
+            else
+            {
+                imagePath = Application.persistentDataPath + "/captured_images";
+            }
+
+            if (!Directory.Exists(imagePath))
+            {
+                Directory.CreateDirectory(imagePath);
+            }
+
+            var bytes = tex.EncodeToJPG();
+            int capture_count = 0;
+            string capture_name = string.Format("/{0}_Capture{1}.png", Application.productName, capture_count.ToString());
+            System.IO.File.WriteAllBytes(imagePath + capture_name, bytes);
+            Debug.Log(imagePath + capture_name);
         }
     }
 }

@@ -199,7 +199,8 @@ public class PublicServiceManager : CameraClient
 
     private void Awake()
     {
-        cams = GetComponents<IDeviceCamera>();
+        //native camera
+        currentCam = GetComponent<IDeviceCamera>();
         annotator = GetComponent<IAnnotate>();
         voiceSynthesizer = GetComponent<ITextToVoice>();
         httpLoader = GetComponent<HttpImageLoading>();
@@ -210,10 +211,7 @@ public class PublicServiceManager : CameraClient
     // Start is called before the first frame update
     void Start()
     {
-        annotationProccessBusy = false;
-
-        //native camera 
-        currentCam = cams[0];
+        annotationProccessBusy = false; 
 
         //native camera
         if (!externalCamera)
