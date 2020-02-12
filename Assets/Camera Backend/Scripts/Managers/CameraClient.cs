@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace EVISION.Camera.plugin
 {
@@ -19,6 +21,7 @@ namespace EVISION.Camera.plugin
 
         // PUBLIC PROPERTIES
         public bool externalCamera;
+        public RawImage displayImage;
         public string AnnotationText { get; }
         public bool annotationProccessBusy { get; set; }
         public string imageName;
@@ -69,11 +72,13 @@ namespace EVISION.Camera.plugin
                         yield return null;
                     }
                     camTexture = httpLoader.screenshotTex;
+                    SetDisplayImage();
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
                 }
                 else
                 {
                     camTexture = Resources.Load<Texture2D>("Products_UnitTests/" + imageName);
+                    SetDisplayImage();
                 }
             }
             else
@@ -96,6 +101,12 @@ namespace EVISION.Camera.plugin
             }
             float endCapture = Time.realtimeSinceStartup;
             captureTime = GenericUtils.CalculateTimeDifference(startCapture, endCapture);
+        }
+
+        private void SetDisplayImage()
+        {
+            displayImage.enabled = true;
+            displayImage.texture = camTexture;
         }
 
         public void SetVerbosity(bool value)

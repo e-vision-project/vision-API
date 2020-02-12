@@ -34,8 +34,8 @@ public class MajorityVoting : AsyncBehaviour
 
     public MasoutisItem masoutis_item;
     //public static string[] masoutisFiles = { "masoutis_cat2", "masoutis_cat3", "masoutis_cat4", "masoutis_desc" };
-    //public static string[] masoutisFiles = { "cat2_2020", "cat3_2020", "cat4_2020", "desc_2020" };
-    public static string[] masoutisFiles = { "cat2_ScanShop", "cat3_ScanShop", "cat4_ScanShop", "desc_ScanShop"};
+    public static string[] masoutisFiles = { "cat2_2020", "cat3_2020", "cat4_2020", "desc_2020" };
+    //public static string[] masoutisFiles = { "cat2_ScanShop", "cat3_ScanShop", "cat4_ScanShop", "desc_ScanShop"};
 
     public static bool database_ready = false;
 
@@ -345,16 +345,16 @@ public class MajorityVoting : AsyncBehaviour
                         string inp_ln = streamReader.ReadLine();
                         switch (datafile_name)
                         {
-                            case "cat2_ScanShop":
+                            case "cat2_2020":
                                 cat2.Add(inp_ln);
                                 break;
-                            case "cat3_ScanShop":
+                            case "cat3_2020":
                                 cat3.Add(inp_ln);
                                 break;
-                            case "cat4_ScanShop":
+                            case "cat4_2020":
                                 cat4.Add(inp_ln);
                                 break;
-                            case "desc_ScanShop":
+                            case "desc_2020":
                                 desc.Add(inp_ln);
                                 break;
                         }

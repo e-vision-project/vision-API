@@ -18,7 +18,6 @@ public class HttpImageLoading : MonoBehaviour
     public bool textureLoaded = false;
     public bool cameraConnected = true;
     private bool firstConnection = true;
-    [SerializeField] private GameObject displayImage;
     [SerializeField] private CameraClient client;
 
 
@@ -30,7 +29,6 @@ public class HttpImageLoading : MonoBehaviour
         {
             Debug.Log("init external cam");
             screenshotTex = new Texture2D(1024, 768);
-            displayImage.SetActive(false);
             //set to photo mode
             yield return StartCoroutine(SetRecordingRequest(1));
             StartCoroutine(TakePhotoRequest());
@@ -92,7 +90,6 @@ public class HttpImageLoading : MonoBehaviour
             // Get downloaded asset bundle
             screenshotTex = DownloadHandlerTexture.GetContent(x);
             //screenshotTex = TextureTools.RotateTexture(screenshotTex, 180);
-            displayImage.SetActive(true);
             var y = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP").GetComponent<RawImage>();
             y.texture = screenshotTex;
             Debug.Log("starting resolution: " + screenshotTex.width + "," + screenshotTex.height);

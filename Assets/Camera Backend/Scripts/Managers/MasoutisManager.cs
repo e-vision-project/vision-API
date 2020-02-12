@@ -91,7 +91,7 @@ namespace EVISION.Camera.plugin
             httpLoader = GetComponent<HttpImageLoading>();
 
             //native camera
-            if (!externalCamera)
+            if (!externalCamera && currentCam != null)
             {
                 ConnectNativeCamera();
             }
