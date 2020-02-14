@@ -19,7 +19,7 @@ public static class LogManager
         path = Application.dataPath + "/evision_result_logs.txt";
         #endif
 
-        #if UNITY_ANDROID
+        #if UNITY_ANDROID || UNITY_IOS
         path = Application.persistentDataPath + "/evision_result_logs.txt";
         #endif
 

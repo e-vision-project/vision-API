@@ -42,7 +42,6 @@ namespace EVISION.Camera.plugin
             {
                 return;
             }
-
             StartCoroutine(ProcessScreenshotAsync());
         }
 
@@ -101,9 +100,12 @@ namespace EVISION.Camera.plugin
             DB_LoadProccessBusy = true;
             annotationProccessBusy = false;
 
-            //EventCamManager.onExternalCamError += ConnectNativeCamera;
-            EventCamManager.onAnnotationFailed += AnnotationFailedHandler;
-
+            //native camera
+            if (!externalCamera && currentCam != null)
+            {
+                Debug.Log("Natice camera exists");
+                ConnectNativeCamera();
+            }
         }
 
         // Update is called once per frame
@@ -153,7 +155,6 @@ namespace EVISION.Camera.plugin
                 fileName = fileName.Replace(" ", "_");
                 fileName = fileName.Replace(":", "_");
                 fileName = fileName.Replace("/", "_");
-                Debug.Log(fileName);
                 string imageName = GetResultLogs("Image Name", fileName);
                 string response =  GetResponseTime(captureTime.ToString(), OCRtime.ToString(), classificationTime.ToString(), 
                     Majoritytime.ToString(), sum.ToString());
@@ -248,7 +249,7 @@ namespace EVISION.Camera.plugin
         public IEnumerator GetProductDescription()
         {
             // output message to user.
-            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Αναγνώριση προϊόντος"));
+            if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Αναγνώριση προϊόντος")); }
 
             float startOCRt = Time.realtimeSinceStartup;
 
@@ -275,11 +276,12 @@ namespace EVISION.Camera.plugin
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
                 text_result = product_formatted.ToLower();
-                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(text_result));
+                if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(text_result)); }
             }
             else
             {
-                yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Δεν αναγνωρίστηκαν λέξεις"));
+                if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Δεν αναγνωρίστηκαν λέξεις")); }
+                text_result = "Δεν αναγνωρίστηκαν λέξεις";
             }
         }
 
@@ -330,14 +332,14 @@ namespace EVISION.Camera.plugin
                     {
                         case (int)Enums.MasoutisCategories.trail:
                             text_result = majVoting.masoutis_item.category_2;
-                            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + text_result));
+                            if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("διάδρομος, " + text_result)); }
                             break;
                         case (int)Enums.MasoutisCategories.shelf:
                             text_result = majVoting.masoutis_item.category_4;
-                            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + text_result));
+                            if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("ράφι, " + text_result)); }
                             break;
                         case (int)Enums.MasoutisCategories.other:
-                            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο"));
+                            if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("άλλο, " + "μη αναγνωρίσιμο")); }
                             break;
                         default:
                             break;
@@ -348,7 +350,7 @@ namespace EVISION.Camera.plugin
                     text_result = "διάδρομος " + majVoting.masoutis_item.category_2 + ", " +
                                    "ράφι " + majVoting.masoutis_item.category_3 + ", " +
                                    "υποκατηγορία ραφιού " + majVoting.masoutis_item.category_4;
-                    yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(text_result));
+                    if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText(text_result)); }
                 }
             }
             else

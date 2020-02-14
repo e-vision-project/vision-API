@@ -11,7 +11,7 @@ namespace EVISION.Camera.plugin
         // INTERFACES
         protected IAnnotate annotator;
         protected ITextToVoice voiceSynthesizer;
-        protected IDeviceCamera currentCam;
+        [SerializeField] protected IDeviceCamera currentCam;
         protected HttpImageLoading httpLoader;
         [SerializeField] protected bool verboseMode;
 
@@ -56,15 +56,6 @@ namespace EVISION.Camera.plugin
         }
 
         #endregion
-
-        public void Start()
-        {
-            //native camera
-            if (!externalCamera && currentCam != null && !Application.isEditor)
-            {
-                ConnectNativeCamera();
-            }
-        }
 
         protected IEnumerator GetScreenshot()
         {
