@@ -56,6 +56,7 @@ namespace EVISION.Camera.plugin
             yield return StartCoroutine(GetScreenshot());
 
             category = ClassifyCategory(camTexture);
+            //category = 1;
 
             // product case
             if (category == (int)Enums.MasoutisCategories.product)

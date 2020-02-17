@@ -37,14 +37,11 @@ namespace EVISION.Camera.plugin
 
         public IEnumerator PerformAnnotation(Texture2D snap)
         {
-            
             if (RescaleInput)
             {
-                GenericUtils.ScaleTextureBilinear(snap, (int)scaleResolution.x, (int)scaleResolution.y);
+                GenericUtils.ScaleTexturePoint(snap, (int)scaleResolution.x, (int)scaleResolution.y);
                 //snap = GenericUtils.Resize(snap, (int)scaleResolution.x, (int)scaleResolution.y);
-                Debug.Log("rescaled final: " + snap.width + "," + snap.height);
             }
-
             //copy image
             temp_image = snap;
             // Convert to base64 encoding.
