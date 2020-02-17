@@ -1059,14 +1059,6 @@ PrefabInstance:
       propertyPath: imageName
       value: debug_1
       objectReference: {fileID: 0}
-<<<<<<< HEAD
-    - target: {fileID: 514237407866332602, guid: a2a9a0ff9ac28464abb582a762b4668e,
-        type: 3}
-      propertyPath: externalCamera
-      value: 1
-      objectReference: {fileID: 0}
-=======
->>>>>>> 9f2a6a5f5e8fe7a52461be5ea2bdab33db32c258
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2a9a0ff9ac28464abb582a762b4668e, type: 3}
 --- !u!1001 &6056436360028426709
