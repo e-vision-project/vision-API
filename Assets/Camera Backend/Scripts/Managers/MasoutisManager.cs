@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static EVISION.Camera.plugin.GenericUtils;
 using static LogManager;
+using System;
 
 namespace EVISION.Camera.plugin
 {
@@ -24,6 +25,7 @@ namespace EVISION.Camera.plugin
         private MasoutisItem masoutis_obj;
         private SVMClassification svm_model;
         private string annotationText;
+        private MajorityVoting majVoting;
 
         // PUBLIC PROPERTIES
         public static int category;
@@ -55,8 +57,8 @@ namespace EVISION.Camera.plugin
             // Get camera texture.
             yield return StartCoroutine(GetScreenshot());
 
-            category = ClassifyCategory(camTexture);
-            //category = 1;
+            //category = ClassifyCategory(camTexture);
+            category = 1;
 
             // product case
             if (category == (int)Enums.MasoutisCategories.product)
@@ -73,6 +75,7 @@ namespace EVISION.Camera.plugin
             //Used to set the main UI
             EventCamManager.onProcessEnded?.Invoke();
             annotationProccessBusy = false;
+            Resources.UnloadUnusedAssets();
         }
 
         public override void SaveScreenshot(Texture2D camTexture)
@@ -90,7 +93,7 @@ namespace EVISION.Camera.plugin
             annotator = GetComponent<IAnnotate>();
             voiceSynthesizer = GetComponent<ITextToVoice>();
             httpLoader = GetComponent<HttpImageLoading>();
-
+            majVoting = new MajorityVoting();
             SetSVM();
         }
 
@@ -218,7 +221,6 @@ namespace EVISION.Camera.plugin
         public IEnumerator GetProductDescriptionFromDb()
         {
             // output message to user.
-            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Αναγνώριση προϊόντος"));
 
             float startOCRt = Time.realtimeSinceStartup;
 
@@ -303,8 +305,7 @@ namespace EVISION.Camera.plugin
         public IEnumerator GetTrailShelfDescription(int category)
         {
             // output message to user.
-            yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Παρακαλώ περιμένετε"));
-
+            if (voiceSynthesizer != null) { yield return StartCoroutine(voiceSynthesizer.PerformSpeechFromText("Παρακαλώ περιμένετε")); }
             float startOCRt = Time.realtimeSinceStartup;
 
             //ocr annotation.
@@ -315,15 +316,13 @@ namespace EVISION.Camera.plugin
 
             OCRtime = CalculateTimeDifference(startOCRt, endOCRt);
 
-            // Perform majority voting
-            MajorityVoting majVoting = new MajorityVoting();
-
             if (!string.IsNullOrEmpty(annotationText))
             {
                 float startMajt = Time.realtimeSinceStartup;
 
                 List<string> OCR_List = SplitStringToList(annotationText);
                 yield return StartCoroutine(majVoting.PerformMajorityVoting(OCR_List));
+                OCR_List = null;
                 float endMajt = Time.realtimeSinceStartup;
                 Majoritytime = CalculateTimeDifference(startMajt, endMajt);
 

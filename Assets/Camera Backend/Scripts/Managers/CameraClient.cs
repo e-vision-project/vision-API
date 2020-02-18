@@ -16,7 +16,7 @@ namespace EVISION.Camera.plugin
         [SerializeField] protected bool verboseMode;
 
         // PRIVATE PROPERTIES
-        protected Texture2D camTexture;
+        public static Texture2D camTexture;
         protected float captureTime;
 
         // PUBLIC PROPERTIES
@@ -69,14 +69,13 @@ namespace EVISION.Camera.plugin
                     {
                         yield return null;
                     }
-                    camTexture = httpLoader.screenshotTex;
-                    SetDisplayImage();
+                    SetDisplayImageAndUnloadDownloadedTexture();
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
                 }
                 else
                 {
                     camTexture = Resources.Load<Texture2D>("Products_UnitTests/" + imageName);
-                    SetDisplayImage();
+                    SetDisplayImageAndUnloadDownloadedTexture();
                 }
             }
             else
@@ -88,14 +87,14 @@ namespace EVISION.Camera.plugin
                     {
                         yield return null;
                     }
-                    camTexture = httpLoader.screenshotTex;
-                    SetDisplayImage();
+                    SetDisplayImageAndUnloadDownloadedTexture();
+                    Debug.Log("capture");
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
                 }
                 else
                 {
                     camTexture = currentCam.TakeScreenShot();
-                    SetDisplayImage();
+                    SetDisplayImageAndUnloadDownloadedTexture();
                     Handheld.Vibrate();
                 }
             }
@@ -103,7 +102,7 @@ namespace EVISION.Camera.plugin
             captureTime = GenericUtils.CalculateTimeDifference(startCapture, endCapture);
         }
 
-        private void SetDisplayImage()
+        private void SetDisplayImageAndUnloadDownloadedTexture()
         {
             displayImage.texture = camTexture;
         }

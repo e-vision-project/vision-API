@@ -27,12 +27,10 @@ public class HttpImageLoading : MonoBehaviour
         client = gameObject.GetComponent<CameraClient>();
         if (client.externalCamera)
         {
-            Debug.Log("init external cam");
-            screenshotTex = new Texture2D(1024, 768);
             //set to photo mode
             yield return StartCoroutine(SetRecordingRequest(1));
             StartCoroutine(TakePhotoRequest());
-            RemoveAllPhotos();
+            //RemoveAllPhotos();
         }
     }
 
@@ -79,21 +77,22 @@ public class HttpImageLoading : MonoBehaviour
     /// <returns>Ienumarator gameobject</returns>
     public IEnumerator GetURLTexture(string url)
     {
-        var x = UnityWebRequestTexture.GetTexture(url);
-        yield return x.SendWebRequest();
-        if (x.isNetworkError || x.isHttpError)
+        using (var x = UnityWebRequestTexture.GetTexture(url))
         {
-            Debug.Log(x.error);
-        }
-        else if(x.isDone)
-        {
-            // Get downloaded asset bundle
-            screenshotTex = DownloadHandlerTexture.GetContent(x);
-            //screenshotTex = TextureTools.RotateTexture(screenshotTex, 180);
-            var y = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE_HTTP").GetComponent<RawImage>();
-            y.texture = screenshotTex;
-            Debug.Log("starting resolution: " + screenshotTex.width + "," + screenshotTex.height);
-            textureLoaded = true;
+            yield return x.SendWebRequest();
+            if (x.isNetworkError || x.isHttpError)
+            {
+                Debug.Log("Get url texture error" + x.error);
+            }
+            else if (x.isDone)
+            {
+                // Get downloaded asset bundle
+                Texture2D temp_tex;
+                temp_tex = DownloadHandlerTexture.GetContent(x);
+                CameraClient.camTexture = GenericUtils.Resize(temp_tex, temp_tex.width, temp_tex.height);
+                DestroyImmediate(temp_tex);
+                textureLoaded = true;
+            }
         }
     }
 
@@ -133,7 +132,7 @@ public class HttpImageLoading : MonoBehaviour
                 var name = match.Groups["name"].Value;
                 names.Add(name);
             }
-
+            response.Dispose();
             return names;
         }
     }
@@ -174,6 +173,7 @@ public class HttpImageLoading : MonoBehaviour
             snapTaken = true;
             cameraConnected = true;
             Handheld.Vibrate();
+            request.Dispose();
         }
     }
 
@@ -204,7 +204,7 @@ public class HttpImageLoading : MonoBehaviour
         }
         else
         {
-            // Get downloaded asset bundle
+            x.Dispose();
         }
     }
 
@@ -240,20 +240,9 @@ public class HttpImageLoading : MonoBehaviour
         }
     }
 
-    public IEnumerator LoadURLTexture(string url)
-    {
-        UnityWebRequest x = UnityWebRequestTexture.GetTexture(url);
-        yield return x.SendWebRequest();
-        if (!x.isNetworkError)
-        {
-            Texture2D texture = DownloadHandlerTexture.GetContent(x);
-            screenshotTex.LoadImage(x.downloadHandler.data);
-        }
-    }
     public Texture2D GetUrlTextureObsolete(string url)
     {
         WWW www = new WWW(url);
-        Debug.Log("start");
         while (www.isDone == false)
         {
             continue;
