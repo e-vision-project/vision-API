@@ -88,7 +88,6 @@ namespace EVISION.Camera.plugin
                         yield return null;
                     }
                     SetDisplayImageAndUnloadDownloadedTexture();
-                    Debug.Log("capture");
                     yield return StartCoroutine(httpLoader.SendRemovePhotoRequest(httpLoader.imageUrl));
                 }
                 else

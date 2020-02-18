@@ -1246,11 +1246,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 514237407866332596, guid: a2a9a0ff9ac28464abb582a762b4668e,
-        type: 3}
-      propertyPath: RescaleInput
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 514237407866332600, guid: a2a9a0ff9ac28464abb582a762b4668e,
         type: 3}
       propertyPath: m_Name
@@ -1261,21 +1256,6 @@ PrefabInstance:
       propertyPath: displayImage
       value: 
       objectReference: {fileID: 1415455626}
-    - target: {fileID: 514237407866332602, guid: a2a9a0ff9ac28464abb582a762b4668e,
-        type: 3}
-      propertyPath: imageName
-      value: debug_1
-      objectReference: {fileID: 0}
-    - target: {fileID: 514237407866332602, guid: a2a9a0ff9ac28464abb582a762b4668e,
-        type: 3}
-      propertyPath: verboseMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 514237407866332602, guid: a2a9a0ff9ac28464abb582a762b4668e,
-        type: 3}
-      propertyPath: externalCamera
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2a9a0ff9ac28464abb582a762b4668e, type: 3}
 --- !u!1001 &6056436360028426709

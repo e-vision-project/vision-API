@@ -30,7 +30,7 @@ public class HttpImageLoading : MonoBehaviour
             //set to photo mode
             yield return StartCoroutine(SetRecordingRequest(1));
             StartCoroutine(TakePhotoRequest());
-            //RemoveAllPhotos();
+            RemoveAllPhotos();
         }
     }
 

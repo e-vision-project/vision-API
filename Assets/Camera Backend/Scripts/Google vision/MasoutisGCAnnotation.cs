@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using FrostweepGames.Plugins.GoogleCloud.Vision;
 using System.Linq;
 using FrostweepGames.Plugins.GoogleCloud.Vision.Helpers;
+using System;
 
 namespace EVISION.Camera.plugin
 {
@@ -31,7 +32,7 @@ namespace EVISION.Camera.plugin
 
         public bool displayBoundingBox;
 
-        private Texture2D temp_image;
+        private Texture2D temp_image = null;
 
         #region IAnnotate callbacks
 
@@ -39,11 +40,13 @@ namespace EVISION.Camera.plugin
         {
             if (RescaleInput)
             {
-                GenericUtils.ScaleTexturePoint(snap, (int)scaleResolution.x, (int)scaleResolution.y);
-                //snap = GenericUtils.Resize(snap, (int)scaleResolution.x, (int)scaleResolution.y);
+                //GenericUtils.ScaleTextureBilinear(snap, (int)scaleResolution.x, (int)scaleResolution.y);
+                snap = GenericUtils.Resize(snap, (int)scaleResolution.x, (int)scaleResolution.y);
             }
             //copy image
-            temp_image = snap;
+
+            //temp_image = snap;
+
             // Convert to base64 encoding.
             string _selectedImageData = ImageConvert.Convert(snap);
             if (MasoutisManager.category == (int)Enums.MasoutisCategories.product)
@@ -307,7 +310,7 @@ namespace EVISION.Camera.plugin
                         {
                             InternalTools.ProcessImage(entity.boundingPoly.vertices, ref temp_image, UnityEngine.Color.red);
                             var display_img = GameObject.FindGameObjectWithTag("DISPLAY_IMAGE").GetComponent<RawImage>();
-                            display_img.texture = temp_image;
+                            //display_img.texture = temp_image;
                         }
                     }
                 }
